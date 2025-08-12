@@ -1,0 +1,211 @@
+.backBtn {
+  width: max-content;
+  border: 0;
+  padding: 0.5rem;
+  margin: 1rem 0;
+  border-radius: 10px;
+  background: rgb(12, 100, 188);
+  color: #fff;
+  cursor: pointer;
+}
+
+.filterFormSection {
+  padding: 1rem;
+  background: #fff;
+  border-radius: 10px;
+  text-align: left;
+  height: 100vh;
+}
+
+.filterFormSection .list {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.filterFormSection .accordion-item {
+  background: #fff !important;
+  margin-bottom: 1rem;
+}
+
+.filterFormSection .list .item-link {
+  background: #484848;
+  border-radius: 0 !important;
+}
+
+.filterFormSection .list .item-link .item-content {
+  min-height: 40px;
+  height: 40px;
+}
+
+.filterFormSection .accordion-item-content {
+  background: #fff;
+}
+
+.inputFieldsSection .item-input-wrap select {
+  color: #222 !important;
+}
+
+.inputFieldsSection .item-content.item-input {
+  margin-left: 0;
+  margin-right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 0;
+  min-height: 30px;
+}
+
+.inputFieldsSection .item-content.item-input::after {
+  display: none !important;
+}
+
+.inputFieldsSection .item-content.item-input::before {
+  background: #fff !important;
+}
+
+.inputFieldsSection {
+  padding: 0.5rem 0 !important;
+}
+
+.filterFormSection .list .item-link .item-title,
+.filterFormSection .list .item-link .item-inner::before {
+  color: #fff;
+}
+
+.filterFormSection .item-inner {
+  padding: 5px;
+  min-height: auto;
+}
+
+.g3080 {
+  display: grid;
+  grid-template-columns: 30% 70%;
+}
+
+.g2080 {
+  display: grid;
+  grid-template-columns: 20% 80%;
+}
+
+/* filterContent */
+.filterContent {
+  padding: 0 2rem;
+}
+
+.filterContent .toolbar.tabbar {
+  border-bottom: 1px solid;
+  background: transparent;
+}
+
+.filterContent .tabbar .tab-link-active,
+.tabbar-icons .tab-link-active {
+  background-color: rgb(12, 100, 188);
+  color: #fff;
+}
+
+.filterContent .tab-link-highlight {
+  display: none;
+}
+
+.filterContent .tab-link {
+  height: auto;
+  width: max-content;
+  padding: 0.5rem !important;
+}
+
+.filterTabsAccordion .list {
+  margin: 0 !important;
+  margin-bottom: 1rem !important;
+}
+
+.filterTabsAccordion .accordion-item {
+  border-radius: 15px;
+}
+
+.filterContent .searchbar-input-wrap input {
+  background: #fff;
+}
+
+.editDemoDetails {
+  cursor: pointer;
+}
+
+.schemeDescAndApply .block {
+  padding: 0 4rem;
+}
+
+.schemeDescSection {
+  background: #eee;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.schemeDescSection p {
+  font-size: 14px;
+  margin: 0;
+  padding-bottom: 1rem;
+}
+
+.schemeDescSection a,
+.schemeDescPage a {
+  border-radius: 10px;
+  padding: 0.5rem;
+  background: #005bc1;
+  color: #fff;
+}
+
+.schemeDescPage a {
+  width: max-content;
+  display: block;
+  margin-left: auto;
+}
+
+.schemeDescPage {
+  background: #fff;
+  padding: 3rem;
+  border-radius: 10px;
+}
+
+.schemeDescPage p.suggest span {
+  background: #D6E8D0;
+  padding: 0.3rem;
+  color: #008C3DFC;
+  margin: 0;
+  border-radius: 10px;
+}
+
+.schemeDescPage p.suggest {
+  margin-left: auto;
+  width: max-content;
+}
+
+.borderBottomLine {
+  border-bottom: 1px solid #69676999;
+  padding-bottom: 1rem;
+}
+
+.sectionDetails ul {
+  padding: 0;
+  padding-left: 1rem;
+  color: #696769;
+}
+
+.sectionDetails span {
+  display: block;
+}
+
+.sectionDetails span ul {
+  margin: 0;
+  margin-left: 1rem;
+}
+
+@media (max-width: 768px) {
+  .leftAlign div {
+    text-align: left;
+  }
+
+  .g3080,
+  .g2080 {
+    grid-template-columns: 100%;
+  }
+}

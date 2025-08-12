@@ -1,0 +1,36 @@
+{
+  "cwd": "C:\\Users\\HP\\Documents\\f7",
+  "type": [
+    "cordova"
+  ],
+  "name": "SFDB",
+  "framework": "react",
+  "template": "split-view",
+  "bundler": "vite",
+  "cssPreProcessor": false,
+  "theming": {
+    "customColor": true,
+    "color": "#007aff",
+    "darkMode": true,
+    "iconFonts": true
+  },
+  "customBuild": false,
+  "pkg": "io.framework7.myapp",
+  "cordova": {
+    "folder": "cordova",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "plugins": [
+      "cordova-plugin-statusbar",
+      "cordova-plugin-keyboard",
+      "cordova-plugin-splashscreen",
+      "cordova-plugin-file",
+      "cordova-plugin-device",
+      "cordova-plugin-media",
+      "cordova-plugin-safariviewcontroller",
+      "cordova-plugin-inappbrowser"
+    ]
+  }
+}
