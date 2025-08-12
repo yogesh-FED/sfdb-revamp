@@ -1,0 +1,163 @@
+/* Floating button */
+.access-btn {
+  position: fixed;
+  right: 20px;
+  top: 49px;
+  background: #0055aa;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 999999999999;
+  width: auto;
+}
+
+/* Panel styling */
+.access-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 70px;
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  width: 260px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  height: 300px;
+  overflow: auto;
+}
+
+/* Each option */
+.access-item {
+  background: #f5f6fa;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.access-item:hover {
+  background: #e0e4f0;
+}
+
+.access-item.active {
+  border: 2px solid #0055aa;
+}
+
+.access-icon {
+  font-size: 22px;
+  margin-bottom: 5px;
+}
+
+.access-label {
+  font-size: 12px;
+}
+
+/* Feature effects */
+.access-biggerText {
+  font-size: 120% !important;
+}
+
+.access-textSpacing {
+  letter-spacing: 2px !important;
+}
+
+.access-lineHeight {
+  line-height: 1.8 !important;
+}
+
+.access-highlightLinks a {
+  background: yellow !important;
+  color: black !important;
+}
+
+.access-dyslexiaFont {
+  font-family: 'OpenDyslexic', Arial, sans-serif !important;
+}
+
+.access-hideImages img {
+  display: none !important;
+}
+
+.access-bigCursor {
+  cursor: url('data:image/svg+xml;utf8,<svg height="32" width="32" xmlns="http://www.w3.org/2000/svg"><text y="20" font-size="20">🖱</text></svg>'), auto;
+}
+
+.access-invertColors {
+  filter: invert(1) hue-rotate(180deg) !important;
+}
+
+.access-textToSpeech {
+  outline: 2px dashed orange;
+}
+
+.access-textToSpeech *:hover {
+  outline: 2px dashed orange;
+  cursor: pointer;
+}
+
+.access-biggerText-large {
+  font-size: 1.25em;
+}
+
+.access-biggerText-larger {
+  font-size: 1.5em;
+}
+
+.access-biggerText-largest {
+  font-size: 1.75em;
+}
+
+.access-biggerText-1 {
+  font-size: 110%;
+}
+
+.access-biggerText-2 {
+  font-size: 120%;
+}
+
+.access-biggerText-3 {
+  font-size: 130%;
+}
+
+.access-biggerText-4 {
+  font-size: 140%;
+}
+
+.access-textSpacing-1 {
+  letter-spacing: 0.5px;
+}
+
+.access-textSpacing-2 {
+  letter-spacing: 1px;
+}
+
+.access-textSpacing-3 {
+  letter-spacing: 1.5px;
+}
+
+.access-textSpacing-4 {
+  letter-spacing: 2px;
+}
+
+.access-lineHeight-1 {
+  line-height: 1.6;
+}
+
+.access-lineHeight-2 {
+  line-height: 1.8;
+}
+
+.access-lineHeight-3 {
+  line-height: 2.0;
+}
+
+.access-lineHeight-4 {
+  line-height: 2.2;
+}

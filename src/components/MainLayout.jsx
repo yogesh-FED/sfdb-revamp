@@ -82,6 +82,7 @@ import React, { useEffect, useState } from 'react';
 import { f7, f7ready, useStore } from 'framework7-react';
 import { CustomNavbar } from '../pages/CustomNavbar';
 import TopNavbar from '../pages/TopNavbar';
+import AccessibilityWidget from './AccessibilityWidget';
 
 const MainLayout = ({ children }) => {
   debugger;
@@ -142,6 +143,7 @@ const MainLayout = ({ children }) => {
         </>
       )}
       {children}
+      <AccessibilityWidget />
     </>
   );
 };
