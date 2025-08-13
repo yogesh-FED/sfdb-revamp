@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../css/AccessibilityWidget.css";
+import accImg from '../assets/images/accessibility.png';
 
 const featuresList = [
   { id: "biggerText", label: "Bigger Text", icon: "🔠", type: "level" },
@@ -71,6 +72,12 @@ const AccessibilityWidget = () => {
     return () => document.removeEventListener("click", handleClick);
   }, [ttsEnabled]);
 
+  const clearAllFeatures = () => {
+    setFeatures({});
+    localStorage.removeItem("accessibility-settings");
+    document.body.className = "";
+  };
+
   const toggleFeature = (id, type) => {
     setFeatures((prev) => {
       if (type === "level") {
@@ -90,10 +97,10 @@ const AccessibilityWidget = () => {
         aria-label="Accessibility options"
         onClick={() => setOpen(!open)}
       >
-        ♿
+        <img src={accImg} alt="Accessibility Options" />
       </button>
 
-      {open && (
+      {/* {open && (
         <div className="access-panel">
           {featuresList.map((feat) => (
             <div
@@ -113,8 +120,49 @@ const AccessibilityWidget = () => {
               </div>
             </div>
           ))}
+          <div className="access-clear" onClick={clearAllFeatures}>
+            Clear All
+          </div>
+        </div>
+      )} */}
+      {open && (
+        <div className="access-panel">
+          <div className="access-panel-header">
+            <p>Accessibility Options</p>
+            <button
+              className="access-close"
+              aria-label="Close accessibility panel"
+              onClick={() => setOpen(false)}
+            >
+              ✖
+            </button>
+          </div>
+          <div className="access-panel-content">
+            {featuresList.map((feat) => (
+              <div
+                key={feat.id}
+                className={`access-item ${features[feat.id] ? "active" : ""
+                  }`}
+                onClick={() => toggleFeature(feat.id, feat.type)}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="access-icon">{feat.icon}</div>
+                <div className="access-label">
+                  {feat.label}
+                  {feat.type === "level" && features[feat.id] > 0
+                    ? ` (${features[feat.id]})`
+                    : ""}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="access-clear" onClick={clearAllFeatures}>
+            Clear All
+          </div>
         </div>
       )}
+
     </>
   );
 };

@@ -2,23 +2,23 @@
 .access-btn {
   position: fixed;
   right: 20px;
-  top: 49px;
-  background: #0055aa;
+  top: 51px;
+  background: #0a0032;
   color: white;
   border: none;
-  padding: 12px;
   font-size: 20px;
-  border-radius: 50%;
   cursor: pointer;
   z-index: 999999999999;
   width: auto;
+  padding: 12px;
+  border-radius: 5px;
 }
 
 /* Panel styling */
-.access-panel {
+/* .access-panel {
   position: fixed;
   right: 20px;
-  bottom: 70px;
+  top: 120px;
   background: white;
   border-radius: 12px;
   padding: 15px;
@@ -31,6 +31,82 @@
   height: 300px;
   overflow: auto;
 }
+
+.access-clear {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background: #ff4d4d;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: center;
+  transition: background 0.3s;
+
+} */
+
+.access-panel {
+  position: fixed;
+  right: 20px;
+  top: 120px;
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  height: 400px;
+}
+
+.access-panel-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.access-close {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s ease;
+  width: auto;
+}
+
+.access-close:hover {
+  color: #000;
+}
+
+.access-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.access-clear {
+  padding: 8px;
+  background: #f44336;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+  margin-top: 10px;
+}
+
+.access-clear:hover {
+  background: #d32f2f;
+}
+
 
 /* Each option */
 .access-item {
@@ -86,7 +162,7 @@
 }
 
 .access-bigCursor {
-  cursor: url('data:image/svg+xml;utf8,<svg height="32" width="32" xmlns="http://www.w3.org/2000/svg"><text y="20" font-size="20">🖱</text></svg>'), auto;
+  cursor: url('data:image/svg+xml,<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="29.188px" height="43.625px" viewBox="0 0 29.188 43.625" enable-background="new 0 0 29.188 43.625" xml:space="preserve"><g><polygon fill="%23FFFFFF" stroke="%23D9DAD9" stroke-width="1.1406" stroke-miterlimit="10" points="2.8,4.549 26.847,19.902 16.964,22.701 24.239,37.749 18.278,42.017 9.741,30.724 1.138,35.809 "/><g><g><g><path fill="%23212627" d="M29.175,21.155c0.071-0.613-0.165-1.253-0.635-1.573L2.165,0.258c-0.424-0.32-0.988-0.346-1.435-0.053C0.282,0.497,0,1.03,0,1.617v34.171c0,0.613,0.306,1.146,0.776,1.439c0.471,0.267,1.059,0.213,1.482-0.16l7.482-6.344l6.847,12.155c0.259,0.48,0.729,0.746,1.2,0.746c0.235,0,0.494-0.08,0.706-0.213l6.988-4.585c0.329-0.213,0.565-0.586,0.659-1.013c0.094-0.426,0.024-0.88-0.188-1.226l-6.376-11.382l8.611-2.745C28.705,22.274,29.105,21.768,29.175,21.155z M16.964,22.701c-0.424,0.133-0.776,0.506-0.941,0.96c-0.165,0.48-0.118,1.013,0.118,1.439l6.588,11.781l-4.541,2.985l-6.894-12.315c-0.212-0.373-0.541-0.64-0.941-0.72c-0.094-0.027-0.165-0.027-0.259-0.027c-0.306,0-0.588,0.107-0.847,0.32L2.8,32.59V4.549l21.599,15.806L16.964,22.701z"/></g></g></g></g></svg>'), auto;
 }
 
 .access-invertColors {
@@ -114,21 +190,42 @@
   font-size: 1.75em;
 }
 
-.access-biggerText-1 {
-  font-size: 110%;
+.access-biggerText-1 * {
+  font-size: 105% !important;
 }
 
-.access-biggerText-2 {
-  font-size: 120%;
+.access-biggerText-2 * {
+  font-size: 110% !important;
 }
 
-.access-biggerText-3 {
-  font-size: 130%;
+.access-biggerText-3 * {
+  font-size: 115% !important;
 }
 
-.access-biggerText-4 {
-  font-size: 140%;
+.access-biggerText-4 * {
+  font-size: 120% !important;
 }
+
+.access-biggerText-1 html,
+.access-biggerText-1 body {
+  font-size: 10% !important;
+}
+
+.access-biggerText-2 html,
+.access-biggerText-2 body {
+  font-size: 20% !important;
+}
+
+.access-biggerText-3 html,
+.access-biggerText-3 body {
+  font-size: 30% !important;
+}
+
+.access-biggerText-4 html,
+.access-biggerText-4 body {
+  font-size: 40% !important;
+}
+
 
 .access-textSpacing-1 {
   letter-spacing: 0.5px;
