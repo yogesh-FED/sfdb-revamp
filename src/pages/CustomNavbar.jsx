@@ -6,7 +6,10 @@ import { App, View, Page, Navbar, Button, f7, Popup } from 'framework7-react';
 const CustomNavbar = (props) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("0");
-  const menuItems = [props.language_data.home, props.language_data.about, props.language_data.scheme, props.language_data.help];
+  const menuItems = [props.language_data.home,
+  props.language_data.about,
+  props.language_data.scheme,
+  props.language_data.help];
   const scrollToSection = (id, setOpen) => {
     if (props.hideMenusInDetailPage === true) {
       props.f7router.navigate('/', { clearPreviousHistory: true, ignoreCache: true })

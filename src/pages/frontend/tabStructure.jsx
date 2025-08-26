@@ -160,9 +160,9 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
               <div className='findschemesPad'>
                 <h4>Find Schemes Tailored To You</h4>
                 <p>No need to browse through all the 1000+ schemes, no login needed! Just answer a few questions and we will match you to the schemes you are eligible for!</p>
-                <Link href={`/details`}>
+                {/* <Link href={`/details`}>
                   <span className='detailsCta kysCTA'>{language_data.know_your_scheme_cta}</span>
-                </Link>
+                </Link> */}
               </div>
             </div>
           </div>

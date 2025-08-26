@@ -734,7 +734,7 @@ const LandingPage = ({ f7router }) => {
   };
 
   useEffect(() => {
-    checkLatest();
+    // checkLatest();
   }, []);
 
   return (
