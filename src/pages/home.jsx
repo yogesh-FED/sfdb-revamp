@@ -262,10 +262,10 @@ const HomePage = (props) => {
         </Tab>
         <Tab id="tab-d" tabActive={is_tabs_id == "D"}>
 
-          {/* <SchemeEligibilityPage languageData={language_data} language={is_language} lang={lang}></SchemeEligibilityPage> */}
-          <EligibiltyFilter
+          <SchemeEligibilityPage languageData={language_data} language={is_language} lang={lang}></SchemeEligibilityPage>
+          {/* <EligibiltyFilter
             languageData={language_data} language={is_language} lang={lang}
-          />
+          /> */}
         </Tab>
 
         <Tab id="tab-e" tabActive={is_tabs_id == "E"}>
