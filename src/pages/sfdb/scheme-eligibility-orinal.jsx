@@ -354,9 +354,9 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
         </List>
 
         {eligible_schemes_box()}
-        {/* {lang === "ENGLISH" ?
+        {lang === "ENGLISH" ?
           <div className='text-danger text-center'>** The above eligibility is based on the information available and further processing will be based on the application and the Department Procedure **</div> :
-          <div className='text-danger text-center'>** இமேற்கண்ட தகுதி கிடைக்கக்கூடிய தகவல்களை அடிப்படையாகக் கொண்டது, மேலும் விண்ணப்பம் மற்றும் துறை நடைமுறையைப் பொறுத்து மேலும் செயலாக்கம் இருக்கும். **</div>} */}
+          <div className='text-danger text-center'>** இமேற்கண்ட தகுதி கிடைக்கக்கூடிய தகவல்களை அடிப்படையாகக் கொண்டது, மேலும் விண்ணப்பம் மற்றும் துறை நடைமுறையைப் பொறுத்து மேலும் செயலாக்கம் இருக்கும். **</div>}
         {ineligible_schemes_box()}
 
 

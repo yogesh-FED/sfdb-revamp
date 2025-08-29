@@ -158,11 +158,11 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
                 <img src={findScheme} alt='find-schemes' />
               </div>
               <div className='findschemesPad'>
-                <h4>Find Schemes Tailored To You</h4>
-                <p>No need to browse through all the 1000+ schemes, no login needed! Just answer a few questions and we will match you to the schemes you are eligible for!</p>
-                {/* <Link href={`/details`}>
+                <h4>{language_data.know_your_scheme}</h4>
+                <p> {language_data.know_your_scheme_desc} </p>
+                <Link href={`/details`}>
                   <span className='detailsCta kysCTA'>{language_data.know_your_scheme_cta}</span>
-                </Link> */}
+                </Link>
               </div>
             </div>
           </div>
@@ -183,13 +183,13 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
             :
             <h3> {language_data.view_scheme_by} {activeTabText.toLowerCase()}</h3>
         }
-        <div className='searchInpt'>
+        {/* <div className='searchInpt'>
           <List strongIos dividersIos insetIos>
             <ListInput outline label={language_data.schemeSearch} floatingLabel type="text">
               <Icon icon="demo-list-icon" slot="media" />
             </ListInput>
           </List>
-        </div>
+        </div> */}
       </div>
       <Tabs>
         <Tab id="tab-1" className="page-content tabContent" tabActive>
@@ -199,7 +199,9 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
               <div className='schemeDetails'>
                 <img src={agriculture} alt='agri' />
                 <div><p>Agriculture</p>
-                  <span> <a onClick={handleCategoryPopUp}>24 Schemes</a></span></div>
+                  {/* <span> <a onClick={handleCategoryPopUp}>24 Schemes</a></span> */}
+                  <span> <a>24 Schemes</a></span>
+                </div>
               </div>
               <div className='schemeDetails'>
                 <img src={education} alt='agri' />

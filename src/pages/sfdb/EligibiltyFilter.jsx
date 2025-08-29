@@ -7,7 +7,7 @@ import {
   ListInput,
   Button,
 } from 'framework7-react';
-import { SchemeEligibilityPage } from './scheme-eligibility';
+import { SchemeEligibilityPage } from './scheme-eligibility-orinal';
 
 const EligibiltyFilter = ({
   languageData, language, lang

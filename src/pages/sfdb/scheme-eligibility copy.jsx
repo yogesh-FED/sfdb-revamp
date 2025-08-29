@@ -82,7 +82,7 @@ useEffect(() => {
 
   if(tabsId == "D"){
     // checkSchemeInfo();
-    if(availed_schemes.length === 0 || !availed_schemes){
+    if(availed_schemes?.length === 0 || !availed_schemes){
            checkSchemeInfo();
     }
    
@@ -104,7 +104,7 @@ const availedButton=()=>{
 const family_dropdown_box = () => {
   
   return (
-      family_schemes_member.length > 0 ? (
+      family_schemes_member?.length > 0 ? (
         <div className="container">
         <select 
           className="select-box" 
@@ -212,11 +212,23 @@ const eligible_schemes_box = () => {
                 */}
                {/* {availed_schemes_box()} */}
                {loading ? (
-              <BlockTitle className='sckeleton-wave-effect skeleton-text'>Eligible Schemes  </BlockTitle>
+              <BlockTitle className='sckeleton-wave-effect skeleton-text'>Eligible Schemes </BlockTitle>
            
             ) : (
               
-              <BlockTitle>{languageData?.languageData?.my_scheme_eligible}  ({eligible_schemes? eligible_schemes.length : 0})</BlockTitle>
+              <BlockTitle>
+               {scheme_count === 0 ? (
+                <>
+                  Sorry, you are probably ineligible for the following reasons
+                </>
+              ) : (
+                <>
+                  {languageData?.languageData?.my_scheme_eligible} ({eligible_schemes.length})
+                  {/* put your else content here */}
+                </>
+              )}
+
+                </BlockTitle>
             )}
              {eligible_schemes_box()}
            

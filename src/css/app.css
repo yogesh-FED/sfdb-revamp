@@ -1839,7 +1839,7 @@ input[type="search"]::placeholder {
   background: #0c64bc;
   color: #fff;
   font-size: 14px;
-  padding: 1rem 2rem;
+  padding: 0.5rem 1rem;
   border-radius: 25px;
   width: auto;
   border: 0;

@@ -85,7 +85,7 @@ import TopNavbar from '../pages/TopNavbar';
 import AccessibilityWidget from './AccessibilityWidget';
 
 const MainLayout = ({ children }) => {
-  debugger;
+  //debugger;
   const lang = useStore('lang');
   const language_data = useStore('language_data');
   const tnFont = useStore('tnFont');
@@ -95,7 +95,7 @@ const MainLayout = ({ children }) => {
   const [hideMenusInDetailPage, setHideMenusInDetailPage] = useState(false);
   const [f7router, setF7Router] = useState(null);
   useEffect(() => {
-    debugger;
+   // debugger;
     f7ready(() => {
       const customRouter = f7.views?.main?.router;
       setF7Router(customRouter);
@@ -143,7 +143,7 @@ const MainLayout = ({ children }) => {
         </>
       )}
       {children}
-      <AccessibilityWidget />
+      {/* <AccessibilityWidget /> */}
     </>
   );
 };

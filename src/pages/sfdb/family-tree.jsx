@@ -114,7 +114,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
                       <img src="/assets/images/male_new.png" alt="Male Passport Photo" className="flex1" />
                     ) : (
                       // <img src="/assets/images/female_new.png" alt="Female Passport Photo" className="" />
-                      'test'
+                      ''
                     )}
                     <p className='flex10'>
                       {lang === "ENGLISH" ?
@@ -148,13 +148,13 @@ const FamilyTreePage = ({ languageData, lang }) => {
 
                     }
 
-                    {lang === "ENGLISH" ?
+                    {/* {lang === "ENGLISH" ?
 
                       <p><a className='viewEligible'>View eligible schemes {'>'}</a></p>
                       :
                       <p><a className='viewEligible'>View eligible schemes {'>'}</a></p>
 
-                    }
+                    } */}
 
 
 
@@ -234,13 +234,13 @@ const FamilyTreePage = ({ languageData, lang }) => {
                       }
 
                       {/* <p>{languageData?.languageData.relation_with_family_head} : {check_relation(member?.user_relation_code)}</p> */}
-                      {lang === "ENGLISH" ?
+                      {/* {lang === "ENGLISH" ?
 
                         <p><a className='viewEligible'>View eligible schemes {'>'}</a></p>
                         :
                         <p><a className='viewEligible'>View eligible schemes {'>'}</a></p>
 
-                      }
+                      } */}
 
 
 

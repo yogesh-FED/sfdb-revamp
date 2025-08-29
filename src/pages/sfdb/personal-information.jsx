@@ -56,11 +56,12 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             <p><b>Hello {user_master?.user?.name} ! </b></p>
             <span>{languageData.banner_text}</span>
           </div>
-          <div className='personalWelcome'>
+          {/* <div className='personalWelcome'>
             <p>
-              <a>View Schemes you are eligible for {'>'} </a>
+              <a >View Schemes you are eligible for {'>'} </a>
+              
             </p>
-          </div>
+          </div> */}
         </div>
         <div className='grid grid-cols-1 large-grid-cols-2 grid-gap gap50'>
           <div className='profileStyles'>
@@ -116,7 +117,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             {/* <Button fill small className='external' href="https://www.tnpds.gov.in/login.xhtml"
               target="_blank"
               rel="noopener noreferrer">Update details on TNPDS</Button> */}
-            <p className='external'>Something is wrong, missing, or outdated? <span> <a onClick={pds}>Update details on TNPDS {'>'} </a> </span></p>
+            <p className='external'>For updation or Correction ? <span> <a onClick={pds}>Click Here {'>'} </a> </span></p>
           </div>
           <div className='profileStyles'>
             <h3>Aadhaar Card Details</h3>
@@ -133,7 +134,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             {/* <Button fill small className='external' href="https://uidai.gov.in/"
               target="_blank"
               rel="noopener noreferrer">Update details on UIDAI</Button> */}
-            <p className='external uidai'>Something is wrong, missing, or outdated? <span><a onClick={uidai}>Update details on UIDAI {'>'} </a> </span></p>
+            <p className='external uidai'>For updation or Correction ? <span><a onClick={uidai}>Click Here{'>'} </a> </span></p>
           </div>
         </div>
       </div>
@@ -199,7 +200,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             {/* <Button fill small className='external' href="https://www.tnpds.gov.in/login.xhtml"
               target="_blank"
               rel="noopener noreferrer">Update details on TNPDS</Button> */}
-            <p className='external'>Something is wrong, missing, or outdated? <span> <a onClick={pds}>Update details on TNPDS {'>'} </a> </span></p>
+            <p className='external'>For updation or Correction ? <span> <a onClick={pds}>Update details on TNPDS {'>'} </a> </span></p>
           </div>
           <div className='profileStyles'>
             <h3>Aadhaar Card Details</h3>
@@ -216,7 +217,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             {/* <Button fill small className='external' href="https://tathya.uidai.gov.in/access/login?role=resident"
               target="_blank"
               rel="noopener noreferrer">Update details on UIDAI</Button> */}
-            <p className='external'>Something is wrong, missing, or outdated? <span><a onClick={uidai}>Update details on UIDAI {'>'} </a> </span></p>
+            <p className='external'>For updation or Correction ? <span><a onClick={uidai}>Update details on UIDAI {'>'} </a> </span></p>
           </div>
         </div>
       </div>

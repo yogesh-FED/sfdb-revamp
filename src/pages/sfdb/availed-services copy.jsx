@@ -89,7 +89,7 @@ const AvailedServicePage = ({ languageData, lang }) => {
     return product ? product : null;
   }
 
-  let listItems = pds_transaction?.map((pds, index) => {
+  let listItems = pds_transaction.map((pds, index) => {
     return `
     <li class="accordion-item pds-accordian">
       <a class="item-link item-content">
@@ -111,7 +111,7 @@ const AvailedServicePage = ({ languageData, lang }) => {
                       </tr>
                     </thead>
                     <tbody>
-               ${pds?.txtlist?.map((list, index) => {
+               ${pds.txtlist.map((list, index) => {
       const t_product = product_details(list.product_id);
       return `
                   <tr>
@@ -223,19 +223,11 @@ const AvailedServicePage = ({ languageData, lang }) => {
           lang === "ENGLISH" ? ( // Use ? for the true case
 
             <List dividersIos outlineIos strongIos className='scheme-list'>
-              <ListItem title="1. PDS" key="1">
+              <ListItem title="PDS" key="1">
                 <Button fill className="padding-button" onClick={() => get_pds_transaction(family_id)}>Transaction</Button>
               </ListItem>
               {family_schemes?.map((scheme, index) => (
-                <ListItem title={
-                  <>
-                    {index + 2}. {scheme.scheme_name} - (
-                    <span style={{ fontWeight: "bold", color: "blue" }}>{scheme.name}</span>
-                    )
-                  </>
-                }
-
-                  key={index + 2}>
+                <ListItem title={`${index + 2}. ${scheme.scheme_name}`} key={index + 2}>
                   <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" /> {scheme.last_availed}
                 </ListItem>
               ))}
@@ -247,19 +239,11 @@ const AvailedServicePage = ({ languageData, lang }) => {
 
 
               <List dividersIos outlineIos strongIos className='scheme-list'>
-                <ListItem title="1. PDS" key="1">
+                <ListItem title="PDS" key="1">
                   <Button fill className="padding-button" onClick={() => get_pds_transaction(family_id)}>Transaction</Button>
                 </ListItem>
                 {family_schemes?.map((scheme, index) => (
-                  <ListItem title={
-                    <>
-                      {index + 2}. {scheme.scheme_name_tamil} - (
-                      <span style={{ fontWeight: "bold", color: "blue" }}>{scheme.name}</span>
-                      )
-                    </>
-                  }
-
-                    key={index + 2}>
+                  <ListItem title={`${index + 2}. ${scheme.scheme_name_tamil}`} key={index + 2}>
                     {/* <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" ></Icon>  */}
                   </ListItem>
                 ))}
@@ -280,7 +264,7 @@ const AvailedServicePage = ({ languageData, lang }) => {
 
       <Block className='page-content'>
         <div className='block'>
-          <div className="block-title">Individual availed Schemes / Services</div>
+          <div className="block-title">Inividual availed Schemes / Services</div>
           {individual_availed_schemes()}
         </div>
         <div className='block'>
