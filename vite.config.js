@@ -45,6 +45,13 @@ export default async () => {
     server: {
       host: true,
       historyApiFallback: true,
+      proxy: {
+        '/api': {
+          target: 'http://makkalsevai.tn.gov.in:8444',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+      }
     },
 
   };

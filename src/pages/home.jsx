@@ -55,8 +55,9 @@ const HomePage = (props) => {
     const response = await store.dispatch('getPersonalInfo');
 
     if (response) {
-      if (response.success) {
-        setUserName(response.data);
+      debugger;
+      if (response.Message === "Success") {
+        setUserName(response?.ApplicantInfo[0]?.Name);
       }
     }
     else {

@@ -9,6 +9,7 @@ import english_contents from '../assets/locales/en/translator.json';
 // const iv = CryptoJS.enc.Utf8.parse("i700#umsF@db0705"); // Must be 16 bytes for AES
 
 import * as CryptoJS from "crypto-js";
+import axios from 'axios';
 
 const key = CryptoJS.enc.Latin1.parse("t700#umsF@db0705");
 const iv = CryptoJS.enc.Latin1.parse("i700#umsF@db0705");
@@ -34,11 +35,13 @@ const decrypt = (value) => {
 const SEND_LOGIN = API + "/makkal/login";
 const SEND_OTP = API + "/makkal/validate-otp";
 const GET_LATEST = API + "/makkal/get-latest";
-const GET_PERSONAL_INFO = API + "/makkal/get-master-data";
+// const GET_PERSONAL_INFO = API + "/makkal/get-master-data";
+const GET_PERSONAL_INFO = LOCAL_API + "/getApplicantInfo";
 const GET_MY_SCHEMES = API + "/makkal/get-my-schemes";
 const GET_CHATBOT_SCHEMES = API + "/makkal/get-chatbot-schemes";
 const GET_MY_FAMILY_SCHEMES = API + "/makkal/get-my-family-schemes";
-const GET_MY_FAMILY = API + "/makkal/get-my-family";
+// const GET_MY_FAMILY = API + "/makkal/get-my-family";
+const GET_MY_FAMILY = LOCAL_API + "/getApplicantInfo";
 const GET_PDS_DATA = API + "/makkal/get-pds-data";
 const GET_MY_SERVICES = API + "/makkal/get-my-services";
 const LOGOUT = API + "/makkal/logout";
@@ -54,6 +57,7 @@ const store = createStore({
     language_contents: [],
     user: [],
     login_error: "",
+    aadharNumber: "",
     posts: [],
     resource: [],
     availed_schemes: [],
@@ -87,6 +91,10 @@ const store = createStore({
 
     login_error({ state }) {
       return state.login_error;
+    },
+
+    aadharNumber({ state }) {
+      return state.aadharNumber;
     },
 
     posts({ state }) {
@@ -206,7 +214,6 @@ const store = createStore({
 
     sendOtp: async ({ state }, formData) => {
       const secureData = {
-
         aadhar: encrypt(formData.aadhar),
         mod: encrypt(formData.otp),
         txn: formData.txn,
@@ -295,20 +302,29 @@ const store = createStore({
 
 
     getPersonalInfo: async ({ state }) => {
-
-      let token = localStorage.getItem("token");
-
+      const uid = localStorage.getItem('uid');
+      const getPersonalInfoPayload = {
+        uid: uid,
+        deptId: 1,
+        schemeId: null
+      };
+      // let token = localStorage.getItem("token");
+      const queryParams = new URLSearchParams(getPersonalInfoPayload).toString();
       try {
-        const response = await fetch(GET_PERSONAL_INFO, {
-          method: "GET",
+        const response = await axios.get(`${GET_PERSONAL_INFO}?${queryParams}`, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
-            Authorization: "Bearer " + token
+            // Authorization: "Bearer " + token,
+          },
+          auth: {
+            username: "TNeGA",
+            password: "aiml",
           },
         });
 
-        const data = await response.json();
+        // const data = await response.json();
+        const data = response.data;
         if (data?.code == 401) {
           f7.dialog.confirm(data?.message, 'Session Expire', () => {
             localStorage.removeItem('token');
@@ -325,6 +341,36 @@ const store = createStore({
         return error; // Indicate failure
       }
     },
+
+    // getPersonalInfo: async ({ state }) => {
+    //   let token = localStorage.getItem("token");
+    //   try {
+    //     const response = await fetch(GET_PERSONAL_INFO, {
+    //       method: "GET",
+    //       headers: {
+    //         Accept: "application/json",
+    //         "Content-Type": "application/json; charset=UTF-8",
+    //         Authorization: "Bearer " + token
+    //       },
+    //     });
+
+    //     const data = await response.json();
+    //     if (data?.code == 401) {
+    //       f7.dialog.confirm(data?.message, 'Session Expire', () => {
+    //         localStorage.removeItem('token');
+    //         localStorage.removeItem('authtabsId');
+    //         localStorage.removeItem('pds_transactions');
+    //         localStorage.removeItem('user_image');
+    //         f7.views.main.router.refreshPage();
+    //       });
+    //     }
+
+    //     return data;
+    //   }
+    //   catch (error) {
+    //     return error; // Indicate failure
+    //   }
+    // },
 
     getMySchemes: async ({ state }) => {
 
@@ -508,15 +554,33 @@ const store = createStore({
       let token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(GET_MY_FAMILY, {
-          method: "GET",
+        // const response = await fetch(GET_MY_FAMILY, {
+        //   method: "GET",
+        //   headers: {
+        //     Accept: "application/json",
+        //     "Content-Type": "application/json; charset=UTF-8",
+        //     Authorization: "Bearer " + token
+        //   },
+        // });
+        const uid = localStorage.getItem('uid');
+        const getPersonalInfoPayload = {
+          uid: uid,
+          deptId: 1,
+          schemeId: null
+        };
+        // let token = localStorage.getItem("token");
+        const queryParams = new URLSearchParams(getPersonalInfoPayload).toString();
+        const response = await axios.get(`${GET_MY_FAMILY}?${queryParams}`, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
-            Authorization: "Bearer " + token
+            // Authorization: "Bearer " + token,
+          },
+          auth: {
+            username: "TNeGA",
+            password: "aiml",
           },
         });
-
         const data = await response.json();
         if (data?.code == 401) {
           f7.dialog.confirm(data?.message, 'Session Expire', () => {

@@ -37,6 +37,7 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
   const [is_login_with, set_login_with] = useState('aadhar');
 
   const [is_login_error, set_login_error] = useState(store.getters.login_error.value);
+  const [setAadhar, set_setAadhar] = useState(store.getters.aadharNumber.value || '');
   const language_data = useStore('language_data');
   const [tnfont, setTnFont] = useState(false);
   const [is_login_screen, set_login_screen] = useState(1);
@@ -61,7 +62,6 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
   //     setTnFont(true);
   //   }
   // }, [lang]);
-  console.log('loginLang', language_data)
   const checkLogin = (event) => {
 
     set_login_with(event.target.value);
@@ -128,7 +128,7 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
   const formSubmit = async (e) => {
 
     e.preventDefault();
-
+    localStorage.setItem('uid', formData.aadhar);
 
     const newErrors = {};
     if (is_login_with == "aadhar") {
@@ -221,7 +221,6 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
 
 
   const otpSubmit = async (e) => {
-    debugger;
     e.preventDefault();
     const newErrors = {};
     if (!formData.otp) {

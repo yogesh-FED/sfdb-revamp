@@ -20,18 +20,21 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
 
   const [user_master, set_user] = useState(store.state.user);
   const [user_image, set_user_image] = useState(store.state.user_image);
-
   const checkUserIfo = async () => {
-
+    debugger;
     f7.preloader.show();
 
     const response = await store.dispatch('getPersonalInfo');
 
     if (response) {
-      if (response.success) {
-        set_user(response.data);
-        localStorage.setItem('user_image', response.data?.user?.ekyc_data?.image);
+      // if (response.success) {
+      //   set_user(response.data);
+      //   localStorage.setItem('user_image', response.data?.user?.ekyc_data?.image);
 
+      // }
+      if (response?.Message === "Success") {
+        set_user(response?.ApplicantInfo[0]);
+        localStorage.setItem('user_image', response.data?.user?.ekyc_data?.image);
       }
     }
     else {
@@ -47,13 +50,13 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
     }
     f7.preloader.hide();
   }
-
   const personal_english = () => {
+    console.log("user_master_personal_english", user_master);
     return (
       <div className='pad3 personalEng'>
         <div className='grid grid-cols-1 large-grid-cols-2 grid-gap'>
           <div className='personalWelcome'>
-            <p><b>Hello {user_master?.user?.name} ! </b></p>
+            <p><b>Hello {user_master?.Name} ! </b></p>
             <span>{languageData.banner_text}</span>
           </div>
           {/* <div className='personalWelcome'>
@@ -68,13 +71,13 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             <h3>Ration Card Details</h3>
             <div className='grid grid-cols-2 large-grid-cols-2 details'>
               <p>Full Name</p>
-              <p>{user_master?.user?.name}</p>
+              <p>{user_master?.Name}</p>
               <p>D.O.B</p>
-              <p>{user_master?.user?.dob}</p>
+              <p>{user_master?.Dob}</p>
               <p>Gender</p>
-              <p>{user_master?.user?.gender}</p>
+              <p>{user_master?.Gender}</p>
               <p>Address</p>
-              <div>{user_master?.user?.pds_address?.address_line1} <br />
+              <div>{user_master?.Address} <br />
                 {user_master?.user?.pds_address?.address_line2 && (
                   <>
                     {user_master.user.pds_address.address_line2} <br />
@@ -89,19 +92,19 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
                   <tbody>
                     <tr>
                       <td>{languageData?.villageName}</td>
-                      <td>: {user_master?.user?.pds_address?.village_name}</td>
+                      <td>: {user_master?.village}</td>
                     </tr>
                     <tr>
                       <td>{languageData?.talukName}</td>
-                      <td>: {user_master?.user?.pds_address?.taluk_name}</td>
+                      <td>: {user_master?.taluk}</td>
                     </tr>
                     <tr>
                       <td>{languageData?.districtName}</td>
-                      <td>: {user_master?.user?.pds_address?.district_name}</td>
+                      <td>: {user_master?.district}</td>
                     </tr>
                     <tr>
                       <td>{languageData?.pincode}</td>
-                      <td>: {user_master?.user?.pds_address?.pincode}</td>
+                      <td>: {user_master?.pincode}</td>
                     </tr>
                     {/* <tr>
                       <td colSpan={2}>
@@ -123,13 +126,13 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             <h3>Aadhaar Card Details</h3>
             <div className='grid grid-cols-2 large-grid-cols-2 details'>
               <p>Full Name</p>
-              <p>{user_master?.user?.ekyc_data?.name} <img src={user_image} alt="" className="user-profile-image" /></p>
+              <p>{user_master?.Name} <img src={user_image} alt="" className="user-profile-image" /></p>
               <p>D.O.B</p>
-              <p>{user_master?.user?.ekyc_data.kyc_dob}</p>
+              <p>{user_master?.Dob}</p>
               <p>Gender</p>
-              <p>{user_master?.user?.ekyc_data?.kyc_gender}</p>
+              <p>{user_master?.Gender}</p>
               <p>Address</p>
-              <p>{user_master?.user?.ekyc_data?.address}</p>
+              <p>{user_master?.Address}</p>
             </div>
             {/* <Button fill small className='external' href="https://uidai.gov.in/"
               target="_blank"

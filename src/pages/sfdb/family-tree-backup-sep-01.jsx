@@ -24,7 +24,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
     const response = await store.dispatch('getMyFamily');
 
     if (response) {
-      if (response.Message === "Success") {
+      if (response.success) {
         const f_head = response.data?.family?.find(item => item.is_family_head === 1);
         const f_members = response.data?.family?.filter(item => item.is_family_head === 0).sort((a, b) => a.user_relation_code - b.user_relation_code); // Sort by user_age
         // Step 3: Insert relation names into the filtered family heads
