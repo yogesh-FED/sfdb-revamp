@@ -25,14 +25,14 @@ const FamilyTreePage = ({ languageData, lang }) => {
 
     if (response) {
       if (response.Message === "Success") {
-        const f_head = response.data?.family?.find(item => item.is_family_head === 1);
-        const f_members = response.data?.family?.filter(item => item.is_family_head === 0).sort((a, b) => a.user_relation_code - b.user_relation_code); // Sort by user_age
+        const f_head = response?.FamilyMembersDetail.find(item => item.RelationCode === "1");
+        const f_members = response?.FamilyMembersDetail.filter(item => item.RelationCode !== "1").sort((a, b) => a.Age - b.Age); // Sort by user_age
         // Step 3: Insert relation names into the filtered family heads
         set_members(f_members);
         set_family_head(f_head);
-        set_current_user(response.data.makkal_id);
-        set_relations(response.data?.relations);
-        set_products(response.data?.products);
+        // set_current_user(response.data.makkal_id);
+        // set_relations(response.data?.relations);
+        // set_products(response.data?.products);
 
 
       }
@@ -68,13 +68,12 @@ const FamilyTreePage = ({ languageData, lang }) => {
   }, [tabsId]);
 
   const check_relation = (code) => {
-    const family_relation = relations?.find(item => item.relation_code === code);
-
+    // const family_relation = family_head?.find(item => item.RelationCode === code);
     return (
       lang === "ENGLISH" ? (
-        <span>{family_relation?.relation_name_english}</span>
+        <span>{family_head?.RelationName}</span>
       ) : (
-        <span>{family_relation?.relation_name_tamil}</span>
+        <span>{family_head?.RelationName}</span>
       )
     )
   }
@@ -110,7 +109,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
               <center>
                 <div className="photo-container">
                   <div className='containerTop'>
-                    {family_head?.gender === "M" ? (
+                    {family_head?.Sex === "M" ? (
                       <img src="/assets/images/male_new.png" alt="Male Passport Photo" className="flex1" />
                     ) : (
                       // <img src="/assets/images/female_new.png" alt="Female Passport Photo" className="" />
@@ -118,15 +117,15 @@ const FamilyTreePage = ({ languageData, lang }) => {
                     )}
                     <p className='flex10'>
                       {lang === "ENGLISH" ?
-                        (family_head?.name)
+                        (family_head?.NameInEnglish)
                         :
-                        (family_head?.user_name_tamil)
+                        (family_head?.NameInTamil)
                       }
                       {family_head?.makkal_id == current_user ?
                         <Badge color="green">You</Badge>
                         : ""}
                     </p>
-                    <p className='marR2'> {check_relation(family_head?.relation)}</p>
+                    <p className='marR2'> {check_relation(family_head?.RelationCode)}</p>
                   </div>
 
                   <div className='family-members-details'>
@@ -142,9 +141,9 @@ const FamilyTreePage = ({ languageData, lang }) => {
                     </p> */}
                     {lang === "ENGLISH" ?
 
-                      <p>{family_head?.user_gender}, {family_head?.user_age} {languageData?.age}</p>
+                      <p>{family_head?.Sex}, {family_head?.Age} {languageData?.age}</p>
                       :
-                      <p>{family_head?.user_gender_tamil}, {family_head?.user_age} {languageData?.age} </p>
+                      <p>{family_head?.Sex}, {family_head?.Age} {languageData?.age} </p>
 
                     }
 
@@ -205,16 +204,16 @@ const FamilyTreePage = ({ languageData, lang }) => {
                 <center>
                   <div className="photo-container">
                     <div className='containerTop'>
-                      {member?.user_info?.gender === "M" ? (
+                      {member?.Sex === "M" ? (
                         <img src="/assets/images/male.png" alt="Male Passport Photo" className="passport-photo" />
                       ) : (
                         <img src="/assets/images/female.png" alt="Female Passport Photo" className="passport-photo" />
                       )}
                       <p className='flex10'>
                         {lang === "ENGLISH" ?
-                          (member?.name)
+                          (member?.NameInEnglish)
                           :
-                          (member?.user_name_tamil)
+                          (member?.NameInTamil)
                         }
                       </p>
                       <p>
@@ -227,9 +226,9 @@ const FamilyTreePage = ({ languageData, lang }) => {
 
                       {lang === "ENGLISH" ?
 
-                        <p>{member?.user_gender}, {member?.user_age} {languageData?.age}</p>
+                        <p>{member?.Sex}, {member?.Age} {languageData?.age}</p>
                         :
-                        <p>{member?.user_gender_tamil}, {member?.user_age} {languageData?.age} </p>
+                        <p>{member?.Sex}, {member?.Age} {languageData?.age} </p>
 
                       }
 
@@ -274,53 +273,53 @@ const FamilyTreePage = ({ languageData, lang }) => {
               {lang === "ENGLISH" ?
                 <tr>
                   <td className="label-cell">1</td>
-                  <td className="label-cell">{family_head?.name}
+                  <td className="label-cell">{family_head?.NameInEnglish}
                     {family_head?.makkal_id == current_user ?
                       <Badge color="green">You</Badge>
                       : ""}
                   </td>
-                  <td className="label-cell">{family_head?.user_gender}</td>
-                  <td className="label-cell">{family_head?.user_age}</td>
-                  <td className="label-cell">{check_relation(family_head?.relation)}</td>
+                  <td className="label-cell">{family_head?.Sex}</td>
+                  <td className="label-cell">{family_head?.Age}</td>
+                  <td className="label-cell">{check_relation(family_head?.RelationName)}</td>
                 </tr>
                 :
                 <tr>
                   <td className="label-cell">1</td>
-                  <td className="label-cell">{family_head?.user_name_tamil}
+                  <td className="label-cell">{family_head?.NameInTamil}
                     {family_head?.makkal_id == current_user ?
                       <Badge color="green">You</Badge>
                       : ""}
                   </td>
-                  <td className="label-cell">{family_head?.user_gender_tamil}</td>
-                  <td className="label-cell">{family_head?.user_info?.user_age}</td>
-                  <td className="label-cell">{check_relation(family_head?.relation)}</td>
+                  <td className="label-cell">{family_head?.Sex}</td>
+                  <td className="label-cell">{family_head?.Age}</td>
+                  <td className="label-cell">{check_relation(family_head?.RelationName)}</td>
                 </tr>
               }
               {members?.map((member, index) => (
                 lang === "ENGLISH" ?
                   <tr key={index}>
                     <td className="label-cell">{index + 2}</td>
-                    <td className="label-cell">{member?.name}
+                    <td className="label-cell">{member?.NameInEnglish}
                       {member?.makkal_id == current_user ?
                         <Badge color="green">You</Badge>
                         : ""}
                     </td>
-                    <td className="label-cell">{member?.user_gender}</td>
-                    <td className="label-cell">{member?.user_age}</td>
-                    <td className="label-cell">{check_relation(member?.user_relation_code)}</td>
+                    <td className="label-cell">{member?.Sex}</td>
+                    <td className="label-cell">{member?.Age}</td>
+                    <td className="label-cell">{member?.RelationName}</td>
 
                   </tr>
                   :
                   <tr key={index}>
                     <td className="label-cell">{index + 2}</td>
-                    <td className="label-cell">{member?.user_name_tamil}
+                    <td className="label-cell">{member?.NameInTamil}
                       {member?.makkal_id == current_user ?
                         <Badge color="green">You</Badge>
                         : ""}
                     </td>
-                    <td className="label-cell">{member?.user_gender_tamil}</td>
-                    <td className="label-cell">{member?.user_age}</td>
-                    <td className="label-cell">{check_relation(member?.user_relation_code)}</td>
+                    <td className="label-cell">{member?.Sex}</td>
+                    <td className="label-cell">{member?.Age}</td>
+                    <td className="label-cell">{member?.RelationName}</td>
 
                   </tr>
               )

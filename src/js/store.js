@@ -209,6 +209,7 @@ const store = createStore({
 
       } catch (error) {
         // return error; // Indicate failure
+        alert(error);
       }
     },
 
@@ -324,7 +325,7 @@ const store = createStore({
         });
 
         // const data = await response.json();
-        const data = response.data;
+        const data = await response.data;
         if (data?.code == 401) {
           f7.dialog.confirm(data?.message, 'Session Expire', () => {
             localStorage.removeItem('token');
@@ -551,7 +552,7 @@ const store = createStore({
 
     getMyFamily: async ({ state }) => {
 
-      let token = localStorage.getItem("token");
+      // let token = localStorage.getItem("token");
 
       try {
         // const response = await fetch(GET_MY_FAMILY, {
@@ -581,7 +582,8 @@ const store = createStore({
             password: "aiml",
           },
         });
-        const data = await response.json();
+        // const data = await response.json();
+        const data = await response.data;
         if (data?.code == 401) {
           f7.dialog.confirm(data?.message, 'Session Expire', () => {
             localStorage.removeItem('token');

@@ -21,7 +21,6 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
   const [user_master, set_user] = useState(store.state.user);
   const [user_image, set_user_image] = useState(store.state.user_image);
   const checkUserIfo = async () => {
-    debugger;
     f7.preloader.show();
 
     const response = await store.dispatch('getPersonalInfo');
@@ -34,7 +33,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
       // }
       if (response?.Message === "Success") {
         set_user(response?.ApplicantInfo[0]);
-        localStorage.setItem('user_image', response.data?.user?.ekyc_data?.image);
+        localStorage.setItem('user_image', response?.ApplicantInfo[0]?.Image);
       }
     }
     else {
@@ -51,7 +50,6 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
     f7.preloader.hide();
   }
   const personal_english = () => {
-    console.log("user_master_personal_english", user_master);
     return (
       <div className='pad3 personalEng'>
         <div className='grid grid-cols-1 large-grid-cols-2 grid-gap'>
@@ -132,7 +130,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
               <p>Gender</p>
               <p>{user_master?.Gender}</p>
               <p>Address</p>
-              <p>{user_master?.Address}</p>
+              <p>{user_master?.AddressByAadhaar}</p>
             </div>
             {/* <Button fill small className='external' href="https://uidai.gov.in/"
               target="_blank"
@@ -148,7 +146,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
       <div className='pad3 personalEng'>
         <div className='grid grid-cols-2 large-grid-cols-2 grid-gap'>
           <div className='personalWelcome'>
-            <p><b>Hello {user_master?.user?.name} ! </b></p>
+            <p><b>Hello {user_master?.NameInTamil} ! </b></p>
             <span>{languageData.banner_text}</span>
           </div>
           <div className='personalWelcome'>
@@ -162,13 +160,13 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             <h3>குடும்ப அட்டை</h3>
             <div className='grid grid-cols-1 large-grid-cols-2 details'>
               <p>முழு பெயர்</p>
-              <p>{user_master?.user?.name}</p>
+              <p>{user_master?.NameInTamil}</p>
               <p>பிறந்த தேதி</p>
-              <p>{user_master?.user?.dob}</p>
+              <p>{user_master?.Dob}</p>
               <p>பாலினம்</p>
-              <p>{user_master?.user?.gender}</p>
+              <p>{user_master?.Gender}</p>
               <p>முகவரி</p>
-              <p>{user_master?.user?.pds_address?.address_line1} <br />
+              <p>{user_master?.AddressByPds} <br />
                 {user_master?.user?.pds_address?.address_line2 && (
                   <>
                     {user_master.user.pds_address.address_line2} <br />
@@ -209,13 +207,13 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             <h3>Aadhaar Card Details</h3>
             <div className='grid grid-cols-2 large-grid-cols-2 details'>
               <p>முழு பெயர்</p>
-              <p>{user_master?.user?.ekyc_data?.name} <img src={user_image} alt="" className="user-profile-image" /></p>
+              <p>{user_master?.NameInTamil} <img src={user_image} alt="" className="user-profile-image" /></p>
               <p>பிறந்த தேதி</p>
-              <p>{user_master?.user?.ekyc_data.kyc_dob}</p>
+              <p>{user_master?.Dob}</p>
               <p>பாலினம்</p>
-              <p>{user_master?.user?.ekyc_data?.kyc_gender}</p>
+              <p>{user_master?.user?.Gender}</p>
               <p>முகவரி</p>
-              <p>{user_master?.user?.ekyc_data?.address}</p>
+              <p>{user_master?.AddressByAadhaar}</p>
             </div>
             {/* <Button fill small className='external' href="https://tathya.uidai.gov.in/access/login?role=resident"
               target="_blank"
