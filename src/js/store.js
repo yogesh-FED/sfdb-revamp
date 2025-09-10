@@ -37,7 +37,9 @@ const SEND_OTP = API + "/makkal/validate-otp";
 const GET_LATEST = API + "/makkal/get-latest";
 // const GET_PERSONAL_INFO = API + "/makkal/get-master-data";
 const GET_PERSONAL_INFO = LOCAL_API + "/getApplicantInfo";
-const GET_MY_SCHEMES = API + "/makkal/get-my-schemes";
+// const GET_MY_SCHEMES = API + "/makkal/get-my-schemes";
+const GET_MY_SCHEMES = LOCAL_API + "/getAllSchemes";
+
 const GET_CHATBOT_SCHEMES = API + "/makkal/get-chatbot-schemes";
 const GET_MY_FAMILY_SCHEMES = API + "/makkal/get-my-family-schemes";
 // const GET_MY_FAMILY = API + "/makkal/get-my-family";
@@ -388,16 +390,42 @@ const store = createStore({
 
 
       try {
-        const response = await fetch(`${GET_MY_SCHEMES}?${queryParams}`, {
-          method: "GET",
+        // const response = await fetch(`${GET_MY_SCHEMES}?${queryParams}`, {
+        //   method: "GET",
+        //   headers: {
+        //     Accept: "application/json",
+        //     "Content-Type": "application/json; charset=UTF-8",
+        //     Authorization: "Bearer " + token
+        //   },
+        // });
+        // const response = await fetch(`${GET_MY_SCHEMES}`, {
+        //   method: "GET",
+        //   headers: {
+        //     Accept: "application/json",
+        //     "Content-Type": "application/json; charset=UTF-8",
+        //     // Authorization: "Bearer " + token
+        //   },
+        //   auth: {
+        //     username: "TNeGA",
+        //     password: "aiml",
+        //   },
+        // });
+
+        const response = await axios.get(`${GET_MY_SCHEMES}`, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
-            Authorization: "Bearer " + token
+            // Authorization: "Bearer " + token,
+          },
+          auth: {
+            username: "TNeGA",
+            password: "aiml",
           },
         });
 
-        const data = await response.json();
+        // const data = await response.json();
+        const data = await response.data;
+
         if (data?.code == 401) {
           f7.dialog.confirm(data?.message, 'Session Expire', () => {
             localStorage.removeItem('token');
@@ -433,7 +461,7 @@ const store = createStore({
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
-            Authorization: "Bearer " + token
+            // Authorization: "Bearer " + token
           },
         });
 

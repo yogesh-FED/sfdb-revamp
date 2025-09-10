@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { List, ListItem, Icon, BlockTitle, Block, f7, Button, AccordionContent, Chip, Searchbar, Badge, useStore } from 'framework7-react';
-import FilterPagination from '../../components/FilterPagination';
 
 const SchemeEligibilityPage = ({ languageData, lang }) => {
   const store = f7.store;
@@ -17,10 +16,6 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
   const [filteredIneligibleCount, setFilteredIneligibleCount] = useState(ineligible_schemes?.length || 0);
 
   const [eligibilityData, setEligibilityData] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 100;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentIneligibleData = ineligible_schemes.slice(startIndex, startIndex + itemsPerPage);
   const handleCheckboxChange = (schemeId, event) => {
     const { name, checked } = event.target;
 
@@ -106,29 +101,18 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
   };
 
   const checkSchemeInfo = async () => {
-    debugger
     f7.preloader.show();
     set_loading(true);
     const response = await store.dispatch('getMySchemes');
-    // if (response.success) {
-    //   const { eligible_schemes: es } = response.data;
-    //   set_eligible_schemes(es.schemes);
-    //   set_ineligible_schemes(es.all_schemes);
-    //   set_scheme_count(es.scheme_count);
-    //   set_family_schemes_member(response.data.family);
-    //   set_current_member(response.data.makkal_id);
-    //   setFilteredEligibleCount(es.schemes?.length || 0);
-    //   setFilteredIneligibleCount(es.all_schemes?.length || 0);
-    // }
-    if (response) {
-      // const { eligible_schemes: es } = response.data;
-      // set_eligible_schemes(response);
-      set_ineligible_schemes(response);
-      // set_scheme_count(es.scheme_count);
-      // set_family_schemes_member(response.data.family);
-      // set_current_member(response.data.makkal_id);
-      // setFilteredEligibleCount(es.schemes?.length || 0);
-      setFilteredIneligibleCount(response?.length || 0);
+    if (response.success) {
+      const { eligible_schemes: es } = response.data;
+      set_eligible_schemes(es.schemes);
+      set_ineligible_schemes(es.all_schemes);
+      set_scheme_count(es.scheme_count);
+      set_family_schemes_member(response.data.family);
+      set_current_member(response.data.makkal_id);
+      setFilteredEligibleCount(es.schemes?.length || 0);
+      setFilteredIneligibleCount(es.all_schemes?.length || 0);
     }
     f7.preloader.hide();
     set_loading(false);
@@ -270,12 +254,12 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
         </List>
       ) : (
         <List dividersIos outlineIos strongIos className='scheme-list search-list searchbar-found ineligible-found' accordionList>
-          {currentIneligibleData?.map((scheme, index) => (
+          {ineligible_schemes?.map((scheme, index) => (
             <ListItem
               accordionItem
               key={index}
               className={`item-title ineligible-scheme-item`}
-              title={`${index + 1}. ${lang === "ENGLISH" ? scheme.schemeName : scheme.schemeNameTamil}`}
+              title={`${index + 1}. ${lang === "ENGLISH" ? scheme.scheme_name : scheme.scheme_name_tamil}`}
               after={
                 <Chip
                   text={lang === "ENGLISH" ? "Check Eligibility" : "தகுதியை சரிபார்க்கவும்"}
@@ -348,12 +332,7 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
           ))}
         </List>
       )}
-      <FilterPagination
-        totalItems={ineligible_schemes.length}
-        itemsPerPage={itemsPerPage}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
-      />
+
     </>
   );
 

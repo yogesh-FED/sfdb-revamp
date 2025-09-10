@@ -6,14 +6,17 @@ import {
   ListItem,
   AccordionContent,
   ListInput,
+  Button,
 } from 'framework7-react';
 import axios from 'axios';
+import FilterPagination from '../../components/FilterPagination';
 
 const FilterTabs = (props) => {
   console.log('filterTabsProps', props);
   const storedData = JSON.parse(localStorage.getItem('formDataVal'))
   console.log('storedData', storedData);
   const [schData, setSchData] = useState([]);
+
   useEffect(() => {
     axios.get('../assets/getschemes.json')
       .then(response => {
@@ -52,6 +55,11 @@ const FilterTabs = (props) => {
       ignoreCache: true,
     })
   }
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentData = schData.slice(startIndex, startIndex + itemsPerPage);
   return (
     <>
       <Toolbar tabbar>
@@ -90,6 +98,7 @@ const FilterTabs = (props) => {
                       </ListItem>
                     </List>
                   )
+
                 })
                 :
                 schemeInnerFilter?.map((val, i) => {
@@ -111,13 +120,19 @@ const FilterTabs = (props) => {
                   )
                 })
             }
+            <FilterPagination
+              totalItems={filteredSchemes.length}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            />
           </Block>
         </Tab>
         <Tab id="all" className="filterTabsAccordion">
           <Block>
             <p><b>Most Relevant Schemes Based on Your Profile ({schData.length})</b></p>
             {
-              schData.map((val, i) => {
+              currentData.map((val, i) => {
                 return (
                   <List strong outlineIos dividersIos insetMd accordionList key={i}>
                     <ListItem accordionItem title={val.scheme_name}>
@@ -133,6 +148,12 @@ const FilterTabs = (props) => {
                 )
               })
             }
+            <FilterPagination
+              totalItems={schData.length}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            />
           </Block>
         </Tab>
         <Tab id="women" className="">
