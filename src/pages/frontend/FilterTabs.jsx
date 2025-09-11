@@ -7,26 +7,35 @@ import {
   AccordionContent,
   ListInput,
   Button,
+  f7,
+  useStore,
 } from 'framework7-react';
 import axios from 'axios';
 import FilterPagination from '../../components/FilterPagination';
 
 const FilterTabs = (props) => {
-  console.log('filterTabsProps', props);
+  const language_data = useStore('lang');
   const storedData = JSON.parse(localStorage.getItem('formDataVal'))
-  console.log('storedData', storedData);
   const [schData, setSchData] = useState([]);
-
+  const store = f7.store;
   useEffect(() => {
-    axios.get('../assets/getschemes.json')
-      .then(response => {
-        console.log('Data:', response.data.data.eligible_schemes.schemes);
-        setSchData(response.data.data.eligible_schemes.schemes || []);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
+    // axios.get('../assets/getschemes.json')
+    //   .then(response => {
+    //     console.log('Data:', response.data.data.eligible_schemes.schemes);
+    //     setSchData(response.data.data.eligible_schemes.schemes || []);
+    //   })
+    //   .catch(error => {
+    //     console.error('Error:', error);
+    //   });
+    allSchemesCategory();
   }, [])
+  const allSchemesCategory = async () => {
+    const response = await store.dispatch('getMySchemes');
+    console.log('response in all schemes category', response);
+    if (response) {
+      setSchData(response);
+    }
+  }
   let schemeInnerFilter;
   const filteredSchemes = schData.filter((val) => {
     return (
@@ -35,8 +44,6 @@ const FilterTabs = (props) => {
       (!val.community || val.community.toLowerCase() === storedData?.community.toLowerCase() || !storedData?.community)
     );
   });
-
-
 
   if (props.eligibleSchemeFilter === true) {
     schemeInnerFilter = filteredSchemes.filter((val) => {
@@ -57,7 +64,7 @@ const FilterTabs = (props) => {
   }
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1;
+  const itemsPerPage = 3;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentData = schData.slice(startIndex, startIndex + itemsPerPage);
   return (
@@ -135,11 +142,11 @@ const FilterTabs = (props) => {
               currentData.map((val, i) => {
                 return (
                   <List strong outlineIos dividersIos insetMd accordionList key={i}>
-                    <ListItem accordionItem title={val.scheme_name}>
+                    <ListItem accordionItem title={language_data === "TAMIL" ? val.schemeNameTamil : val.schemeName}>
                       <AccordionContent>
                         <Block>
                           <p>
-                            {val.scheme_desc}
+                            {language_data === "TAMIL" ? val.schemeDescTamil : val.schemeDesc}
                           </p>
                         </Block>
                       </AccordionContent>
@@ -182,7 +189,6 @@ const FilterTabs = (props) => {
           </Block>
         </Tab>
       </Tabs>
-      <p>Filter-Page</p>
     </>
   );
 }

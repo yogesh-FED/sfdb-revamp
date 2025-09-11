@@ -18,12 +18,11 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
 
   const [eligibilityData, setEligibilityData] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 100;
+  const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentIneligibleData = ineligible_schemes.slice(startIndex, startIndex + itemsPerPage);
   const handleCheckboxChange = (schemeId, event) => {
     const { name, checked } = event.target;
-
     setEligibilityData((prevData) => ({
       ...prevData,
       [schemeId]: {
@@ -270,82 +269,87 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
         </List>
       ) : (
         <List dividersIos outlineIos strongIos className='scheme-list search-list searchbar-found ineligible-found' accordionList>
-          {currentIneligibleData?.map((scheme, index) => (
-            <ListItem
-              accordionItem
-              key={index}
-              className={`item-title ineligible-scheme-item`}
-              title={`${index + 1}. ${lang === "ENGLISH" ? scheme.schemeName : scheme.schemeNameTamil}`}
-              after={
-                <Chip
-                  text={lang === "ENGLISH" ? "Check Eligibility" : "தகுதியை சரிபார்க்கவும்"}
-                  color="red"
-                  style={{ fontWeight: 'bold' }}
-                />
-              }
-            >
-              <AccordionContent>
-                <Block>
+          {currentIneligibleData?.map((scheme, index) => {
+            const globalIndex = (currentPage - 1) * itemsPerPage + (index + 1);
+            return (
+
+              <ListItem
+                accordionItem
+                key={globalIndex}
+                className={`item-title ineligible-scheme-item`}
+                title={`${globalIndex}. ${lang === "ENGLISH" ? scheme.schemeName : scheme.schemeNameTamil}`}
+                after={
+                  <Chip
+                    text={lang === "ENGLISH" ? "Check Eligibility" : "தகுதியை சரிபார்க்கவும்"}
+                    color="red"
+                    style={{ fontWeight: 'bold' }}
+                  />
+                }
+              >
+                <AccordionContent>
+                  <Block>
 
 
-                  <div className='wrap-text' dangerouslySetInnerHTML={{ __html: lang === "ENGLISH" ? scheme.scheme_desc : scheme.scheme_desc_tamil }} />
+                    <div className='wrap-text' dangerouslySetInnerHTML={{ __html: lang === "ENGLISH" ? scheme.scheme_desc : scheme.scheme_desc_tamil }} />
 
-                  <form onSubmit={(event) => handleSubmit(event, scheme.scheme_id)}>
-                    <div className="eligibility-form">
-                      <List strongIos outlineIos dividersIos>
-                        {scheme.disability !== 0 && (
-                          <ListItem
-                            checkbox
-                            className="question-list"
-                            checkboxIcon="end"
-                            title={languageData?.is_dap_question}
-                            name="is_disabled"
-                            onChange={(event) => handleCheckboxChange(scheme.scheme_id, event)}
-                          />
-                        )}
-                        {scheme.marital_status === 3 && scheme.gender === "F" && (
-                          <ListItem
-                            checkbox
-                            className="question-list"
-                            checkboxIcon="end"
-                            title={languageData?.is_widow_question}
-                            name="is_widow"
-                            onChange={(event) => handleCheckboxChange(scheme.scheme_id, event)}
-                          />
-                        )}
-                        {scheme.marital_status === 2 && scheme.gender === "F" && (
-                          <ListItem
-                            checkbox
-                            className="question-list"
-                            checkboxIcon="end"
-                            title={languageData?.is_unmarried_question}
-                            name="is_unmarried"
-                            onChange={(event) => handleCheckboxChange(scheme.scheme_id, event)}
-                          />
-                        )}
-                        {scheme.srilankan_refuge === 1 && (
-                          <ListItem
-                            checkbox
-                            className="question-list"
-                            checkboxIcon="end"
-                            title={languageData?.is_refuge_question}
-                            name="is_srilankan_refuge"
-                            onChange={(event) => handleCheckboxChange(scheme.scheme_id, event)}
-                          />
-                        )}
-                      </List>
+                    <form onSubmit={(event) => handleSubmit(event, scheme.scheme_id)}>
+                      <div className="eligibility-form">
+                        <List strongIos outlineIos dividersIos>
+                          {scheme.disability !== 0 && (
+                            <ListItem
+                              checkbox
+                              className="question-list"
+                              checkboxIcon="end"
+                              title={languageData?.is_dap_question}
+                              name="is_disabled"
+                              onChange={(event) => handleCheckboxChange(scheme.scheme_id, event)}
+                            />
+                          )}
+                          {scheme.marital_status === 3 && scheme.gender === "F" && (
+                            <ListItem
+                              checkbox
+                              className="question-list"
+                              checkboxIcon="end"
+                              title={languageData?.is_widow_question}
+                              name="is_widow"
+                              onChange={(event) => handleCheckboxChange(scheme.scheme_id, event)}
+                            />
+                          )}
+                          {scheme.marital_status === 2 && scheme.gender === "F" && (
+                            <ListItem
+                              checkbox
+                              className="question-list"
+                              checkboxIcon="end"
+                              title={languageData?.is_unmarried_question}
+                              name="is_unmarried"
+                              onChange={(event) => handleCheckboxChange(scheme.scheme_id, event)}
+                            />
+                          )}
+                          {scheme.srilankan_refuge === 1 && (
+                            <ListItem
+                              checkbox
+                              className="question-list"
+                              checkboxIcon="end"
+                              title={languageData?.is_refuge_question}
+                              name="is_srilankan_refuge"
+                              onChange={(event) => handleCheckboxChange(scheme.scheme_id, event)}
+                            />
+                          )}
+                        </List>
 
-                      {/* Submit Button */}
-                      <Button fill small className="eligibility-button" type="submit">
-                        {languageData?.Check_Eligibility}
-                      </Button>
-                    </div>
-                  </form>
+                        {/* Submit Button */}
+                        <Button fill small className="eligibility-button" type="submit">
+                          {languageData?.Check_Eligibility}
+                        </Button>
+                      </div>
+                    </form>
 
-                </Block>
-              </AccordionContent>
-            </ListItem>
-          ))}
+                  </Block>
+                </AccordionContent>
+              </ListItem>
+            )
+          }
+          )}
         </List>
       )}
       <FilterPagination
@@ -359,7 +363,7 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
 
   return (
     <>
-      <Block className='page-content scheme-page'>
+      <Block className='page-content scheme-page padB5rem'>
         {family_dropdown_box()}
 
         <Searchbar

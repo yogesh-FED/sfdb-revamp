@@ -11,12 +11,14 @@ import {
   Toolbar,
   Link,
   Tab,
-  Tabs
+  Tabs,
+  f7
 } from 'framework7-react';
 import '../../css/schemefilter.css';
 import FilterTabs from './FilterTabs';
 
 const SchemeFilter = (props) => {
+  const store = f7.store;
   const handleBackClick = () => {
     props.f7router.navigate('/details', {
       clearPreviousHistory: true,

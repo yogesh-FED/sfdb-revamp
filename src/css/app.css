@@ -3054,3 +3054,11 @@ input[type="search"]::placeholder {
 .filter-options select option {
   color: #222 !important;
 }
+
+.padB5rem {
+  padding-bottom: 5rem;
+}
+
+.transparentBg {
+  background: transparent !important;
+}
