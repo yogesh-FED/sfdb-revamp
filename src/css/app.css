@@ -3062,3 +3062,38 @@ input[type="search"]::placeholder {
 .transparentBg {
   background: transparent !important;
 }
+
+.filterContent .toolbar-inner {
+  width: auto !important;
+}
+
+.categorySection {
+  width: 40%;
+  margin-left: auto;
+}
+
+.categorySection .block-title {
+  margin: 0;
+}
+
+.categorySection li {
+  list-style-type: none;
+}
+
+.categorySection li .item-content.item-input {
+  padding: 0;
+  padding-bottom: 0.5rem;
+  margin: 0;
+}
+
+.categorySection li .item-content.item-input::before {
+  background: transparent !important;
+}
+
+.categorySection li .item-input-wrap.input-dropdown {
+  width: 100%;
+}
+
+.categorySection li .item-input-wrap.input-dropdown select {
+  width: 100%;
+}

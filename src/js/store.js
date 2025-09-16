@@ -39,7 +39,7 @@ const GET_LATEST = API + "/makkal/get-latest";
 const GET_PERSONAL_INFO = LOCAL_API + "/getApplicantInfo";
 // const GET_MY_SCHEMES = API + "/makkal/get-my-schemes";
 const GET_MY_SCHEMES = LOCAL_API + "/getAllSchemes";
-
+const GET_CATEGORY_SCHEMES = LOCAL_API + "/getMakkalPortalSchemes";
 const GET_CHATBOT_SCHEMES = API + "/makkal/get-chatbot-schemes";
 const GET_MY_FAMILY_SCHEMES = API + "/makkal/get-my-family-schemes";
 // const GET_MY_FAMILY = API + "/makkal/get-my-family";
@@ -374,6 +374,36 @@ const store = createStore({
     //     return error; // Indicate failure
     //   }
     // },
+
+
+    getCategorySchemes: async ({ state }) => {
+      try {
+        const response = await axios.get(`${GET_CATEGORY_SCHEMES}`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json; charset=UTF-8",
+          },
+          auth: {
+            username: "TNeGA",
+            password: "aiml",
+          },
+        });
+        const data = await response.data;
+        if (data?.code == 401) {
+          f7.dialog.confirm(data?.message, 'Session Expire', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('authtabsId');
+            localStorage.removeItem('pds_transactions');
+            localStorage.removeItem('user_image');
+            f7.views.main.router.refreshPage();
+          });
+        }
+        return data;
+      }
+      catch (error) {
+        return error;
+      }
+    },
 
     getMySchemes: async ({ state }) => {
 

@@ -17,34 +17,37 @@ const FilterTabs = (props) => {
   const language_data = useStore('lang');
   const storedData = JSON.parse(localStorage.getItem('formDataVal'))
   const [schData, setSchData] = useState([]);
+  const [categoryOptionsData, setCategoryOptionsData] = useState([]);
+  const [categoriesValue, setCategoriesValue] = useState('');
+  const [showCategoriesWiseData, setShowCategoriesWiseData] = useState(false);
+  const [categoryData, setCategoryData] = useState([]);
   const store = f7.store;
   useEffect(() => {
-    // axios.get('../assets/getschemes.json')
-    //   .then(response => {
-    //     console.log('Data:', response.data.data.eligible_schemes.schemes);
-    //     setSchData(response.data.data.eligible_schemes.schemes || []);
-    //   })
-    //   .catch(error => {
-    //     console.error('Error:', error);
-    //   });
     allSchemesCategory();
   }, [])
   const allSchemesCategory = async () => {
     const response = await store.dispatch('getMySchemes');
-    console.log('response in all schemes category', response);
+    const categoryResponse = await store.dispatch('getCategorySchemes');
+    const categoryResponseData = categoryResponse?.categories.map((item) => {
+      return item.category
+    })
+    setCategoryData(categoryResponse.categories || []);
+    setCategoryOptionsData(categoryResponseData);
     if (response) {
       setSchData(response);
     }
   }
+  const filteredCategory = categoryData.find(
+    (cat) => cat.category.toLowerCase() === categoriesValue.toLowerCase()
+  );
   let schemeInnerFilter;
   const filteredSchemes = schData.filter((val) => {
     return (
-      (!val.gender || val.gender.toLowerCase() === storedData?.gender.toLowerCase()) &&
-      (!val.age || val.age === storedData?.age) &&
+      (val.gender && val.gender.toLowerCase() === (storedData.gender.toLowerCase())) &&
+      // (!val.age || val.age === storedData?.age) &&
       (!val.community || val.community.toLowerCase() === storedData?.community.toLowerCase() || !storedData?.community)
     );
   });
-
   if (props.eligibleSchemeFilter === true) {
     schemeInnerFilter = filteredSchemes.filter((val) => {
       return (
@@ -63,10 +66,28 @@ const FilterTabs = (props) => {
     })
   }
 
+  const handleChange = (value) => {
+
+    if (value) {
+      setCategoriesValue(value);
+      setShowCategoriesWiseData(true);
+    }
+    else if (value === '') {
+      setCategoriesValue('');
+      setShowCategoriesWiseData(false);
+    }
+    else {
+      setCategoriesValue('');
+    }
+  }
+
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 10;
+  const categoryItemsPerPage = 5;
   const startIndex = (currentPage - 1) * itemsPerPage;
+  const categoryStartIndex = (currentPage - 1) * categoryItemsPerPage;
   const currentData = schData.slice(startIndex, startIndex + itemsPerPage);
+  const currentCategoryData = filteredCategory?.schemes?.slice(categoryStartIndex, categoryStartIndex + categoryItemsPerPage);
   return (
     <>
       <Toolbar tabbar>
@@ -77,11 +98,11 @@ const FilterTabs = (props) => {
         <Link tabLink="#all">
           All ({schData.length})
         </Link>
-        <Link tabLink="#women">Women</Link>
+        {/* <Link tabLink="#women">Women</Link>
         <Link tabLink="#child">Child And Youth</Link>
         <Link tabLink="#diffAbled">Differently Abled</Link>
         <Link tabLink="#fisherman">Fisherman</Link>
-        <Link tabLink="#farmer">Farmer</Link>
+        <Link tabLink="#farmer">Farmer</Link> */}
       </Toolbar>
       <Tabs className='filterTabsAccordion'>
         <Tab id="eligible" className="" tabActive>
@@ -91,12 +112,12 @@ const FilterTabs = (props) => {
                 filteredSchemes?.map((val, i) => {
                   return (
                     <List strong outlineIos dividersIos insetMd accordionList key={i}>
-                      <ListItem accordionItem title={val.scheme_name}>
+                      <ListItem accordionItem title={language_data === "TAMIL" ? val.schemeNameTamil : val.schemeName}>
                         <AccordionContent>
                           <Block>
                             <div className='schemeDescSection'>
                               <p>
-                                {val.scheme_desc}
+                                {language_data === "TAMIL" ? val.schemeDescTamil : val.schemeDesc}
                               </p>
                               <a href='' onClick={handleViewMore}>View More</a>
                             </div>
@@ -137,27 +158,65 @@ const FilterTabs = (props) => {
         </Tab>
         <Tab id="all" className="filterTabsAccordion">
           <Block>
-            <p><b>Most Relevant Schemes Based on Your Profile ({schData.length})</b></p>
+            <p><b>Most Relevant Schemes Based on Your Profile ({showCategoriesWiseData ? filteredCategory?.schemes?.length : schData?.length})</b></p>
+
+            <div className="grid grid-cols-1 large-grid-cols-2 category categorySection">
+              <p className="block-title">View By Category : </p>
+              <div>
+                <ListInput
+                  type="select"
+                  placeholder="Choose Age"
+                  onInput={(e) => handleChange(e.target.value)}
+                >
+                  <option value="">All Categories</option>
+                  {categoryOptionsData && categoryOptionsData.map((cat, index) => (
+                    <option key={index} value={cat}>{cat}</option>
+                  ))}
+                </ListInput>
+              </div>
+            </div>
             {
-              currentData.map((val, i) => {
-                return (
-                  <List strong outlineIos dividersIos insetMd accordionList key={i}>
-                    <ListItem accordionItem title={language_data === "TAMIL" ? val.schemeNameTamil : val.schemeName}>
-                      <AccordionContent>
-                        <Block>
-                          <p>
-                            {language_data === "TAMIL" ? val.schemeDescTamil : val.schemeDesc}
-                          </p>
-                        </Block>
-                      </AccordionContent>
-                    </ListItem>
-                  </List>
+              showCategoriesWiseData ?
+                currentCategoryData?.length > 0 ? (
+                  currentCategoryData?.map((val, i) => {
+                    return (
+                      <List strong outlineIos dividersIos insetMd accordionList key={i}>
+                        <ListItem accordionItem title={language_data === "TAMIL" ? val.schemeNameTamil : val.schemeName}>
+                          <AccordionContent>
+                            <Block>
+                              <p>
+                                {language_data === "TAMIL" ? val.schemeDescTamil : val.schemeDesc}
+                              </p>
+                            </Block>
+                          </AccordionContent>
+                        </ListItem>
+                      </List>
+                    )
+                  }
+                  )
+                ) : (
+                  <p>No schemes available for this category.</p>
                 )
-              })
+                :
+                currentData.map((val, i) => {
+                  return (
+                    <List strong outlineIos dividersIos insetMd accordionList key={i}>
+                      <ListItem accordionItem title={language_data === "TAMIL" ? val.schemeNameTamil : val.schemeName}>
+                        <AccordionContent>
+                          <Block>
+                            <p>
+                              {language_data === "TAMIL" ? val.schemeDescTamil : val.schemeDesc}
+                            </p>
+                          </Block>
+                        </AccordionContent>
+                      </ListItem>
+                    </List>
+                  )
+                })
             }
             <FilterPagination
-              totalItems={schData.length}
-              itemsPerPage={itemsPerPage}
+              totalItems={showCategoriesWiseData ? filteredCategory?.schemes.length : schData.length}
+              itemsPerPage={showCategoriesWiseData ? categoryItemsPerPage : itemsPerPage}
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />

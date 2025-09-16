@@ -4,6 +4,11 @@ import {
 } from 'framework7-react';
 
 const SchemeForm = ({ language_data, handleSubmit, handleChange, formData, buttonImg }) => {
+  const genderOptions = [
+    { label: 'Male', value: 'm' },
+    { label: 'Female', value: 'f' },
+    { label: 'Transgender', value: 't' }
+  ];
   return (
     <div>
       <div className='grid grid-cols-1 large-grid-cols-1'>
@@ -20,17 +25,33 @@ const SchemeForm = ({ language_data, handleSubmit, handleChange, formData, butto
                 {/* Gender */}
                 <div className="grid grid-cols-1 large-grid-cols-4 gender leftAlign">
                   <p className="block-title">Gender *</p>
-                  {['Male', 'Female', 'Transgender'].map((val) => (
-                    <div key={val}>
-                      <label className={`radio ${formData.gender === val ? 'active-radio' : ''}`}>
+                  {/* {genderOptions.map((val) => (
+                    <div key={val.value}>
+                      <label className={`radio ${formData.gender === val.value ? 'active-radio' : ''}`}>
                         <input
                           type="radio"
                           name="gender"
-                          value={val}
-                          checked={formData.gender === val}
+                          value={val.value}
+                          checked={formData.gender === val.value}
                           onChange={(e) => handleChange('gender', e.target.value)}
                         />
                         <i className={`icon-radio ${val}`}><p className={`i_${val}`}>{val}</p></i>
+                      </label>
+                    </div>
+                  ))} */}
+                  {genderOptions.map((val) => (
+                    <div key={val.value}>
+                      <label className={`radio ${formData.gender === val.value ? 'active-radio' : ''}`}>
+                        <input
+                          type="radio"
+                          name="gender"
+                          value={val.value}
+                          checked={formData.gender === val.value}
+                          onChange={(e) => handleChange('gender', e.target.value)}
+                        />
+                        <i className={`icon-radio ${val.label}`}>
+                          <p className={`i_${val.label}`}>{val.label}</p> {/* Display the label here */}
+                        </i>
                       </label>
                     </div>
                   ))}

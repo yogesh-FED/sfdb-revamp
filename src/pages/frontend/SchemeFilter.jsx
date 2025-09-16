@@ -26,7 +26,6 @@ const SchemeFilter = (props) => {
     })
   }
   useEffect(() => {
-    console.log('schemeFilterProps', props);
   }, [])
   const [eligibleSchemeFilter, setEligibleSchemeFilter] = useState(false);
   const [schemeFilterFormData, setSchemeFilterFormData] = useState({
@@ -120,7 +119,7 @@ const SchemeFilter = (props) => {
                           <option value="OBC">No</option>
                         </ListInput>
                       </ul>
-                      <ul className="educationEmp inputFieldsSection">
+                      {/* <ul className="educationEmp inputFieldsSection">
                         <span>Select your current or highest education level:</span>
                         <ListInput
                           type="select"
@@ -171,7 +170,7 @@ const SchemeFilter = (props) => {
                           <option value="General">Yes</option>
                           <option value="OBC">No</option>
                         </ListInput>
-                      </ul>
+                      </ul> */}
                     </Block>
                   </AccordionContent>
                 </ListItem>

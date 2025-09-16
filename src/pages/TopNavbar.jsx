@@ -6,7 +6,6 @@ import langDown from '../assets/images/lang-down.png';
 import openInNew from '../assets/images/open_in_new.png';
 
 const TopNavbar = (props) => {
-  console.log('topnavbarprops', props);
   const alinkClk = () => {
     window.open("https://tnega.tn.gov.in/", "_blank");
   }
