@@ -65,12 +65,13 @@ const FilterTabs = (props) => {
       ignoreCache: true,
     })
   }
-
+  const [currentPage, setCurrentPage] = useState(1);
   const handleChange = (value) => {
-
+    debugger;
     if (value) {
       setCategoriesValue(value);
       setShowCategoriesWiseData(true);
+      setCurrentPage(1);
     }
     else if (value === '') {
       setCategoriesValue('');
@@ -80,8 +81,6 @@ const FilterTabs = (props) => {
       setCategoriesValue('');
     }
   }
-
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const categoryItemsPerPage = 5;
   const startIndex = (currentPage - 1) * itemsPerPage;

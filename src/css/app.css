@@ -1819,6 +1819,11 @@ input[type="search"]::placeholder {
   width: 100%;
 }
 
+/* 
+.abouUsPage {
+  background: url('../assets/images/about-us1.png');
+} */
+
 .kyswl {
   text-align: center;
   border: 2px solid #0c64bc;
@@ -2093,13 +2098,14 @@ input[type="search"]::placeholder {
 .schemeDetails {
   border-radius: 25px;
   padding: 1rem;
-  margin: 0 0 1.5rem;
-  text-align: center;
+  padding-left: 1.5rem;
+  margin: 0 0 0;
+  text-align: left;
   background: #fff;
   font-size: 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
   flex-direction: row;
 }
 
@@ -2128,7 +2134,8 @@ input[type="search"]::placeholder {
 }
 
 .adjustGridGap {
-  gap: 4rem !important;
+  gap: 2rem !important;
+  margin-bottom: 2rem;
 }
 
 .searchInpt .list {
@@ -2965,10 +2972,14 @@ input[type="search"]::placeholder {
 
 .demo_form .ageSection {
   display: grid;
-  grid-template-columns: 10% 20% 25% 40%;
+  grid-template-columns: 10% 20% 25% 35%;
   align-items: center;
   padding: 1.5rem 0;
   gap: 15px;
+}
+
+.mb0 {
+  margin-bottom: 0 !important;
 }
 
 .demo_form .ageSection .alignRight {

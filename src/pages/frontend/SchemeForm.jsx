@@ -23,8 +23,8 @@ const SchemeForm = ({ language_data, handleSubmit, handleChange, formData, butto
               <div className="block block-strong-ios block-outline-ios">
 
                 {/* Gender */}
-                <div className="grid grid-cols-1 large-grid-cols-4 gender leftAlign">
-                  <p className="block-title">Gender *</p>
+                <div className="grid grid-cols-1 large-grid-cols-4 gender twoGrid mb0">
+                  {/* <p className="block-title">Gender *</p> */}
                   {/* {genderOptions.map((val) => (
                     <div key={val.value}>
                       <label className={`radio ${formData.gender === val.value ? 'active-radio' : ''}`}>
@@ -39,22 +39,23 @@ const SchemeForm = ({ language_data, handleSubmit, handleChange, formData, butto
                       </label>
                     </div>
                   ))} */}
-                  {genderOptions.map((val) => (
-                    <div key={val.value}>
-                      <label className={`radio ${formData.gender === val.value ? 'active-radio' : ''}`}>
-                        <input
-                          type="radio"
-                          name="gender"
-                          value={val.value}
-                          checked={formData.gender === val.value}
-                          onChange={(e) => handleChange('gender', e.target.value)}
-                        />
-                        <i className={`icon-radio ${val.label}`}>
-                          <p className={`i_${val.label}`}>{val.label}</p> {/* Display the label here */}
-                        </i>
-                      </label>
-                    </div>
-                  ))}
+
+                  <p className="block-title">Gender *</p>
+                  <div>
+                    <ListInput
+                      label="Gender"
+                      type="select"
+                      value={formData.gender}
+                      placeholder="Choose Gender"
+                      onInput={(e) => handleChange('gender', e.target.value)}
+                    >
+                      <option value="">Select</option>
+                      <option value="m">Male</option>
+                      <option value="f">Female</option>
+                      <option value="t">Transgender</option>
+                      <option value="o">Others</option>
+                    </ListInput>
+                  </div>
                 </div>
 
                 {/* Age */}
@@ -69,10 +70,12 @@ const SchemeForm = ({ language_data, handleSubmit, handleChange, formData, butto
                       onInput={(e) => handleChange('age', e.target.value)}
                     >
                       <option value="">Select</option>
-                      <option value="18-25">18-25</option>
-                      <option value="26-35">26-35</option>
-                      <option value="36-45">36-45</option>
-                      <option value="46+">46+</option>
+
+                      {Array.from({ length: 96 }, (_, i) => i + 5).map((age) => (
+                        <option key={age} value={age}>
+                          {age}
+                        </option>
+                      ))}
                     </ListInput>
                   </div>
 

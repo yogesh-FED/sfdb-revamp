@@ -10,12 +10,25 @@ import findScheme from '../../assets/images/find_schemes.png';
 import departmentImg from '../../assets/images/department-logo/sample.png';
 import CategoryPage from './categoryschemes';
 import SchemeList from './scheme-list';
-
+import FilterPagination from '../../components/FilterPagination';
 
 
 
 
 export default ({ language_data, tnClass, getdepartment, f7router }) => {
+  const store = f7.store;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryLabel, setCategoryLabel] = useState('');
+  const [categoriesSchCount, setCategoriesSchCount] = useState('');
+  const getCategorySchemesLabel = async () => {
+    const categoryResponse = await store.dispatch('getCategorySchemes');
+    const categoryResponseData = categoryResponse?.categories.map((item) => {
+      return item.category
+    })
+
+    setCategoriesSchCount(categoryResponse);
+    setCategoryLabel(categoryResponseData);
+  }
   const goToDetails = () => {
     f7.popup.close();
     // f7.views.main.router.navigate('/details', {
@@ -37,7 +50,7 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
   const [deptName, setDeptName] = useState('');
   const popup = useRef(null);
   const handleCategoryPopUp = () => {
-
+    return false;
     if (!popup.current) {
       popup.current = f7.popup.create({
         content: `
@@ -76,6 +89,7 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
   };
   const [activeTabText, setActiveTabText] = useState('categories');
   useEffect(() => {
+    getCategorySchemesLabel();
     if (tnClass) {
       setActiveTabText('வகைகள்');
     } else {
@@ -148,6 +162,16 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
     f7.preloader.hide();
 
   }
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const categoryCount = categoriesSchCount.categories;
+  //const currentData = Array.isArray(categoryLabel) ? categoryLabel.slice(startIndex, startIndex + itemsPerPage) : [];
+  const currentData = categoryLabel || [];
+  const searchSchemes = currentData.filter(sch => {
+    return sch.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
   return (
     <>
       <div className="grid grid-cols-1 large-grid-cols-1 scheme_layout">
@@ -183,48 +207,55 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
             :
             <h3> {language_data.view_scheme_by} {activeTabText.toLowerCase()}</h3>
         }
-        {/* <div className='searchInpt'>
+        <div className='searchInpt'>
           <List strongIos dividersIos insetIos>
-            <ListInput outline label={language_data.schemeSearch} floatingLabel type="text">
+            <ListInput outline label={language_data.schemeSearch} floatingLabel type="text" value={searchQuery}
+              onInput={(e) => setSearchQuery(e.target.value)}>
               <Icon icon="demo-list-icon" slot="media" />
             </ListInput>
           </List>
-        </div> */}
+        </div>
       </div>
       <Tabs>
         <Tab id="tab-1" className="page-content tabContent" tabActive>
           <Block>
             {/* <p>Categories</p> */}
             <div className="grid grid-cols-1 large-grid-cols-4 grid-gap adjustGridGap">
-              <div className='schemeDetails'>
-                <img src={agriculture} alt='agri' />
-                <div><p>Agriculture</p>
-                  {/* <span> <a onClick={handleCategoryPopUp}>24 Schemes</a></span> */}
-                  <span> <a>24 Schemes</a></span>
-                </div>
-              </div>
-              <div className='schemeDetails'>
-                <img src={education} alt='agri' />
-                <div>
-                  <p>Education</p>
-                  <span> <a>70 Schemes</a></span>
-                </div>
-              </div>
-              <div className='schemeDetails'>
-                <img src={HealthWellness} alt='agri' />
-                <div>
-                  <p>Health & Wellness</p>
-                  <span> <a>24 Schemes</a></span>
-                </div>
-              </div>
-              <div className='schemeDetails'>
-                <img src={womenschild} alt='agri' />
-                <div>
-                  <p>Women & Children</p>
-                  <span> <a>24 Schemes</a></span>
-                </div>
-              </div>
+              {searchSchemes && searchSchemes.map((cat, index) => {
+                return (
+                  <div className='schemeDetails' key={index}>
+                    <img src={`../../assets/images/category/${cat}.png`} alt={cat} />
+                    <div>
+                      <p>{cat}</p>
+                      {categoryCount && categoryCount.length > 0 && (
+                        <span>
+                          {
+                            categoryCount.find(catCount => catCount.category === cat)
+                              ? (
+                                <a onClick={() => handleCategoryPopUp()}>
+                                  {
+                                    categoryCount.find(catCount => catCount.category === cat).schemes.length
+                                  } {language_data.schemes} Schemes
+                                </a>
+                              )
+                              : (
+                                <a>0 {language_data.schemes}</a> // in case no schemes for this category
+                              )
+                          }
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
             </div>
+            {/* <FilterPagination
+              totalItems={categoryLabel.length}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            /> */}
           </Block>
         </Tab>
         <Tab id="tab-2" className="page-content tabContent">
