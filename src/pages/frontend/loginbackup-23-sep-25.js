@@ -180,7 +180,7 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
       const response = await store.dispatch('sendLogin', formData);
 
       if (response) {
-        if (response.status == "OK") {
+        if (response.success == true) {
 
           if (response.data?.data?.code == 500) {
             set_login_error("Internal Server Error UIDAI");
@@ -191,7 +191,7 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
 
           setFormData(prevState => ({
             ...prevState,
-            txn: response.data.txn
+            txn: response.data.data.data.txn
           }));
           setCountdown(120);           // Reset countdown to 10
           // Start countdown

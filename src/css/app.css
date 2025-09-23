@@ -1996,6 +1996,8 @@ input[type="search"]::placeholder {
   color: #fff;
   font-size: 12px;
   font-weight: 400;
+  margin-left: auto;
+  margin-right: 11rem;
 }
 
 .tnegaLink {

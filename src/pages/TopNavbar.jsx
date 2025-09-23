@@ -11,7 +11,7 @@ const TopNavbar = (props) => {
   }
   return (
     <div>
-      <div className="grid grid-cols-1 large-grid-cols-4 topNav"
+      <div className="grid grid-cols-1 large-grid-cols-3 topNav"
         style={{
           position: 'fixed',
           top: 0,
@@ -24,10 +24,10 @@ const TopNavbar = (props) => {
         }}>
         <span><img src={topNavLogo} alt="tnega" /> <a href='' className='tnegaLink' target='blank' onClick={() => alinkClk()}>Tamil Nadu eGovernance Agency  <img src={openInNew} alt='link' /></a></span>
         <p></p>
-        <p>
+        {/* <p>
           <span>{props.language_data.skipToNavigation}</span>
           <span className='rt1'>A<sup>+</sup> </span><span className='rt1'> A </span><span className='rt1'>A <sup>-</sup></span>
-        </p>
+        </p> */}
         <div>
           <Button onClick={() => props.toggleLanguage(props.lang)} className='btnStyle'>
             <img src={globe} alt='globe' /> &nbsp; {props.lang} &nbsp; <img src={langDown} alt='language' />

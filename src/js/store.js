@@ -32,7 +32,8 @@ const decrypt = (value) => {
 
 
 
-const SEND_LOGIN = API + "/makkal/login";
+// const SEND_LOGIN = API + "/makkal/login";
+const SEND_LOGIN = LOGIN_API;
 const SEND_OTP = API + "/makkal/validate-otp";
 const GET_LATEST = API + "/makkal/get-latest";
 // const GET_PERSONAL_INFO = API + "/makkal/get-master-data";
@@ -190,9 +191,11 @@ const store = createStore({
       state.login_error = "";
       const secureData = {
         // aadhar: formData.aadhar ? CryptoJS.AES.encrypt(formData.aadhar, key, { iv: iv}).toString() : "",
-        aadhar: encrypt(formData.aadhar),
+        // aadhar: encrypt(formData.aadhar),
+        aadharNo: encrypt(formData.aadhar),
         // mobile: formData.mobile ? CryptoJS.AES.encrypt(formData.mobile, key, { iv: iv}).toString() : "",
-        saveConsent: formData.saveConsent, // For checkbox
+        // saveConsent: formData.saveConsent, // For checkbox
+        isConsent: "true"
       };
 
       try {

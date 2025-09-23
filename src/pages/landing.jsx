@@ -675,7 +675,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Page, f7, useStore } from 'framework7-react';
-import homebg from '../assets/images/landing-bg.jpg';
+import homebg from '../assets/images/landing-bg.webp';
 import { WelcomePage } from './frontend/welcome';
 import { AboutPageRevamp } from './frontend/about-revamp';
 import { FooterRevampPage } from './frontend/footer';
@@ -684,7 +684,6 @@ import { HelpPageRevamp } from './frontend/help';
 import { ChatBotPage } from './frontend/chat-bot';
 
 const Section = ({ id, title, bg, children, className }) => {
-  debugger;
   const isImage = typeof bg === 'string' && (bg.startsWith('/') || bg.startsWith('http') || bg.startsWith('data:'));
   return (
     <div

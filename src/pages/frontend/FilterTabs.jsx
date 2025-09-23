@@ -86,6 +86,7 @@ const FilterTabs = (props) => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const categoryStartIndex = (currentPage - 1) * categoryItemsPerPage;
   const currentData = schData.slice(startIndex, startIndex + itemsPerPage);
+  const eligibilityPagination = filteredSchemes?.slice(startIndex, startIndex + itemsPerPage);
   const currentCategoryData = filteredCategory?.schemes?.slice(categoryStartIndex, categoryStartIndex + categoryItemsPerPage);
   return (
     <>
@@ -107,8 +108,8 @@ const FilterTabs = (props) => {
         <Tab id="eligible" className="" tabActive>
           <Block>
             {
-              filteredSchemes?.length > 0 && props.eligibleSchemeFilter !== true ?
-                filteredSchemes?.map((val, i) => {
+              eligibilityPagination?.length > 0 && props.eligibleSchemeFilter !== true ?
+                eligibilityPagination?.map((val, i) => {
                   return (
                     <List strong outlineIos dividersIos insetMd accordionList key={i}>
                       <ListItem accordionItem title={language_data === "TAMIL" ? val.schemeNameTamil : val.schemeName}>
@@ -148,7 +149,7 @@ const FilterTabs = (props) => {
                 })
             }
             <FilterPagination
-              totalItems={filteredSchemes.length}
+              totalItems={filteredSchemes?.length}
               itemsPerPage={itemsPerPage}
               currentPage={currentPage}
               onPageChange={setCurrentPage}
