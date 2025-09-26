@@ -18,7 +18,10 @@ import FilterPagination from '../../components/FilterPagination';
 export default ({ language_data, tnClass, getdepartment, f7router }) => {
   const store = f7.store;
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchDeptQuery, setSearchDeptQuery] = useState('');
   const [categoryLabel, setCategoryLabel] = useState('');
+  const [deptLabel, setDeptLabel] = useState('');
+  const [deptSchCount, setDeptSchCount] = useState('');
   const [categoriesSchCount, setCategoriesSchCount] = useState('');
   const getCategorySchemesLabel = async () => {
     const categoryResponse = await store.dispatch('getCategorySchemes');
@@ -28,6 +31,15 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
 
     setCategoriesSchCount(categoryResponse);
     setCategoryLabel(categoryResponseData);
+  }
+  const getDepartmentSchemesLabel = async () => {
+    const deptResponse = await store.dispatch('getDepartmentSchemes');
+    const deptResponseData = deptResponse?.departments.map((item) => {
+      return item.department
+    })
+
+    setDeptSchCount(deptResponse);
+    setDeptLabel(deptResponseData);
   }
   const goToDetails = () => {
     f7.popup.close();
@@ -90,12 +102,14 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
   const [activeTabText, setActiveTabText] = useState('categories');
   useEffect(() => {
     getCategorySchemesLabel();
+    getDepartmentSchemesLabel();
     if (tnClass) {
       setActiveTabText('வகைகள்');
     } else {
       setActiveTabText('categories');
     }
   }, [tnClass]);
+  console.log('deptLabel', deptLabel);
   const handleTabClick = (e) => {
     setActiveTabText(e.target.innerText);
   }
@@ -166,10 +180,15 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
   const itemsPerPage = 12;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const categoryCount = categoriesSchCount.categories;
+  const deptCount = deptSchCount.departments;
   //const currentData = Array.isArray(categoryLabel) ? categoryLabel.slice(startIndex, startIndex + itemsPerPage) : [];
   const currentData = categoryLabel || [];
+  const currentDeptData = deptLabel || [];
   const searchSchemes = currentData.filter(sch => {
     return sch.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+  const searchDeptSchemes = currentDeptData.filter(schDept => {
+    return schDept.toLowerCase().includes(searchDeptQuery.toLowerCase());
   });
 
   return (
@@ -211,6 +230,8 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
           <List strongIos dividersIos insetIos>
             <ListInput outline label={language_data.schemeSearch} floatingLabel type="text" value={searchQuery}
               onInput={(e) => setSearchQuery(e.target.value)}>
+              {/* onInput={(e) => activeTabText === "categories" ? setSearchQuery(e.target.value) : setSearchDeptQuery(e.target.value)}> */}
+
               <Icon icon="demo-list-icon" slot="media" />
             </ListInput>
           </List>
@@ -260,7 +281,7 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
         </Tab>
         <Tab id="tab-2" className="page-content tabContent">
           <Block>
-            <div className="grid grid-cols-1 large-grid-cols-3 grid-gap">
+            {/* <div className="grid grid-cols-1 large-grid-cols-3 grid-gap">
               {getdepartment.map((departmentName, i) => {
                 return (
                   <div className='departmentDetails grid grid-cols-3 large-grid-cols-3' key={i}>
@@ -272,6 +293,37 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
 
                 )
               })}
+            </div> */}
+            <div className="grid grid-cols-1 large-grid-cols-2 grid-gap adjustGridGap">
+              {searchDeptSchemes && searchDeptSchemes.map((cat, index) => {
+                console.log('deptCount', cat);
+                return (
+                  <div className='schemeDetails' key={index}>
+                    {/* <img src={`../../assets/images/department-logo/${departmentName.org_id}.png`} alt={cat} /> */}
+                    <div>
+                      <p>{cat}</p>
+                      {deptCount && deptCount.length > 0 && (
+                        <span>
+                          {
+                            deptCount.find(catCount => catCount.category === cat)
+                              ? (
+                                <a onClick={() => handleCategoryPopUp()}>
+                                  {
+                                    deptCount.find(catCount => catCount.category === cat).schemes.length
+                                  } {language_data.schemes} Schemes
+                                </a>
+                              )
+                              : (
+                                <a>0 {language_data.schemes}</a> // in case no schemes for this category
+                              )
+                          }
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
             </div>
 
 

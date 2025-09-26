@@ -250,9 +250,9 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
       if (response) {
         debugger;
 
-        if (response.success == true) {
-          localStorage.setItem('token', response.data.token);
-          localStorage.setItem('user_image', response.data.user_image);
+        if (response.status === "OK") {
+          localStorage.setItem('token', response.refreshToken);
+          // localStorage.setItem('user_image', response.data.user_image);
           // location.reload();
           //f7.views.main.router.refreshPage();
           f7.views.main.router.navigate('/home/', {

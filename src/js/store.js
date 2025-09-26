@@ -34,13 +34,15 @@ const decrypt = (value) => {
 
 // const SEND_LOGIN = API + "/makkal/login";
 const SEND_LOGIN = LOGIN_API;
-const SEND_OTP = API + "/makkal/validate-otp";
+// const SEND_OTP = API + "/makkal/validate-otp";
+const SEND_OTP = LOCAL_API + "/sendAadharSmsKyc";
 const GET_LATEST = API + "/makkal/get-latest";
 // const GET_PERSONAL_INFO = API + "/makkal/get-master-data";
 const GET_PERSONAL_INFO = LOCAL_API + "/getApplicantInfo";
 // const GET_MY_SCHEMES = API + "/makkal/get-my-schemes";
 const GET_MY_SCHEMES = LOCAL_API + "/getAllSchemes";
 const GET_CATEGORY_SCHEMES = LOCAL_API + "/getMakkalPortalSchemes";
+const GET_DEPARTMENT_SCHEMES = LOCAL_API + "/getMakkalSchemesByDepartment";
 const GET_CHATBOT_SCHEMES = API + "/makkal/get-chatbot-schemes";
 const GET_MY_FAMILY_SCHEMES = API + "/makkal/get-my-family-schemes";
 // const GET_MY_FAMILY = API + "/makkal/get-my-family";
@@ -219,22 +221,56 @@ const store = createStore({
     },
 
     sendOtp: async ({ state }, formData) => {
+      // const secureData = {
+      //   aadhar: encrypt(formData.aadhar),
+      //   mod: encrypt(formData.otp),
+      //   txn: formData.txn,
+      //   saveConsent: formData.saveConsent, // For checkbox
+      // };
+
       const secureData = {
-        aadhar: encrypt(formData.aadhar),
+        aadharNo: encrypt(formData.aadhar),
         mod: encrypt(formData.otp),
         txn: formData.txn,
-        saveConsent: formData.saveConsent, // For checkbox
+        isConsent: formData.saveConsent, // For checkbox
       };
       try {
-        const response = await fetch(SEND_OTP, {
-          method: "POST",
-          body: JSON.stringify(secureData),
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json; charset=UTF-8",
-          },
-        });
-        const data = await response.json();
+        // const response = await axios.post(`${SEND_OTP}`, {
+        //   headers: {
+        //     Accept: "application/json",
+        //     "Content-Type": "application/json; charset=UTF-8",
+        //     // Authorization: "Bearer " + token,
+        //   },
+        //   auth: {
+        //     username: "TNeGA",
+        //     password: "aiml",
+        //   },
+        // });
+        const response = await axios.post(
+          `${SEND_OTP}`,
+          {
+            aadharNo: encrypt(formData.aadhar),
+            mod: encrypt(formData.otp),
+            txn: formData.txn,
+            isConsent: formData.saveConsent,
+          },  // Request body goes here (if any)
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json; charset=UTF-8",
+              // If you need to send a bearer token:
+              // Authorization: `Bearer ${token}`,
+            },
+            auth: {
+              username: "TNeGA",
+              password: "aiml",
+            },
+          }
+        );
+
+        // const data = await response.json();
+        const data = response.data;
+
         return data;
 
       } catch (error) {
@@ -314,7 +350,7 @@ const store = createStore({
         deptId: 1,
         schemeId: null
       };
-      // let token = localStorage.getItem("token");
+      let token = localStorage.getItem("token");
       const queryParams = new URLSearchParams(getPersonalInfoPayload).toString();
       try {
         const response = await axios.get(`${GET_PERSONAL_INFO}?${queryParams}`, {
@@ -382,6 +418,35 @@ const store = createStore({
     getCategorySchemes: async ({ state }) => {
       try {
         const response = await axios.get(`${GET_CATEGORY_SCHEMES}`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json; charset=UTF-8",
+          },
+          auth: {
+            username: "TNeGA",
+            password: "aiml",
+          },
+        });
+        const data = await response.data;
+        if (data?.code == 401) {
+          f7.dialog.confirm(data?.message, 'Session Expire', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('authtabsId');
+            localStorage.removeItem('pds_transactions');
+            localStorage.removeItem('user_image');
+            f7.views.main.router.refreshPage();
+          });
+        }
+        return data;
+      }
+      catch (error) {
+        return error;
+      }
+    },
+
+    getDepartmentSchemes: async ({ state }) => {
+      try {
+        const response = await axios.get(`${GET_DEPARTMENT_SCHEMES}`, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
@@ -630,7 +695,7 @@ const store = createStore({
           deptId: 1,
           schemeId: null
         };
-        // let token = localStorage.getItem("token");
+        let token = localStorage.getItem("token");
         const queryParams = new URLSearchParams(getPersonalInfoPayload).toString();
         const response = await axios.get(`${GET_MY_FAMILY}?${queryParams}`, {
           headers: {
