@@ -35,7 +35,11 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
   const getDepartmentSchemesLabel = async () => {
     const deptResponse = await store.dispatch('getDepartmentSchemes');
     const deptResponseData = deptResponse?.departments.map((item) => {
-      return item.department
+      // return item.department
+      return {
+        id: item.departmentCode,
+        department: item.department
+      };
     })
 
     setDeptSchCount(deptResponse);
@@ -188,7 +192,10 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
     return sch.toLowerCase().includes(searchQuery.toLowerCase());
   });
   const searchDeptSchemes = currentDeptData.filter(schDept => {
-    return schDept.toLowerCase().includes(searchDeptQuery.toLowerCase());
+    return {
+      deptName: schDept.department.toLowerCase().includes(searchDeptQuery.toLowerCase()),
+      id: schDept.id
+    }
   });
 
   return (
