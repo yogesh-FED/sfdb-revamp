@@ -124,12 +124,170 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
 
   };
 
+  //new login submit 
+  // const formSubmit = async (e) => {
 
+  //   e.preventDefault();
+  //   localStorage.setItem('uid', formData.aadhar);
+
+  //   const newErrors = {};
+  //   if (is_login_with == "aadhar") {
+
+  //     if (!formData.aadhar) {
+
+  //       newErrors.aadhar = 'Aadhar is required.';
+
+  //     }
+  //     if (formData.aadhar.length != 12) {
+
+  //       newErrors.aadhar = 'Enter valid aadhar number.';
+  //     }
+  //   }
+
+
+  //   if (is_login_with == "mobile") {
+
+  //     if (!formData.mobile) {
+
+  //       newErrors.mobile = 'Mobile number is required.';
+
+  //     }
+
+  //     if (formData.mobile.length != 10) {
+
+  //       newErrors.mobile = 'Enter valid mobile number.';
+  //     }
+  //   }
+
+  //   if (!formData.saveConsent) {
+
+  //     newErrors.saveConsent = 'You must accept the terms.';
+
+  //   }
+
+  //   if (Object.keys(newErrors).length > 0) {
+  //     setErrors(newErrors); // Set errors if validation fails
+
+  //   }
+  //   else {
+
+  //     setErrors({}); // Clear errors if valid
+
+  //     set_login_error("");
+
+  //     f7.preloader.show();
+
+  //     const response = await store.dispatch('sendLogin', formData);
+
+  //     if (response) {
+  //       if (response.status == "OK") {
+
+  //         if (response.data?.data?.code == 500) {
+  //           set_login_error("Internal Server Error UIDAI");
+  //           f7.preloader.hide();
+  //           return true;
+  //         }
+  //         set_login_screen(2);
+
+  //         setFormData(prevState => ({
+  //           ...prevState,
+  //           txn: response.data.txn
+  //         }));
+  //         setCountdown(120);           // Reset countdown to 10
+  //         // Start countdown
+  //         startTimer();
+  //       }
+  //       else {
+  //         if (response.message?.errorInfo) {
+  //           set_login_error("Internal Server Error")
+  //         }
+  //         else {
+  //           set_login_error(response.message)
+  //         }
+
+  //       }
+
+  //     }
+  //     else {
+
+  //       set_login_error("Server Could not connect");
+
+  //     }
+  //     f7.preloader.hide();
+  //   }
+
+  //   // f7.store.dispatch('sendLogin', formData);
+  // }
+
+  //new otp submit
+  // const otpSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const newErrors = {};
+  //   if (!formData.otp) {
+  //     newErrors.otp = 'OTP is required.';
+  //   }
+
+  //   if (formData.otp.length != 6) {
+
+  //     newErrors.otp = 'Enter valid OTP.';
+  //   }
+
+
+  //   if (Object.keys(newErrors).length > 0) {
+  //     setErrors(newErrors); // Set errors if validation fails
+
+  //   }
+  //   else {
+
+  //     setErrors({}); // Clear errors if valid
+
+  //     set_login_error("");
+
+  //     f7.preloader.show();
+
+  //     const response = await store.dispatch('sendOtp', formData);
+
+  //     if (response) {
+  //       debugger;
+
+  //       if (response.status === "OK") {
+  //         localStorage.setItem('token', response.refreshToken);
+  //         // localStorage.setItem('user_image', response.data.user_image);
+  //         // location.reload();
+  //         //f7.views.main.router.refreshPage();
+  //         f7.views.main.router.navigate('/home/', {
+  //           clearPreviousHistory: true,
+  //           ignoreCache: true,
+  //         });
+  //         f7.popup.close();
+  //       }
+  //       else {
+
+  //         set_login_error(response.message.error)
+
+  //       }
+  //     }
+  //     else {
+
+
+  //       set_login_error("Server Could not connect");
+
+  //     }
+  //     f7.preloader.hide();
+
+  //   }
+
+  //   // f7.store.dispatch('sendLogin', formData);
+  // }
+
+  // old otp submit
+
+  //old login submit
   const formSubmit = async (e) => {
 
     e.preventDefault();
-    localStorage.setItem('uid', formData.aadhar);
 
+    localStorage.setItem('uid', formData.aadhar);
     const newErrors = {};
     if (is_login_with == "aadhar") {
 
@@ -180,9 +338,10 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
       const response = await store.dispatch('sendLogin', formData);
 
       if (response) {
+        // if (response.success == true) {
         if (response.status == "OK") {
-
-          if (response.data?.data?.code == 500) {
+          // if (response.data?.data?.code == 500) {
+          if (response.data?.code == 500) {
             set_login_error("Internal Server Error UIDAI");
             f7.preloader.hide();
             return true;
@@ -191,14 +350,15 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
 
           setFormData(prevState => ({
             ...prevState,
-            txn: response.data.txn
+            // txn: response.data.data.data.txn
+            txn: response.data?.txn
           }));
           setCountdown(120);           // Reset countdown to 10
           // Start countdown
           startTimer();
         }
         else {
-          if (response.message?.errorInfo) {
+          if (response.message !== null) {
             set_login_error("Internal Server Error")
           }
           else {
@@ -219,8 +379,8 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
     // f7.store.dispatch('sendLogin', formData);
   }
 
-
   const otpSubmit = async (e) => {
+    debugger;
     e.preventDefault();
     const newErrors = {};
     if (!formData.otp) {
@@ -250,8 +410,9 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
       if (response) {
         debugger;
 
-        if (response.status === "OK") {
-          localStorage.setItem('token', response.refreshToken);
+        // if (response.success == true) {
+        if (response.status == "OK") {
+          localStorage.setItem('token', response.data?.refreshToken);
           // localStorage.setItem('user_image', response.data.user_image);
           // location.reload();
           //f7.views.main.router.refreshPage();

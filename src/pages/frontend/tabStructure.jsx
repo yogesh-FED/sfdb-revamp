@@ -113,7 +113,7 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
       setActiveTabText('categories');
     }
   }, [tnClass]);
-  console.log('deptLabel', deptLabel);
+  // console.log('deptLabel', deptLabel);
   const handleTabClick = (e) => {
     setActiveTabText(e.target.innerText);
   }
@@ -301,22 +301,22 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
                 )
               })}
             </div> */}
-            <div className="grid grid-cols-1 large-grid-cols-2 grid-gap adjustGridGap">
+            <div className="grid grid-cols-1 large-grid-cols-3 grid-gap adjustGridGap">
               {searchDeptSchemes && searchDeptSchemes.map((cat, index) => {
-                console.log('deptCount', cat);
+                // console.log('deptCount', cat);
                 return (
                   <div className='schemeDetails' key={index}>
-                    {/* <img src={`../../assets/images/department-logo/${departmentName.org_id}.png`} alt={cat} /> */}
+                    <img src={`../../assets/images/department-logo/${cat.id}.png`} alt={cat} />
                     <div>
-                      <p>{cat}</p>
+                      <p>{cat.department}</p>
                       {deptCount && deptCount.length > 0 && (
                         <span>
                           {
-                            deptCount.find(catCount => catCount.category === cat)
+                            deptCount.find(catCount => catCount.department === cat.department)
                               ? (
                                 <a onClick={() => handleCategoryPopUp()}>
                                   {
-                                    deptCount.find(catCount => catCount.category === cat).schemes.length
+                                    deptCount.find(catCount => catCount.department === cat.department).schemes.length
                                   } {language_data.schemes} Schemes
                                 </a>
                               )

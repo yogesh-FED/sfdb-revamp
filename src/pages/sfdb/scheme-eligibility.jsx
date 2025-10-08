@@ -108,7 +108,7 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
     debugger
     f7.preloader.show();
     set_loading(true);
-    const response = await store.dispatch('getMySchemes');
+    const response = await store.dispatch('getMySchemeswithStatus');
     // if (response.success) {
     //   const { eligible_schemes: es } = response.data;
     //   set_eligible_schemes(es.schemes);

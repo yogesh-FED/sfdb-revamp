@@ -33,7 +33,7 @@ const decrypt = (value) => {
 
 
 // const SEND_LOGIN = API + "/makkal/login";
-const SEND_LOGIN = LOGIN_API;
+const SEND_LOGIN = LOCAL_API + "/sendAadharSms";
 // const SEND_OTP = API + "/makkal/validate-otp";
 const SEND_OTP = LOCAL_API + "/sendAadharSmsKyc";
 const GET_LATEST = API + "/makkal/get-latest";
@@ -41,6 +41,7 @@ const GET_LATEST = API + "/makkal/get-latest";
 const GET_PERSONAL_INFO = LOCAL_API + "/getApplicantInfo";
 // const GET_MY_SCHEMES = API + "/makkal/get-my-schemes";
 const GET_MY_SCHEMES = LOCAL_API + "/getAllSchemes";
+const GET_MY_SCHEMES_WITH_STS = LOCAL_API + "/getAllSchemesWithStatus";
 const GET_CATEGORY_SCHEMES = LOCAL_API + "/getMakkalPortalSchemes";
 const GET_DEPARTMENT_SCHEMES = LOCAL_API + "/getMakkalSchemesByDepartment";
 const GET_CHATBOT_SCHEMES = API + "/makkal/get-chatbot-schemes";
@@ -191,35 +192,53 @@ const store = createStore({
     sendLogin: async ({ state }, formData) => {
       f7.preloader.show();
       state.login_error = "";
-      const secureData = {
-        // aadhar: formData.aadhar ? CryptoJS.AES.encrypt(formData.aadhar, key, { iv: iv}).toString() : "",
-        // aadhar: encrypt(formData.aadhar),
-        aadharNo: encrypt(formData.aadhar),
-        // mobile: formData.mobile ? CryptoJS.AES.encrypt(formData.mobile, key, { iv: iv}).toString() : "",
-        // saveConsent: formData.saveConsent, // For checkbox
-        isConsent: "true"
-      };
+      // const secureData = {
+      //   // aadhar: formData.aadhar ? CryptoJS.AES.encrypt(formData.aadhar, key, { iv: iv}).toString() : "",
+      //   aadhar: encrypt(formData.aadhar),
+      //   // aadharNo: encrypt(formData.aadhar),
+      //   // mobile: formData.mobile ? CryptoJS.AES.encrypt(formData.mobile, key, { iv: iv}).toString() : "",
+      //   saveConsent: formData.saveConsent, // For checkbox
+      //   // isConsent: "true"
+      // };
 
       try {
-        const response = await fetch(SEND_LOGIN, {
-          method: "POST",
-          body: JSON.stringify(secureData),
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json; charset=UTF-8",
+        // const response = await fetch(SEND_LOGIN, {
+        //   method: "POST",
+        //   body: JSON.stringify(secureData),
+        //   headers: {
+        //     Accept: "application/json",
+        //     "Content-Type": "application/json; charset=UTF-8",
+        //   },
+        // });
+        const response = await axios.post(
+          `${SEND_LOGIN}`,
+          {
+            aadharNo: encrypt(formData.aadhar),
+            isConsent: formData.saveConsent,
           },
-        });
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json; charset=UTF-8",
+            },
+            auth: {
+              username: "TNeGA",
+              password: "aiml",
+            },
+          }
+        );
 
-        const data = await response.json();
-        //console.log(data);
-        return data; // Returning response data
+        const data = response.data;
+        // const data = await response.json();
+
+        return data;
 
       } catch (error) {
-        // return error; // Indicate failure
         alert(error);
       }
     },
 
+    //new otp with axios
     sendOtp: async ({ state }, formData) => {
       // const secureData = {
       //   aadhar: encrypt(formData.aadhar),
@@ -227,13 +246,6 @@ const store = createStore({
       //   txn: formData.txn,
       //   saveConsent: formData.saveConsent, // For checkbox
       // };
-
-      const secureData = {
-        aadharNo: encrypt(formData.aadhar),
-        mod: encrypt(formData.otp),
-        txn: formData.txn,
-        isConsent: formData.saveConsent, // For checkbox
-      };
       try {
         // const response = await axios.post(`${SEND_OTP}`, {
         //   headers: {
@@ -258,8 +270,6 @@ const store = createStore({
             headers: {
               Accept: "application/json",
               "Content-Type": "application/json; charset=UTF-8",
-              // If you need to send a bearer token:
-              // Authorization: `Bearer ${token}`,
             },
             auth: {
               username: "TNeGA",
@@ -267,16 +277,40 @@ const store = createStore({
             },
           }
         );
-
-        // const data = await response.json();
         const data = response.data;
 
         return data;
 
       } catch (error) {
-        return error; // Indicate failure
+        return error;
       }
     },
+
+    //old otp
+    // sendOtp: async ({ state }, formData) => {
+    //   const secureData = {
+
+    //     aadhar: encrypt(formData.aadhar),
+    //     mod: encrypt(formData.otp),
+    //     txn: formData.txn,
+    //     saveConsent: formData.saveConsent, // For checkbox
+    //   };
+    //   try {
+    //     const response = await fetch(SEND_OTP, {
+    //       method: "POST",
+    //       body: JSON.stringify(secureData),
+    //       headers: {
+    //         Accept: "application/json",
+    //         "Content-Type": "application/json; charset=UTF-8",
+    //       },
+    //     });
+    //     const data = await response.json();
+    //     return data;
+
+    //   } catch (error) {
+    //     return error; // Indicate failure
+    //   }
+    // },
 
     getLatest: async ({ state }) => {
       f7.preloader.show();
@@ -470,6 +504,73 @@ const store = createStore({
       }
       catch (error) {
         return error;
+      }
+    },
+
+    getMySchemeswithStatus: async ({ state }) => {
+
+      let token = localStorage.getItem("token");
+
+      const filters = {
+        is_ex: 1,
+        is_widow: 1,
+        is_dap: 1,
+        is_student: 1
+      };
+
+      const queryParams = new URLSearchParams(filters).toString(); // Convert object to query string
+
+
+      try {
+        // const response = await fetch(`${GET_MY_SCHEMES}?${queryParams}`, {
+        //   method: "GET",
+        //   headers: {
+        //     Accept: "application/json",
+        //     "Content-Type": "application/json; charset=UTF-8",
+        //     Authorization: "Bearer " + token
+        //   },
+        // });
+        // const response = await fetch(`${GET_MY_SCHEMES}`, {
+        //   method: "GET",
+        //   headers: {
+        //     Accept: "application/json",
+        //     "Content-Type": "application/json; charset=UTF-8",
+        //     // Authorization: "Bearer " + token
+        //   },
+        //   auth: {
+        //     username: "TNeGA",
+        //     password: "aiml",
+        //   },
+        // });
+
+        const response = await axios.get(`${GET_MY_SCHEMES_WITH_STS}`, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json; charset=UTF-8",
+            // Authorization: "Bearer " + token,
+          },
+          auth: {
+            username: "TNeGA",
+            password: "aiml",
+          },
+        });
+
+        // const data = await response.json();
+        const data = await response.data;
+
+        if (data?.code == 401) {
+          f7.dialog.confirm(data?.message, 'Session Expire', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('authtabsId');
+            localStorage.removeItem('pds_transactions');
+            localStorage.removeItem('user_image');
+            f7.views.main.router.refreshPage();
+          });
+        }
+        return data;
+      }
+      catch (error) {
+        return error; // Indicate failure
       }
     },
 

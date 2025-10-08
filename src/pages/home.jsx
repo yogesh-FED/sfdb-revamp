@@ -123,35 +123,40 @@ const HomePage = (props) => {
   const checkUserLogout = async () => {
 
     f7.preloader.show();
-
-    const response = await store.dispatch('logout');
-
-    if (response.data) {
-      if (response.success) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('authtabsId');
-        localStorage.removeItem('pds_transactions');
-        localStorage.removeItem('user_image');
-        // location.reload();
-        //f7.views.main.router.refreshPage();
-        f7.views.main.router.navigate('/', {
-          clearPreviousHistory: true,
-          ignoreCache: true,
-        });
-      }
-      else {
-        // console.log(response.messeage);
-      }
-
-    }
-    else {
-      f7.toast.create({
-        text: 'Server Could not connect. Please try after sometime',
-        position: 'top',
-        closeTimeout: 2000,
-      }).open();
-    }
+    localStorage.removeItem('token');
+    f7.views.main.router.navigate('/', {
+      clearPreviousHistory: true,
+      ignoreCache: true,
+    });
     f7.preloader.hide();
+    // const response = await store.dispatch('logout');
+
+    // if (response.data) {
+    //   if (response.success) {
+    //     localStorage.removeItem('token');
+    //     localStorage.removeItem('authtabsId');
+    //     localStorage.removeItem('pds_transactions');
+    //     localStorage.removeItem('user_image');
+    //     // location.reload();
+    //     //f7.views.main.router.refreshPage();
+    //     f7.views.main.router.navigate('/', {
+    //       clearPreviousHistory: true,
+    //       ignoreCache: true,
+    //     });
+    //   }
+    //   else {
+    //     // console.log(response.messeage);
+    //   }
+
+    // }
+    // else {
+    //   f7.toast.create({
+    //     text: 'Server Could not connect. Please try after sometime',
+    //     position: 'top',
+    //     closeTimeout: 2000,
+    //   }).open();
+    // }
+    // f7.preloader.hide();
   }
   useEffect(() => {
     window.addEventListener('resize', handleResize);

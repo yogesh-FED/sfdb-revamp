@@ -19,7 +19,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
   const tabsId = localStorage.getItem('authtabsId');
 
   const [user_master, set_user] = useState(store.state.user);
-  const [user_image, set_user_image] = useState(store.state.user_image);
+  const [user_image, set_user_image] = useState('');
   const checkUserIfo = async () => {
     f7.preloader.show();
 
@@ -34,6 +34,9 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
       if (response?.Message === "Success") {
         set_user(response?.ApplicantInfo[0]);
         localStorage.setItem('user_image', response?.ApplicantInfo[0]?.Image);
+        const imgPath = response?.ApplicantInfo[0]?.Image;
+        const path = "https://makkalsevai.tn.gov.in/MakkalService/" + imgPath;
+        set_user_image(path);
       }
     }
     else {
@@ -412,6 +415,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
         checkUserIfo();
       }
       const image_path = localStorage.getItem('user_image');
+      console.log("image_path", image_path);
       const path = "https://makkalsevai.tn.gov.in/MakkalService/" + image_path;
       set_user_image(path);
 
