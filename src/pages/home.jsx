@@ -37,6 +37,8 @@ const HomePage = (props) => {
   const [is_language, set_language] = useState(f7.params.language);
   const language_data = useStore('language_data');
   const lang = useStore('lang');
+  const adharImg = useStore('aadharImg');
+  // console.log('adharImglink', adharImg);
   const [user_image, set_user_image] = useState(store.getters.user_image.value);
   const [userName, setUserName] = useState(store.state.user);
 
@@ -184,7 +186,7 @@ const HomePage = (props) => {
           <Button onClick={logout}>
             <Icon md="material:logout" ios="f7:lock_rotation_open" slot="media" className='text-white' />
           </Button>
-          <img src={user_image} alt="" className="user-logo" />
+          <img src={adharImg} alt="" className="user-logo" />
           {/* <img src="/assets/images/user.png" alt="" className="tnega-logo" /> */}
         </NavRight>
 

@@ -20,7 +20,9 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
 
   const [user_master, set_user] = useState(store.state.user);
   const [user_image, set_user_image] = useState('');
+  const adharImg = useStore('aadharImg');
   const checkUserIfo = async () => {
+    debugger;
     f7.preloader.show();
 
     const response = await store.dispatch('getPersonalInfo');
@@ -127,7 +129,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             <h3>Aadhaar Card Details</h3>
             <div className='grid grid-cols-2 large-grid-cols-2 details'>
               <p>Full Name</p>
-              <p>{user_master?.Name} <img src={user_image} alt="" className="user-profile-image" /></p>
+              <p>{user_master?.Name} <img src={adharImg} alt="" className="user-profile-image" /></p>
               <p>D.O.B</p>
               <p>{user_master?.Dob}</p>
               <p>Gender</p>
@@ -210,7 +212,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             <h3>Aadhaar Card Details</h3>
             <div className='grid grid-cols-2 large-grid-cols-2 details'>
               <p>முழு பெயர்</p>
-              <p>{user_master?.NameInTamil} <img src={user_image} alt="" className="user-profile-image" /></p>
+              <p>{user_master?.NameInTamil} <img src={adharImg} alt="" className="user-profile-image" /></p>
               <p>பிறந்த தேதி</p>
               <p>{user_master?.Dob}</p>
               <p>பாலினம்</p>
@@ -408,7 +410,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
 
 
   useEffect(() => {
-
+    debugger
     if (tabsId == "A" || !tabsId) {
 
       if (user_master.length === 0 || !user_master) {
@@ -420,7 +422,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
       set_user_image(path);
 
     }
-  }, [tabsId, language]);
+  }, [tabsId, language, user_master]);
 
 
   return (

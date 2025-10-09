@@ -95,7 +95,7 @@ const MainLayout = ({ children }) => {
   const [hideMenusInDetailPage, setHideMenusInDetailPage] = useState(false);
   const [f7router, setF7Router] = useState(null);
   useEffect(() => {
-   // debugger;
+    // debugger;
     f7ready(() => {
       const customRouter = f7.views?.main?.router;
       setF7Router(customRouter);

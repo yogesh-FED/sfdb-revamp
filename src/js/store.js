@@ -33,7 +33,8 @@ const decrypt = (value) => {
 
 
 // const SEND_LOGIN = API + "/makkal/login";
-const SEND_LOGIN = LOCAL_API + "/sendAadharSms";
+const SEND_LOGIN = LOGIN_API;
+// const SEND_LOGIN = LOCAL_API + "/sendAadharSms";
 // const SEND_OTP = API + "/makkal/validate-otp";
 const SEND_OTP = LOCAL_API + "/sendAadharSmsKyc";
 const GET_LATEST = API + "/makkal/get-latest";
@@ -79,10 +80,12 @@ const store = createStore({
     lang: isTamil ? 'TAMIL' : 'ENGLISH',
     language_data: isTamil ? tamil_contents : english_contents,
     tnFont: isTamil,
+    aadharImg: "",
   },
 
   getters: {
     lang: ({ state }) => state.lang,
+    aadharImg: ({ state }) => state.aadharImg,
     language_data: ({ state }) => state.language_data,
     tnFont: ({ state }) => state.tnFont,
     getLanguageWhenReload({ state }) {
@@ -136,6 +139,7 @@ const store = createStore({
     user_image({ state }) {
       return state.user_image;
     },
+
 
   },
   actions: {
@@ -401,6 +405,12 @@ const store = createStore({
 
         // const data = await response.json();
         const data = await response.data;
+        const imagePath = data?.ApplicantInfo?.[0]?.Image;
+        if (imagePath) {
+          const imageUrl = "https://makkalsevai.tn.gov.in/MakkalService/" + imagePath;
+          localStorage.setItem('user_image', imagePath);
+          state.aadharImg = imageUrl;
+        }
         if (data?.code == 401) {
           f7.dialog.confirm(data?.message, 'Session Expire', () => {
             localStorage.removeItem('token');
