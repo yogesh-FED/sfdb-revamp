@@ -4,8 +4,18 @@ import React, { useEffect, useState } from 'react';
 import { List, ListItem, AccordionContent, Block, Icon, f7, BlockTitle, Button, useStore } from 'framework7-react';
 import { width } from 'dom7';
 
-const PersonalInformationPage = ({ languageData, language, lang }) => {
-  // const languageData = useStore('language_data');
+const PersonalInformationPage = ({ languageData, language, lang, userImgPath }) => {
+
+  const [userAadharImg, setUserAadharImg] = useState('');
+  useEffect(() => {
+    const getUserImg = () => {
+      setUserAadharImg("https://makkalsevai.tn.gov.in/MakkalService/" + userImgPath);
+    }
+    if (userImgPath) {
+      getUserImg();
+    }
+  }, [userImgPath])
+
   const uidai = () => {
     window.open("https://uidai.gov.in/", "_blank");
   }
@@ -22,10 +32,9 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
   const [user_image, set_user_image] = useState('');
   const adharImg = useStore('aadharImg');
   const checkUserIfo = async () => {
-    debugger;
     f7.preloader.show();
-
-    const response = await store.dispatch('getPersonalInfo');
+    const uid = localStorage.getItem('uidNumber');
+    const response = await store.dispatch('getPersonalInfo', uid);
 
     if (response) {
       // if (response.success) {
@@ -33,12 +42,10 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
       //   localStorage.setItem('user_image', response.data?.user?.ekyc_data?.image);
 
       // }
-      if (response?.Message === "Success") {
-        set_user(response?.ApplicantInfo[0]);
-        localStorage.setItem('user_image', response?.ApplicantInfo[0]?.Image);
-        const imgPath = response?.ApplicantInfo[0]?.Image;
-        const path = "https://makkalsevai.tn.gov.in/MakkalService/" + imgPath;
-        set_user_image(path);
+      if (response?.message === "success") {
+        set_user(response?.Data);
+        store.state.familyIdfromPersonalInfo = response.Data.familyId;
+        localStorage.setItem('ufc', response?.Data?.familyId);
       }
     }
     else {
@@ -59,7 +66,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
       <div className='pad3 personalEng'>
         <div className='grid grid-cols-1 large-grid-cols-2 grid-gap'>
           <div className='personalWelcome'>
-            <p><b>Hello {user_master?.Name} ! </b></p>
+            <p><b>Hello {user_master?.NameByAadhaar} ! </b></p>
             <span>{languageData.banner_text}</span>
           </div>
           {/* <div className='personalWelcome'>
@@ -74,13 +81,13 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             <h3>Ration Card Details</h3>
             <div className='grid grid-cols-2 large-grid-cols-2 details'>
               <p>Full Name</p>
-              <p>{user_master?.Name}</p>
+              <p>{user_master?.name}</p>
               <p>D.O.B</p>
-              <p>{user_master?.Dob}</p>
+              <p>{user_master?.dob}</p>
               <p>Gender</p>
-              <p>{user_master?.Gender}</p>
+              <p>{user_master?.gender}</p>
               <p>Address</p>
-              <div>{user_master?.Address} <br />
+              <div>{user_master?.address} <br />
                 {user_master?.user?.pds_address?.address_line2 && (
                   <>
                     {user_master.user.pds_address.address_line2} <br />
@@ -129,11 +136,12 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             <h3>Aadhaar Card Details</h3>
             <div className='grid grid-cols-2 large-grid-cols-2 details'>
               <p>Full Name</p>
-              <p>{user_master?.Name} <img src={adharImg} alt="" className="user-profile-image" /></p>
+              <p>{user_master?.NameByAadhaar} <img src={userAadharImg} alt="" className="user-profile-image" /></p>
               <p>D.O.B</p>
-              <p>{user_master?.Dob}</p>
+              <p>{user_master?.dob}</p>
               <p>Gender</p>
-              <p>{user_master?.Gender}</p>
+              {/* <p>{user_master?.GenderByAadhaar === "2" ? 'M' : 'F'}</p> */}
+              <p>{user_master?.gender}</p>
               <p>Address</p>
               <p>{user_master?.AddressByAadhaar}</p>
             </div>
@@ -212,7 +220,7 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
             <h3>Aadhaar Card Details</h3>
             <div className='grid grid-cols-2 large-grid-cols-2 details'>
               <p>முழு பெயர்</p>
-              <p>{user_master?.NameInTamil} <img src={adharImg} alt="" className="user-profile-image" /></p>
+              <p>{user_master?.NameInTamil} <img src={userAadharImg} alt="" className="user-profile-image" /></p>
               <p>பிறந்த தேதி</p>
               <p>{user_master?.Dob}</p>
               <p>பாலினம்</p>
@@ -408,18 +416,17 @@ const PersonalInformationPage = ({ languageData, language, lang }) => {
     )
   }
 
-
+  useEffect(() => { }, [user_image]);
   useEffect(() => {
     debugger
     if (tabsId == "A" || !tabsId) {
 
       if (user_master.length === 0 || !user_master) {
         checkUserIfo();
+        const imgPath = localStorage.getItem("user_image");
+        const path = "https://makkalsevai.tn.gov.in/MakkalService/" + imgPath;
+        set_user_image(path);
       }
-      const image_path = localStorage.getItem('user_image');
-      console.log("image_path", image_path);
-      const path = "https://makkalsevai.tn.gov.in/MakkalService/" + image_path;
-      set_user_image(path);
 
     }
   }, [tabsId, language, user_master]);

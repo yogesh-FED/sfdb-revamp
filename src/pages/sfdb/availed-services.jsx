@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { List, ListItem, Icon, BlockTitle, Block, f7, Button } from 'framework7-react';
+import { List, ListItem, Icon, BlockTitle, Block, f7, Button, useStore } from 'framework7-react';
 
 const AvailedServicePage = ({ languageData, lang }) => {
   const store = f7.store;
@@ -13,22 +13,54 @@ const AvailedServicePage = ({ languageData, lang }) => {
   const [family_id, set_family_id] = useState();
   const [products, set_products] = useState([]);
   const [listItms, setListItms] = useState(true);
-  const checkServices = async () => {
-
+  const uid = localStorage.getItem('uidNumber');
+  const ufc = localStorage.getItem('ufc');
+  const familySchemes = async () => {
+    debugger
     f7.preloader.show();
     set_loading(true);
 
-    const response = await store.dispatch('getMyServices');
+    const response = await store.dispatch('getMyFamilySchemes', ufc);
 
-    if (response) {
-      if (response.success) {
+    if (response.statusCode === 200) {
+      // if (response.success) {
+      // set_individual_schemes(response.Data !== null ? response?.Data?.schemes : []);
+      set_family_schemes(response.Data !== null ? JSON.parse(response?.Data?.schemes) : []);
+      //   set_family_id(response.data.family_id);
 
-        set_individual_schemes(response.data.individual_schemes);
-        set_family_schemes(response.data.family_schemes);
-        set_family_id(response.data.family_id);
+      // }
+      // set_individual_schemes(response.data.individual_schemes);
+      // set_family_schemes(response.data.family_schemes);
+      // set_family_id(response.data.family_id);
 
-      }
+    }
+    else {
+      f7.toast.create({
+        text: 'Server Could not connect. Please try after sometime',
+        position: 'top',
+        closeTimeout: 2000,
+      }).open();
+    }
+    f7.preloader.hide();
+    set_loading(false);
+  }
+  const checkServices = async () => {
+    debugger
+    f7.preloader.show();
+    set_loading(true);
 
+    const response = await store.dispatch('getMyServices', uid);
+
+    if (response.statusCode === 200) {
+      // if (response.success) {
+      set_individual_schemes(response.Data !== null ? JSON.parse(response?.Data?.schemes) : []);
+      //   set_family_schemes(response.data.family_schemes);
+      //   set_family_id(response.data.family_id);
+
+      // }
+      // set_individual_schemes(response.data.individual_schemes);
+      // set_family_schemes(response.data.family_schemes);
+      // set_family_id(response.data.family_id);
 
     }
     else {
@@ -45,29 +77,31 @@ const AvailedServicePage = ({ languageData, lang }) => {
   useEffect(() => {
     if (tabsId == "C") {
       checkServices();
+      familySchemes();
     }
   }, [tabsId]);
 
-  const get_pds_transaction = async (family_id) => {
+  const get_pds_transaction = async () => {
+    debugger
     f7.preloader.show();
+    const response = await store.dispatch('getPdsData', uid);
+    if (response.statusCode === 200) {
+      // if (response.success) {
+      set_products(response?.Data?.transactionData.map((txtlist, i) => {
+        return txtlist?.txtlist;
+      }));
+      setListItms(true);
+      const sortedData = response?.Data?.transactionData.sort((a, b) => {
+        const dateA = a.transaction_date.slice(4) + a.transaction_date.slice(2, 4) + a.transaction_date.slice(0, 2);
+        const dateB = b.transaction_date.slice(4) + b.transaction_date.slice(2, 4) + b.transaction_date.slice(0, 2);
+        return dateB.localeCompare(dateA);
+      });
+      set_pds_transaction(sortedData);
+      // }
+      // else {
 
-    const response = await store.dispatch('getPdsData', family_id);
-
-    if (response.data) {
-      if (response.success) {
-        set_products(response?.data?.products);
-        setListItms(true);
-        const sortedData = response?.data?.pds_data?.transactionData.sort((a, b) => {
-          const dateA = a.transaction_date.slice(4) + a.transaction_date.slice(2, 4) + a.transaction_date.slice(0, 2);
-          const dateB = b.transaction_date.slice(4) + b.transaction_date.slice(2, 4) + b.transaction_date.slice(0, 2);
-          return dateB.localeCompare(dateA);
-        });
-        set_pds_transaction(sortedData);
-      }
-      else {
-
-        // console.log(response.messeage);
-      }
+      //   // console.log(response.messeage);
+      // }
 
     }
 
@@ -83,8 +117,8 @@ const AvailedServicePage = ({ languageData, lang }) => {
     return `${day}-${month}-${year}`;
   };
   const product_details = (id) => {
-
-    const product = products.find(item => item.product_id == id);
+    debugger
+    const product = products.find(item => item.product_id === id);
 
     return product ? product : null;
   }
@@ -112,19 +146,20 @@ const AvailedServicePage = ({ languageData, lang }) => {
                     </thead>
                     <tbody>
                ${pds?.txtlist?.map((list, index) => {
-      const t_product = product_details(list.product_id);
+      // const t_product = product_details(list.product_id);
+      // console.log('t_product', t_product);
       return `
                   <tr>
                       <td class="numeric-cell">${index + 1}</td>
                       <td class="label-cell">
-                       ${t_product ? (
+                       ${list ? (
           lang === "ENGLISH" ?
-            t_product.product_name :
-            t_product.product_name_tamil  // Assuming you have product_name_tamil in the product object
+            list.product_name :
+            list.product_name_tamil  // Assuming you have product_name_tamil in the product object
         ) : 'Product Not Found'  // Fallback in case t_product is null
         }</td>
                       <td class="numeric-cell">${list.distributed_quanitity}
-                       ${t_product ? t_product.product_unit : ''  // Fallback in case t_product is null
+                       ${list ? list.product_unit : ''  // Fallback in case t_product is null
         }
                       </td>
 
@@ -188,11 +223,12 @@ const AvailedServicePage = ({ languageData, lang }) => {
 
           lang === "ENGLISH" ? ( // Use ? for the true case
             <List dividersIos outlineIos strongIos className='scheme-list'>
-              {individual_schemes?.map((scheme, index) => (
-                <ListItem title={`${index + 1}. ${scheme.scheme_name}`} key={index}>
-                  {/* <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />  */}
-                </ListItem>
-              ))}
+              {individual_schemes.length === 0 ? <ListItem title="No Schemes Availed" key="0"></ListItem> :
+                individual_schemes?.map((scheme, index) => (
+                  <ListItem title={`${index + 1}. ${scheme.scheme_name}`} key={index}>
+                    {/* <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />  */}
+                  </ListItem>
+                ))}
             </List>
           ) : ( // Use : for the false case
             <List dividersIos outlineIos strongIos className='scheme-list'>
@@ -224,7 +260,7 @@ const AvailedServicePage = ({ languageData, lang }) => {
 
             <List dividersIos outlineIos strongIos className='scheme-list'>
               <ListItem title="1. PDS" key="1">
-                <Button fill className="padding-button" onClick={() => get_pds_transaction(family_id)}>Transaction</Button>
+                <Button fill className="padding-button" onClick={() => get_pds_transaction()}>Transaction</Button>
               </ListItem>
               {family_schemes?.map((scheme, index) => (
                 <ListItem title={
@@ -248,7 +284,7 @@ const AvailedServicePage = ({ languageData, lang }) => {
 
               <List dividersIos outlineIos strongIos className='scheme-list'>
                 <ListItem title="1. PDS" key="1">
-                  <Button fill className="padding-button" onClick={() => get_pds_transaction(family_id)}>Transaction</Button>
+                  <Button fill className="padding-button" onClick={() => get_pds_transaction()}>Transaction</Button>
                 </ListItem>
                 {family_schemes?.map((scheme, index) => (
                   <ListItem title={

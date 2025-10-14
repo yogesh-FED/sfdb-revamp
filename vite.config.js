@@ -44,6 +44,7 @@ export default async () => {
     },
     server: {
       host: true,
+      port: 5174,
       historyApiFallback: true,
       proxy: {
         '/api': {
@@ -51,6 +52,7 @@ export default async () => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
+
       }
     },
 

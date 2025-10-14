@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Block, Button, f7, Icon, Card, Badge } from 'framework7-react';
+import { Block, Button, f7, Icon, Card, Badge, useStore } from 'framework7-react';
 import { change, height } from 'dom7';
 
 const FamilyTreePage = ({ languageData, lang }) => {
@@ -17,25 +17,25 @@ const FamilyTreePage = ({ languageData, lang }) => {
   const [you, setYou] = useState("");
   const [pds_transaction, set_pds_transaction] = useState(pds);
   const [products, set_products] = useState([]);
-  // console.log('family_head', family_head);
+  const uid = localStorage.getItem('uidNumber');
   const checkFamilyInfo = async () => {
-
+    debugger
     f7.preloader.show();
     set_loading(true);
-    const response = await store.dispatch('getMyFamily');
+    const response = await store.dispatch('getMyFamily', uid);
 
     if (response) {
-      if (response.Message === "Success") {
+      if (response.statusCode === 200) {
         debugger
-        const f_head = response?.FamilyMembersDetail.find(item => item.RelationCode === "1");
-        const f_members = response?.FamilyMembersDetail.filter(item => item.RelationCode !== "1").sort((a, b) => a.Age - b.Age); // Sort by user_age
-        const t = response?.ApplicantInfo[0].makkalId;
-        const member = f_members.find((m) => m.MakkalId === t);
-        setYou(member);
+        const f_head = response?.Data?.find(item => item.relationCode === "1");
+        const f_members = response?.Data.filter(item => item.relationCode !== "1").sort((a, b) => a.Age - b.Age); // Sort by user_age
+        // const t = response?.ApplicantInfo[0].makkalId;
+        // const member = f_members.find((m) => m.MakkalId === t);
+        // setYou(member);
         // Step 3: Insert relation names into the filtered family heads
         set_members(f_members);
         set_family_head(f_head);
-        set_current_user(response?.ApplicantInfo[0].makkalId);
+        // set_current_user(response?.ApplicantInfo[0].makkalId);
         // set_relations(response.data?.relations);
         // set_products(response.data?.products);
       }
@@ -74,9 +74,9 @@ const FamilyTreePage = ({ languageData, lang }) => {
     // const family_relation = family_head?.find(item => item.RelationCode === code);
     return (
       lang === "ENGLISH" ? (
-        <span>{family_head?.RelationName}</span>
+        <span>{family_head?.relationName}</span>
       ) : (
-        <span>{family_head?.RelationName}</span>
+        <span>{family_head?.relationName}</span>
       )
     )
   }
@@ -112,7 +112,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
               <center>
                 <div className="photo-container">
                   <div className='containerTop'>
-                    {family_head?.Sex === "M" ? (
+                    {family_head?.sex === "M" ? (
                       <img src="/assets/images/male_new.png" alt="Male Passport Photo" className="flex1" />
                     ) : (
                       // <img src="/assets/images/female_new.png" alt="Female Passport Photo" className="" />
@@ -120,15 +120,15 @@ const FamilyTreePage = ({ languageData, lang }) => {
                     )}
                     <p className='flex10'>
                       {lang === "ENGLISH" ?
-                        (family_head?.NameInEnglish)
+                        (family_head?.nameInEnglish)
                         :
-                        (family_head?.NameInTamil)
+                        (family_head?.nameInTamil)
                       }
                       {family_head?.makkal_id == current_user ?
                         <Badge color="green">You</Badge>
                         : ""}
                     </p>
-                    <p className='marR2'> {check_relation(family_head?.RelationCode)}</p>
+                    <p className='marR2'> {check_relation(family_head?.relationCode)}</p>
                   </div>
 
                   <div className='family-members-details'>
@@ -144,9 +144,9 @@ const FamilyTreePage = ({ languageData, lang }) => {
                     </p> */}
                     {lang === "ENGLISH" ?
 
-                      <p>{family_head?.Sex}, {family_head?.Age} {languageData?.age}</p>
+                      <p>Gender : {family_head?.sex} <br /> Age :{family_head?.age} {languageData?.age}</p>
                       :
-                      <p>{family_head?.Sex}, {family_head?.Age} {languageData?.age} </p>
+                      <p>Gender : {family_head?.sex} Age : {family_head?.age} {languageData?.age} </p>
 
                     }
 
@@ -207,16 +207,16 @@ const FamilyTreePage = ({ languageData, lang }) => {
                 <center>
                   <div className="photo-container">
                     <div className='containerTop'>
-                      {member?.Sex === "M" ? (
+                      {member?.sex === "M" ? (
                         <img src="/assets/images/male.png" alt="Male Passport Photo" className="passport-photo" />
                       ) : (
                         <img src="/assets/images/female.png" alt="Female Passport Photo" className="passport-photo" />
                       )}
                       <p className='flex10'>
                         {lang === "ENGLISH" ?
-                          (member?.NameInEnglish)
+                          (member?.nameInEnglish)
                           :
-                          (member?.NameInTamil)
+                          (member?.nameInTamil)
                         }
                       </p>
                       <p>
@@ -229,9 +229,9 @@ const FamilyTreePage = ({ languageData, lang }) => {
 
                       {lang === "ENGLISH" ?
 
-                        <p>{member?.Sex}, {member?.Age} {languageData?.age}</p>
+                        <p>Gender : {member?.sex} <br />Age : {member?.age} {languageData?.age}</p>
                         :
-                        <p>{member?.Sex}, {member?.Age} {languageData?.age} </p>
+                        <p>Gender : {member?.sex}<br /> Age :{member?.age} {languageData?.age} </p>
 
                       }
 
@@ -276,13 +276,13 @@ const FamilyTreePage = ({ languageData, lang }) => {
               {lang === "ENGLISH" ?
                 <tr>
                   <td className="label-cell">1</td>
-                  <td className="label-cell">{family_head?.NameInEnglish}
+                  <td className="label-cell">{family_head?.nameInEnglish}
                     {members?.makkal_id == current_user ?
                       <Badge color="green">You</Badge>
                       : ""}
                   </td>
-                  <td className="label-cell">{family_head?.Sex}</td>
-                  <td className="label-cell">{family_head?.Age}</td>
+                  <td className="label-cell">{family_head?.sex}</td>
+                  <td className="label-cell">{family_head?.age}</td>
                   <td className="label-cell">{check_relation(family_head?.RelationName)}</td>
                 </tr>
                 :
@@ -293,8 +293,8 @@ const FamilyTreePage = ({ languageData, lang }) => {
                       <Badge color="green">You</Badge>
                       : ""}
                   </td>
-                  <td className="label-cell">{family_head?.Sex}</td>
-                  <td className="label-cell">{family_head?.Age}</td>
+                  <td className="label-cell">{family_head?.sex}</td>
+                  <td className="label-cell">{family_head?.age}</td>
                   <td className="label-cell">{check_relation(family_head?.RelationName)}</td>
                 </tr>
               }
@@ -302,27 +302,27 @@ const FamilyTreePage = ({ languageData, lang }) => {
                 lang === "ENGLISH" ?
                   <tr key={index}>
                     <td className="label-cell">{index + 2}</td>
-                    <td className="label-cell">{member?.NameInEnglish}
+                    <td className="label-cell">{member?.nameInEnglish}
                       {member?.MakkalId == current_user ?
                         <Badge color="green">You</Badge>
                         : ""}
                     </td>
-                    <td className="label-cell">{member?.Sex}</td>
-                    <td className="label-cell">{member?.Age}</td>
-                    <td className="label-cell">{member?.RelationName}</td>
+                    <td className="label-cell">{member?.sex}</td>
+                    <td className="label-cell">{member?.age}</td>
+                    <td className="label-cell">{member?.relationName}</td>
 
                   </tr>
                   :
                   <tr key={index}>
                     <td className="label-cell">{index + 2}</td>
-                    <td className="label-cell">{member?.NameInTamil}
+                    <td className="label-cell">{member?.nameInTamil}
                       {member?.MakkalId == current_user ?
                         <Badge color="green">You</Badge>
                         : ""}
                     </td>
-                    <td className="label-cell">{member?.Sex}</td>
-                    <td className="label-cell">{member?.Age}</td>
-                    <td className="label-cell">{member?.RelationName}</td>
+                    <td className="label-cell">{member?.sex}</td>
+                    <td className="label-cell">{member?.age}</td>
+                    <td className="label-cell">{member?.relationName}</td>
 
                   </tr>
               )

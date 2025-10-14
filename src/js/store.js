@@ -22,12 +22,16 @@ const encrypt = (value) => {
   }).toString();
 };
 
-const decrypt = (value) => {
+const decrypt = async (value) => {
   const decrypted = CryptoJS.AES.decrypt(value, key, {
     iv: iv,
-    padding: CryptoJS.pad.ZeroPadding,
+    // padding: CryptoJS.pad.ZeroPadding,
+    padding: CryptoJS.pad.Pkcs7
   });
-  return decrypted.toString(CryptoJS.enc.Utf8);
+  const decryptedStr = decrypted.toString(CryptoJS.enc.Utf8);
+  const cleanStr = decryptedStr.trim().replace(/\0/g, '');
+  console.log("Decrypted string:", cleanStr);
+  return JSON.parse(cleanStr);
 };
 
 
@@ -36,10 +40,11 @@ const decrypt = (value) => {
 const SEND_LOGIN = LOGIN_API;
 // const SEND_LOGIN = LOCAL_API + "/sendAadharSms";
 // const SEND_OTP = API + "/makkal/validate-otp";
-const SEND_OTP = LOCAL_API + "/sendAadharSmsKyc";
+// const SEND_OTP = LOCAL_API + "/sendAadharSmsKyc";
+const SEND_OTP = OTP_VERIFY_API;
 const GET_LATEST = API + "/makkal/get-latest";
 // const GET_PERSONAL_INFO = API + "/makkal/get-master-data";
-const GET_PERSONAL_INFO = LOCAL_API + "/getApplicantInfo";
+const GET_PERSONAL_INFO = LOCAL_API + "/getPersonalInfo";
 // const GET_MY_SCHEMES = API + "/makkal/get-my-schemes";
 const GET_MY_SCHEMES = LOCAL_API + "/getAllSchemes";
 const GET_MY_SCHEMES_WITH_STS = LOCAL_API + "/getAllSchemesWithStatus";
@@ -48,9 +53,12 @@ const GET_DEPARTMENT_SCHEMES = LOCAL_API + "/getMakkalSchemesByDepartment";
 const GET_CHATBOT_SCHEMES = API + "/makkal/get-chatbot-schemes";
 const GET_MY_FAMILY_SCHEMES = API + "/makkal/get-my-family-schemes";
 // const GET_MY_FAMILY = API + "/makkal/get-my-family";
-const GET_MY_FAMILY = LOCAL_API + "/getApplicantInfo";
-const GET_PDS_DATA = API + "/makkal/get-pds-data";
-const GET_MY_SERVICES = API + "/makkal/get-my-services";
+const GET_MY_FAMILY = LOCAL_API + "/getFamilyInfo";
+// const GET_PDS_DATA = API + "/makkal/get-pds-data";
+const GET_PDS_DATA = LOCAL_API + "/fetchPdsSalesData";
+// const GET_MY_SERVICES = API + "/makkal/get-my-services";
+const GET_MY_SERVICES = LOCAL_API + "/getIndividualSchemeDetailsByUid";
+const GET_MY_FAMILY_SERVICES = LOCAL_API + "/getfamilySchemeDetailsByUfc";
 const LOGOUT = API + "/makkal/logout";
 const GET_ALL_SCHEMES = API + "/makkal/get-all-schemes";
 const CHECK_MY_ELIGIBILITY = API + "/makkal/check-eligibility";
@@ -81,10 +89,14 @@ const store = createStore({
     language_data: isTamil ? tamil_contents : english_contents,
     tnFont: isTamil,
     aadharImg: "",
+    uidNumber: '',
+    familyIdfromPersonalInfo: '',
   },
 
   getters: {
     lang: ({ state }) => state.lang,
+    ufcId: ({ state }) => state.familyIdfromPersonalInfo,
+    uidNumber: ({ state }) => state.uidNumber,
     aadharImg: ({ state }) => state.aadharImg,
     language_data: ({ state }) => state.language_data,
     tnFont: ({ state }) => state.tnFont,
@@ -238,7 +250,11 @@ const store = createStore({
         return data;
 
       } catch (error) {
-        alert(error);
+        f7.toast.create({
+          text: error + 'Please Try Again After Sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
       }
     },
 
@@ -282,10 +298,12 @@ const store = createStore({
           }
         );
         const data = response.data;
-
+        // state.aadharImg = data.userImagePath;
+        localStorage.setItem('user_image', data.userImagePath);
         return data;
 
       } catch (error) {
+        alert(error);
         return error;
       }
     },
@@ -381,17 +399,12 @@ const store = createStore({
     },
 
 
-    getPersonalInfo: async ({ state }) => {
-      const uid = localStorage.getItem('uid');
-      const getPersonalInfoPayload = {
-        uid: uid,
-        deptId: 1,
-        schemeId: null
-      };
+    getPersonalInfo: async ({ state }, uid) => {
       let token = localStorage.getItem("token");
-      const queryParams = new URLSearchParams(getPersonalInfoPayload).toString();
       try {
-        const response = await axios.get(`${GET_PERSONAL_INFO}?${queryParams}`, {
+        const response = await axios.post(`${GET_PERSONAL_INFO}`, {
+          uid: encrypt(uid),
+        }, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
@@ -405,12 +418,13 @@ const store = createStore({
 
         // const data = await response.json();
         const data = await response.data;
-        const imagePath = data?.ApplicantInfo?.[0]?.Image;
-        if (imagePath) {
-          const imageUrl = "https://makkalsevai.tn.gov.in/MakkalService/" + imagePath;
-          localStorage.setItem('user_image', imagePath);
-          state.aadharImg = imageUrl;
-        }
+        const decryptPersonalInfoData = await decrypt(data.data);
+        // const imagePath = data?.ApplicantInfo?.[0]?.Image;
+        // if (imagePath) {
+        //   const imageUrl = "https://makkalsevai.tn.gov.in/MakkalService/" + imagePath;
+        //   localStorage.setItem('user_image', imagePath);
+        //   state.aadharImg = imageUrl;
+        // }
         if (data?.code == 401) {
           f7.dialog.confirm(data?.message, 'Session Expire', () => {
             localStorage.removeItem('token');
@@ -420,8 +434,7 @@ const store = createStore({
             f7.views.main.router.refreshPage();
           });
         }
-
-        return data;
+        return decryptPersonalInfoData;
       }
       catch (error) {
         return error; // Indicate failure
@@ -691,21 +704,35 @@ const store = createStore({
       }
     },
 
-    getMyServices: async ({ state }) => {
-
+    getMyServices: async ({ state }, uid) => {
+      debugger
       let token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(GET_MY_SERVICES, {
-          method: "GET",
+        // const response = await fetch(GET_MY_SERVICES, {
+        //   method: "GET",
+        //   headers: {
+        //     Accept: "application/json",
+        //     "Content-Type": "application/json; charset=UTF-8",
+        //     Authorization: "Bearer " + token
+        //   },
+        // });
+        const response = await axios.post(`${GET_MY_SERVICES}`, {
+          "uid": encrypt(uid),
+        }, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
-            Authorization: "Bearer " + token
+            // Authorization: "Bearer " + token,
+          },
+          auth: {
+            username: "TNeGA",
+            password: "aiml",
           },
         });
 
-        const data = await response.json();
+        // const data = await response.json();
+        const data = await decrypt(response.data.data);
         if (data?.code == 401) {
           f7.dialog.confirm(data?.message, 'Session Expire', () => {
             localStorage.removeItem('token');
@@ -722,24 +749,39 @@ const store = createStore({
       }
     },
 
-    getMyFamilySchemes: async ({ state }, id) => {
+    getMyFamilySchemes: async ({ state }, ufc) => {
 
       let token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(GET_MY_FAMILY_SCHEMES, {
-          method: "POST",
+        // const response = await fetch(GET_MY_FAMILY_SCHEMES, {
+        //   method: "POST",
+        //   headers: {
+        //     Accept: "application/json",
+        //     "Content-Type": "application/json; charset=UTF-8",
+        //     Authorization: "Bearer " + token
+        //   },
+        //   body: JSON.stringify({
+        //     makkal_id: id
+        //   }),
+        // });
+
+        const response = await axios.post(`${GET_MY_FAMILY_SERVICES}`, {
+          "ufc": ufc,
+        }, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
-            Authorization: "Bearer " + token
+            // Authorization: "Bearer " + token,
           },
-          body: JSON.stringify({
-            makkal_id: id
-          }),
+          auth: {
+            username: "TNeGA",
+            password: "aiml",
+          },
         });
 
-        const data = await response.json();
+        const data = await decrypt(response.data.data);
+        console.log(data, 'family services');
         if (data?.code == 401) {
           f7.dialog.confirm(data?.message, 'Session Expire', () => {
             localStorage.removeItem('token');
@@ -787,8 +829,8 @@ const store = createStore({
       }
     },
 
-    getMyFamily: async ({ state }) => {
-
+    getMyFamily: async ({ state }, uid) => {
+      debugger
       // let token = localStorage.getItem("token");
 
       try {
@@ -800,15 +842,10 @@ const store = createStore({
         //     Authorization: "Bearer " + token
         //   },
         // });
-        const uid = localStorage.getItem('uid');
-        const getPersonalInfoPayload = {
-          uid: uid,
-          deptId: 1,
-          schemeId: null
-        };
         let token = localStorage.getItem("token");
-        const queryParams = new URLSearchParams(getPersonalInfoPayload).toString();
-        const response = await axios.get(`${GET_MY_FAMILY}?${queryParams}`, {
+        const response = await axios.post(`${GET_MY_FAMILY}`, {
+          "uid": encrypt(uid),
+        }, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
@@ -821,6 +858,7 @@ const store = createStore({
         });
         // const data = await response.json();
         const data = await response.data;
+        const decryptedData = await decrypt(data.data);
         if (data?.code == 401) {
           f7.dialog.confirm(data?.message, 'Session Expire', () => {
             localStorage.removeItem('token');
@@ -830,32 +868,49 @@ const store = createStore({
             f7.views.main.router.refreshPage();
           });
         }
-        return data;
+        return decryptedData;
       }
       catch (error) {
         return error; // Indicate failure
       }
     },
 
-    getPdsData: async ({ state }, family_id) => {
-
+    getPdsData: async ({ state }, formData) => {
+      debugger
       let token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(GET_PDS_DATA, {
-          method: "POST",
+        // const response = await fetch(GET_PDS_DATA, {
+        //   method: "POST",
+        //   headers: {
+        //     Accept: "application/json",
+        //     "Content-Type": "application/json; charset=UTF-8",
+        //     Authorization: "Bearer " + token
+        //   },
+        //   body: JSON.stringify({
+        //     family_id: family_id
+        //   }),
+        // });
+        const response = await axios.post(`${GET_PDS_DATA}`
+          , {
+            uid: encrypt(formData),
+            // isConsent: formData.saveConsent,
+          }, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
-            Authorization: "Bearer " + token
+            // Authorization: "Bearer " + token,
           },
-          body: JSON.stringify({
-            family_id: family_id
-          }),
+          auth: {
+            username: "TNeGA",
+            password: "aiml",
+          },
         });
 
 
-        const data = await response.json();
+        // const data = await response.json();
+        const data = await decrypt(response.data.data);
+
         if (data?.code == 401) {
           f7.dialog.confirm(data?.message, 'Session Expire', () => {
             localStorage.removeItem('token');
@@ -868,6 +923,7 @@ const store = createStore({
         return data;
       }
       catch (error) {
+        console.log(error);
         return error; // Indicate failure
       }
     },

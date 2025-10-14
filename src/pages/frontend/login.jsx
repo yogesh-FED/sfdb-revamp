@@ -286,8 +286,7 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
   const formSubmit = async (e) => {
 
     e.preventDefault();
-
-    localStorage.setItem('uid', formData.aadhar);
+    localStorage.setItem('uidNumber', formData.aadhar);
     const newErrors = {};
     if (is_login_with == "aadhar") {
 
@@ -413,7 +412,7 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
         // if (response.success == true) {
         if (response.status == "OK") {
           localStorage.setItem('token', response.data?.refreshToken);
-          // localStorage.setItem('user_image', response.data.user_image);
+          localStorage.setItem('user_image', response.data.userImagePath);
           // location.reload();
           //f7.views.main.router.refreshPage();
           f7.views.main.router.navigate('/home/', {

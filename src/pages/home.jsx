@@ -31,7 +31,8 @@ import EligibiltyFilter from './sfdb/EligibiltyFilter';
 
 
 const HomePage = (props) => {
-
+  const userImgPath = localStorage.getItem('user_image');
+  const topLogoImg = "https://makkalsevai.tn.gov.in/MakkalService/" + userImgPath;
   const store = f7.store;
 
   const [is_language, set_language] = useState(f7.params.language);
@@ -54,6 +55,7 @@ const HomePage = (props) => {
   }, [user_image]);
 
   const getUserName = async () => {
+    debugger;
     const response = await store.dispatch('getPersonalInfo');
 
     if (response) {
@@ -126,6 +128,14 @@ const HomePage = (props) => {
 
     f7.preloader.show();
     localStorage.removeItem('token');
+    localStorage.removeItem('authtabsId');
+    localStorage.removeItem('pds_transactions');
+    localStorage.removeItem('user_image');
+    localStorage.removeItem('f7router-view_main-history');
+    localStorage.removeItem('language');
+    localStorage.removeItem('ufc');
+    localStorage.removeItem('uidNumber');
+    localStorage.removeItem('user_image');
     f7.views.main.router.navigate('/', {
       clearPreviousHistory: true,
       ignoreCache: true,
@@ -186,7 +196,7 @@ const HomePage = (props) => {
           <Button onClick={logout}>
             <Icon md="material:logout" ios="f7:lock_rotation_open" slot="media" className='text-white' />
           </Button>
-          <img src={adharImg} alt="" className="user-logo" />
+          <img src={topLogoImg} alt="" className="user-logo" />
           {/* <img src="/assets/images/user.png" alt="" className="tnega-logo" /> */}
         </NavRight>
 
@@ -255,7 +265,7 @@ const HomePage = (props) => {
 
         <Tab id="tab-a" tabActive={is_tabs_id == "A"} className='clearMar'>
 
-          <PersonalInformationPage languageData={language_data} language={is_language} lang={lang}></PersonalInformationPage>
+          <PersonalInformationPage userImgPath={userImgPath} languageData={language_data} language={is_language} lang={lang}></PersonalInformationPage>
 
         </Tab>
         <Tab id="tab-b" tabActive={is_tabs_id == "B"} className='clearMar wid75'>
