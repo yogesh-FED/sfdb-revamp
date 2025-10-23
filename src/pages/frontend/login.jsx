@@ -3,9 +3,20 @@ import { Block, List, ListItem, Button, ListInput, f7, Page, Navbar, NavLeft, Na
 import loginLeftImg from '../../assets/images/landing-small-bg.jpg';
 import TopNavbar from '../TopNavbar';
 import { CustomNavbar } from '../CustomNavbar';
+import * as CryptoJS from "crypto-js";
 
 
 const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => {
+  const key = CryptoJS.enc.Latin1.parse("t700#umsF@db0705");
+  const iv = CryptoJS.enc.Latin1.parse("i700#umsF@db0705");
+
+  const encrypt = (value) => {
+    return CryptoJS.AES.encrypt(value, key, {
+      iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.ZeroPadding,
+    }).toString();
+  };
   const [hideNav, setHideNav] = useState(false);
   const getSwitchedLang = useStore('getLanguageWhenReload');
   useEffect(() => {
@@ -283,6 +294,15 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
   // old otp submit
 
   //old login submit
+  const showCustomLoader = () => {
+    const dialog = f7.dialog.create({
+      text: '<div class="custom-loader blinking-text">Please wait...</div>',
+      cssClass: 'custom-loader-dialog',
+      closeByBackdropClick: false,
+    });
+    dialog.open();
+    return dialog;
+  };
   const formSubmit = async (e) => {
 
     e.preventDefault();
@@ -332,47 +352,52 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
 
       set_login_error("");
 
-      f7.preloader.show();
+      const loader = showCustomLoader();
+      try {
+        const response = await store.dispatch('sendLogin', formData);
 
-      const response = await store.dispatch('sendLogin', formData);
+        if (response) {
+          // if (response.success == true) {
+          if (response.status == "OK") {
+            // if (response.data?.data?.code == 500) {
+            if (response.data?.code == 500) {
+              set_login_error("Internal Server Error UIDAI");
+              loader.close();
+              return true;
+            }
+            set_login_screen(2);
 
-      if (response) {
-        // if (response.success == true) {
-        if (response.status == "OK") {
-          // if (response.data?.data?.code == 500) {
-          if (response.data?.code == 500) {
-            set_login_error("Internal Server Error UIDAI");
-            f7.preloader.hide();
-            return true;
-          }
-          set_login_screen(2);
-
-          setFormData(prevState => ({
-            ...prevState,
-            // txn: response.data.data.data.txn
-            txn: response.data?.txn
-          }));
-          setCountdown(120);           // Reset countdown to 10
-          // Start countdown
-          startTimer();
-        }
-        else {
-          if (response.message !== null) {
-            set_login_error("Internal Server Error")
+            setFormData(prevState => ({
+              ...prevState,
+              // txn: response.data.data.data.txn
+              txn: response.data?.txn
+            }));
+            setCountdown(120);           // Reset countdown to 10
+            // Start countdown
+            startTimer();
           }
           else {
-            set_login_error(response.message)
+            if (response.message !== null) {
+              set_login_error("Internal Server Error")
+            }
+            else {
+              set_login_error(response.message)
+            }
+
           }
 
         }
+        else {
 
+          set_login_error("Server Could not connect");
+
+        }
+      } catch (error) {
+        console.error("Error during login:", error);
       }
-      else {
-
-        set_login_error("Server Could not connect");
-
+      finally {
+        loader.close();
       }
-      f7.preloader.hide();
     }
 
     // f7.store.dispatch('sendLogin', formData);
@@ -402,38 +427,56 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
 
       set_login_error("");
 
-      f7.preloader.show();
+      const loader = showCustomLoader();
+      try {
+        const response = await store.dispatch('sendOtp', formData);
 
-      const response = await store.dispatch('sendOtp', formData);
+        if (response) {
+          debugger;
 
-      if (response) {
-        debugger;
+          // if (response.success == true) {
+          if (response.status == "OK") {
+            localStorage.setItem('token', response.data?.refreshToken);
+            localStorage.setItem('user_image', response.data.userImagePath);
+            // location.reload();
+            //f7.views.main.router.refreshPage();
+            const respData = response.data;
+            const getTokenPayload = {
+              name: encrypt(respData.name) || '',
+              address: encrypt(respData.address) || '',
+              district: encrypt(respData.district) || '',
+              gender: encrypt(respData.gender) || '',
+              dob: encrypt(respData.dob) || '',
+              userImagePath: encrypt(respData.userImagePath) || '',
+              state: encrypt(respData.state) || '',
+              formData: formData
+            }
+            const tokenRepsonse = await store.dispatch('getToken', getTokenPayload);
+            console.log(tokenRepsonse, 'tokenRepsonse');
+            f7.views.main.router.navigate('/home/', {
+              clearPreviousHistory: true,
+              ignoreCache: true,
+            });
+            f7.popup.close();
+          }
+          else {
 
-        // if (response.success == true) {
-        if (response.status == "OK") {
-          localStorage.setItem('token', response.data?.refreshToken);
-          localStorage.setItem('user_image', response.data.userImagePath);
-          // location.reload();
-          //f7.views.main.router.refreshPage();
-          f7.views.main.router.navigate('/home/', {
-            clearPreviousHistory: true,
-            ignoreCache: true,
-          });
-          f7.popup.close();
+            set_login_error(response.message.error)
+
+          }
         }
         else {
 
-          set_login_error(response.message.error)
+
+          set_login_error("Server Could not connect");
 
         }
+      } catch (error) {
+        console.error("Error during OTP submission:", error);
       }
-      else {
-
-
-        set_login_error("Server Could not connect");
-
+      finally {
+        loader.close();
       }
-      f7.preloader.hide();
 
     }
 

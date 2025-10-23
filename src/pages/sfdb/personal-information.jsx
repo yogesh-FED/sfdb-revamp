@@ -31,36 +31,54 @@ const PersonalInformationPage = ({ languageData, language, lang, userImgPath }) 
   const [user_master, set_user] = useState(store.state.user);
   const [user_image, set_user_image] = useState('');
   const adharImg = useStore('aadharImg');
+
+  const showCustomLoader = () => {
+    const dialog = f7.dialog.create({
+      text: '<div class="custom-loader blinking-text">Please wait while we fetch your personal information...</div>',
+      cssClass: 'custom-loader-dialog',
+      closeByBackdropClick: false,
+    });
+    dialog.open();
+    return dialog;
+  };
   const checkUserIfo = async () => {
-    f7.preloader.show();
+    debugger;
     const uid = localStorage.getItem('uidNumber');
-    const response = await store.dispatch('getPersonalInfo', uid);
+    const loader = showCustomLoader();
+    try {
+      const response = await store.dispatch('getPersonalInfo', uid);
 
-    if (response) {
-      // if (response.success) {
-      //   set_user(response.data);
-      //   localStorage.setItem('user_image', response.data?.user?.ekyc_data?.image);
-
-      // }
-      if (response?.message === "success") {
-        set_user(response?.Data);
-        store.state.familyIdfromPersonalInfo = response.Data.familyId;
-        localStorage.setItem('ufc', response?.Data?.familyId);
+      if (response) {
+        if (response?.message === "success") {
+          set_user(response?.Data);
+          store.state.familyIdfromPersonalInfo = response.Data.familyId;
+          localStorage.setItem('ufc', response?.Data?.familyId);
+        } else {
+          f7.toast.create({
+            text: response?.message || 'Something went wrong',
+            position: 'top',
+            closeTimeout: 2000,
+          }).open();
+        }
+      } else {
+        f7.toast.create({
+          text: 'Server could not connect. Please try after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
       }
-    }
-    else {
-
+    } catch (error) {
+      console.error('Error fetching personal info:', error);
       f7.toast.create({
-        text: 'Server Could not connect. Please try after sometime',
+        text: 'An unexpected error occurred.',
         position: 'top',
         closeTimeout: 2000,
       }).open();
-
-      console.log(response)
-
+    } finally {
+      loader.close();
     }
-    f7.preloader.hide();
-  }
+  };
+
   const personal_english = () => {
     return (
       <div className='pad3 personalEng'>

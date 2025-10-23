@@ -41,6 +41,7 @@ const SEND_LOGIN = LOGIN_API;
 // const SEND_LOGIN = LOCAL_API + "/sendAadharSms";
 // const SEND_OTP = API + "/makkal/validate-otp";
 // const SEND_OTP = LOCAL_API + "/sendAadharSmsKyc";
+const GET_TOKEN = LOCAL_API + "/getToken";
 const SEND_OTP = OTP_VERIFY_API;
 const GET_LATEST = API + "/makkal/get-latest";
 // const GET_PERSONAL_INFO = API + "/makkal/get-master-data";
@@ -206,7 +207,6 @@ const store = createStore({
     },
 
     sendLogin: async ({ state }, formData) => {
-      f7.preloader.show();
       state.login_error = "";
       // const secureData = {
       //   // aadhar: formData.aadhar ? CryptoJS.AES.encrypt(formData.aadhar, key, { iv: iv}).toString() : "",
@@ -308,6 +308,44 @@ const store = createStore({
       }
     },
 
+    getToken: async ({ state }, getTokenPayload) => {
+      debugger
+      try {
+        const response = await axios.post(
+          `${GET_TOKEN}`,
+          {
+            aadharNo: encrypt(getTokenPayload.formData.aadhar),
+            mod: encrypt(getTokenPayload.formData.otp),
+            txn: getTokenPayload.formData.txn,
+            isConsent: getTokenPayload.formData.saveConsent,
+            name: getTokenPayload.name || '',
+            state: getTokenPayload.state || '',
+            district: getTokenPayload.district || '',
+            gender: getTokenPayload.gender || '',
+            dob: getTokenPayload.dob || '',
+            address: getTokenPayload.address || '',
+            userImagePath: getTokenPayload.userImagePath || '',
+          },
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json; charset=UTF-8",
+            },
+            auth: {
+              username: "TNeGA",
+              password: "aiml",
+            },
+          }
+        );
+        const data = response.data;
+        console.log(data, 'get token response');
+        return data;
+
+      } catch (error) {
+        alert(error);
+        return error;
+      }
+    },
     //old otp
     // sendOtp: async ({ state }, formData) => {
     //   const secureData = {

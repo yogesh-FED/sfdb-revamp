@@ -3110,3 +3110,35 @@ input[type="search"]::placeholder {
 .categorySection li .item-input-wrap.input-dropdown select {
   width: 100%;
 }
+
+.dialog-backdrop.backdrop-in {
+  background: rgba(0, 0, 0, 0.85) !important;
+}
+
+.custom-loader-dialog .dialog-inner {
+  padding: 0.2rem;
+  text-align: center;
+  background-color: transparent;
+  color: #fff;
+}
+
+.custom-loader-dialog {
+  border-radius: 5px;
+  background: transparent;
+}
+
+.blinking-text {
+  animation: blink 1.2s ease-in-out infinite;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}

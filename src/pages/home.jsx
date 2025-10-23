@@ -51,29 +51,32 @@ const HomePage = (props) => {
     const path = "https://makkalsevai.tn.gov.in/MakkalService/" + image_path;
 
     set_user_image(path);
-    getUserName();
+    // getUserName();
   }, [user_image]);
 
-  const getUserName = async () => {
-    debugger;
-    const response = await store.dispatch('getPersonalInfo');
+  // const getUserName = async () => {
+  //   debugger;
+  //   f7.preloader.show();
+  //   const uid = localStorage.getItem('uidNumber');
+  //   const response = await store.dispatch('getPersonalInfo', uid);
 
-    if (response) {
-      debugger;
-      if (response.Message === "Success") {
-        setUserName(response?.ApplicantInfo[0]?.Name);
-      }
-    }
-    else {
+  //   if (response) {
+  //     debugger;
+  //     if (response.Message === "Success") {
+  //       setUserName(response?.ApplicantInfo[0]?.Name);
+  //     }
+  //   }
+  //   else {
 
-      f7.toast.create({
-        text: 'Server Could not connect. Please try after sometime',
-        position: 'top',
-        closeTimeout: 2000,
-      }).open();
+  //     f7.toast.create({
+  //       text: 'Server Could not connect. Please try after sometime',
+  //       position: 'top',
+  //       closeTimeout: 2000,
+  //     }).open();
 
-    }
-  }
+  //   }
+  //   f7.preloader.hide();
+  // }
 
   useEffect(() => {
     // Update f7.params.language whenever the state changes

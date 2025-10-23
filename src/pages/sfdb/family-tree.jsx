@@ -18,41 +18,58 @@ const FamilyTreePage = ({ languageData, lang }) => {
   const [pds_transaction, set_pds_transaction] = useState(pds);
   const [products, set_products] = useState([]);
   const uid = localStorage.getItem('uidNumber');
+  const showCustomLoader = () => {
+    const dialog = f7.dialog.create({
+      text: '<div class="custom-loader blinking-text">Please wait while we fetch your family information...</div>',
+      cssClass: 'custom-loader-dialog',
+      closeByBackdropClick: false,
+    });
+    dialog.open();
+    return dialog;
+  };
   const checkFamilyInfo = async () => {
-    debugger
-    f7.preloader.show();
-    set_loading(true);
-    const response = await store.dispatch('getMyFamily', uid);
+    const loader = showCustomLoader();
+    try {
+      const response = await store.dispatch('getMyFamily', uid);
 
-    if (response) {
-      if (response.statusCode === 200) {
-        debugger
-        const f_head = response?.Data?.find(item => item.relationCode === "1");
-        const f_members = response?.Data.filter(item => item.relationCode !== "1").sort((a, b) => a.Age - b.Age); // Sort by user_age
-        // const t = response?.ApplicantInfo[0].makkalId;
-        // const member = f_members.find((m) => m.MakkalId === t);
-        // setYou(member);
-        // Step 3: Insert relation names into the filtered family heads
-        set_members(f_members);
-        set_family_head(f_head);
-        // set_current_user(response?.ApplicantInfo[0].makkalId);
-        // set_relations(response.data?.relations);
-        // set_products(response.data?.products);
+      if (response) {
+        if (response.statusCode === 200) {
+          const f_head = response?.Data?.find(item => item.relationCode === "1");
+          const f_members = response?.Data.filter(item => item.relationCode !== "1").sort((a, b) => a.Age - b.Age); // Sort by user_age
+          // const t = response?.ApplicantInfo[0].makkalId;
+          // const member = f_members.find((m) => m.MakkalId === t);
+          // setYou(member);
+          // Step 3: Insert relation names into the filtered family heads
+          set_members(f_members);
+          set_family_head(f_head);
+          // set_current_user(response?.ApplicantInfo[0].makkalId);
+          // set_relations(response.data?.relations);
+          // set_products(response.data?.products);
+        }
+
       }
+      else {
 
+        f7.toast.create({
+          text: 'Server Could not connect. Please try after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
+
+        console.log(response)
+      }
     }
-    else {
-
+    catch (error) {
+      console.error('Error fetching family info:', error);
       f7.toast.create({
-        text: 'Server Could not connect. Please try after sometime',
+        text: 'An unexpected error occurred.',
         position: 'top',
         closeTimeout: 2000,
       }).open();
-
-      console.log(response)
     }
-    f7.preloader.hide();
-    set_loading(false);
+    finally {
+      loader.close();
+    }
   }
 
 
@@ -144,9 +161,9 @@ const FamilyTreePage = ({ languageData, lang }) => {
                     </p> */}
                     {lang === "ENGLISH" ?
 
-                      <p>Gender : {family_head?.sex} <br /> Age :{family_head?.age} {languageData?.age}</p>
+                      <p>Gender : {family_head?.sex} <br /> {family_head?.age} {languageData?.age}</p>
                       :
-                      <p>Gender : {family_head?.sex} Age : {family_head?.age} {languageData?.age} </p>
+                      <p>Gender : {family_head?.sex} <br /> {family_head?.age} {languageData?.age} </p>
 
                     }
 
@@ -229,9 +246,9 @@ const FamilyTreePage = ({ languageData, lang }) => {
 
                       {lang === "ENGLISH" ?
 
-                        <p>Gender : {member?.sex} <br />Age : {member?.age} {languageData?.age}</p>
+                        <p>Gender : {member?.sex} <br /> {member?.age} {languageData?.age}</p>
                         :
-                        <p>Gender : {member?.sex}<br /> Age :{member?.age} {languageData?.age} </p>
+                        <p>Gender : {member?.sex}<br /> {member?.age} {languageData?.age} </p>
 
                       }
 

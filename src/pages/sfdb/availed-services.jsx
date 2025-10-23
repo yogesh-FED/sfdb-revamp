@@ -15,69 +15,90 @@ const AvailedServicePage = ({ languageData, lang }) => {
   const [listItms, setListItms] = useState(true);
   const uid = localStorage.getItem('uidNumber');
   const ufc = localStorage.getItem('ufc');
+  const showCustomLoader = () => {
+    const dialog = f7.dialog.create({
+      text: '<div class="custom-loader blinking-text">Please wait while we fetch your schemes information...</div>',
+      cssClass: 'custom-loader-dialog',
+      closeByBackdropClick: false,
+    });
+    dialog.open();
+    return dialog;
+  };
   const familySchemes = async () => {
     debugger
-    f7.preloader.show();
-    set_loading(true);
+    const loader = showCustomLoader();
+    try {
+      const response = await store.dispatch('getMyFamilySchemes', ufc);
 
-    const response = await store.dispatch('getMyFamilySchemes', ufc);
+      if (response.statusCode === 200) {
+        // if (response.success) {
+        // set_individual_schemes(response.Data !== null ? response?.Data?.schemes : []);
+        set_family_schemes(response.Data !== null ? JSON.parse(response?.Data?.schemes) : []);
+        //   set_family_id(response.data.family_id);
 
-    if (response.statusCode === 200) {
-      // if (response.success) {
-      // set_individual_schemes(response.Data !== null ? response?.Data?.schemes : []);
-      set_family_schemes(response.Data !== null ? JSON.parse(response?.Data?.schemes) : []);
-      //   set_family_id(response.data.family_id);
+        // }
+        // set_individual_schemes(response.data.individual_schemes);
+        // set_family_schemes(response.data.family_schemes);
+        // set_family_id(response.data.family_id);
 
-      // }
-      // set_individual_schemes(response.data.individual_schemes);
-      // set_family_schemes(response.data.family_schemes);
-      // set_family_id(response.data.family_id);
-
+      }
+      else {
+        f7.toast.create({
+          text: 'Server Could not connect. Please try after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
+      }
     }
-    else {
-      f7.toast.create({
-        text: 'Server Could not connect. Please try after sometime',
-        position: 'top',
-        closeTimeout: 2000,
-      }).open();
+    catch (error) {
+      console.error('Error fetching family schemes:', error);
     }
-    f7.preloader.hide();
-    set_loading(false);
+    finally {
+      loader.close()
+    }
   }
   const checkServices = async () => {
     debugger
-    f7.preloader.show();
-    set_loading(true);
+    const loader = showCustomLoader();
 
-    const response = await store.dispatch('getMyServices', uid);
+    try {
+      const response = await store.dispatch('getMyServices', uid);
 
-    if (response.statusCode === 200) {
-      // if (response.success) {
-      set_individual_schemes(response.Data !== null ? JSON.parse(response?.Data?.schemes) : []);
-      //   set_family_schemes(response.data.family_schemes);
-      //   set_family_id(response.data.family_id);
+      if (response.statusCode === 200) {
+        // if (response.success) {
+        set_individual_schemes(response.Data !== null ? JSON.parse(response?.Data?.schemes) : []);
+        //   set_family_schemes(response.data.family_schemes);
+        //   set_family_id(response.data.family_id);
 
-      // }
-      // set_individual_schemes(response.data.individual_schemes);
-      // set_family_schemes(response.data.family_schemes);
-      // set_family_id(response.data.family_id);
+        // }
+        // set_individual_schemes(response.data.individual_schemes);
+        // set_family_schemes(response.data.family_schemes);
+        // set_family_id(response.data.family_id);
 
+      }
+      else {
+        f7.toast.create({
+          text: 'Server Could not connect. Please try after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
+      }
+    } catch (error) {
+      console.error('Error fetching individual schemes:', error);
     }
-    else {
-      f7.toast.create({
-        text: 'Server Could not connect. Please try after sometime',
-        position: 'top',
-        closeTimeout: 2000,
-      }).open();
+    finally {
+      loader.close()
     }
-    f7.preloader.hide();
-    set_loading(false);
   }
 
   useEffect(() => {
-    if (tabsId == "C") {
-      checkServices();
-      familySchemes();
+    if (tabsId == "C" || !tabsId) {
+      debugger;
+      if (individual_schemes.length === 0 || family_schemes.length === 0) {
+        checkServices();
+        familySchemes();
+      }
+
     }
   }, [tabsId]);
 
@@ -260,6 +281,7 @@ const AvailedServicePage = ({ languageData, lang }) => {
 
             <List dividersIos outlineIos strongIos className='scheme-list'>
               <ListItem title="1. PDS" key="1">
+                <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />
                 <Button fill className="padding-button" onClick={() => get_pds_transaction()}>Transaction</Button>
               </ListItem>
               {family_schemes?.map((scheme, index) => (
@@ -270,7 +292,6 @@ const AvailedServicePage = ({ languageData, lang }) => {
                     )
                   </>
                 }
-
                   key={index + 2}>
                   <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" /> {scheme.last_availed}
                 </ListItem>

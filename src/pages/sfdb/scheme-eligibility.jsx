@@ -20,7 +20,7 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentIneligibleData = ineligible_schemes.slice(startIndex, startIndex + itemsPerPage);
+  const currentIneligibleData = ineligible_schemes?.slice(startIndex, startIndex + itemsPerPage) || [];
   const handleCheckboxChange = (schemeId, event) => {
     const { name, checked } = event.target;
     setEligibilityData((prevData) => ({
@@ -103,32 +103,47 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
 
     }
   };
-
+  const showCustomLoader = () => {
+    const dialog = f7.dialog.create({
+      text: '<div class="custom-loader blinking-text">Please wait while we fetch your Eligibility information...</div>',
+      cssClass: 'custom-loader-dialog',
+      closeByBackdropClick: false,
+    });
+    dialog.open();
+    return dialog;
+  };
   const checkSchemeInfo = async () => {
     debugger
-    f7.preloader.show();
-    set_loading(true);
-    const response = await store.dispatch('getMySchemeswithStatus');
-    // if (response.success) {
-    //   const { eligible_schemes: es } = response.data;
-    //   set_eligible_schemes(es.schemes);
-    //   set_ineligible_schemes(es.all_schemes);
-    //   set_scheme_count(es.scheme_count);
-    //   set_family_schemes_member(response.data.family);
-    //   set_current_member(response.data.makkal_id);
-    //   setFilteredEligibleCount(es.schemes?.length || 0);
-    //   setFilteredIneligibleCount(es.all_schemes?.length || 0);
-    // }
-    if (response) {
-      // const { eligible_schemes: es } = response.data;
-      // set_eligible_schemes(response);
-      set_ineligible_schemes(response);
-      // set_scheme_count(es.scheme_count);
-      // set_family_schemes_member(response.data.family);
-      // set_current_member(response.data.makkal_id);
-      // setFilteredEligibleCount(es.schemes?.length || 0);
-      setFilteredIneligibleCount(response?.length || 0);
+    const loader = showCustomLoader();
+    try {
+      const response = await store.dispatch('getMySchemeswithStatus');
+      // if (response.success) {
+      //   const { eligible_schemes: es } = response.data;
+      //   set_eligible_schemes(es.schemes);
+      //   set_ineligible_schemes(es.all_schemes);
+      //   set_scheme_count(es.scheme_count);
+      //   set_family_schemes_member(response.data.family);
+      //   set_current_member(response.data.makkal_id);
+      //   setFilteredEligibleCount(es.schemes?.length || 0);
+      //   setFilteredIneligibleCount(es.all_schemes?.length || 0);
+      // }
+      if (response) {
+        // const { eligible_schemes: es } = response.data;
+        // set_eligible_schemes(response);
+        set_ineligible_schemes(response);
+        // set_scheme_count(es.scheme_count);
+        // set_family_schemes_member(response.data.family);
+        // set_current_member(response.data.makkal_id);
+        // setFilteredEligibleCount(es.schemes?.length || 0);
+        setFilteredIneligibleCount(response?.length || 0);
+      }
+    } catch (error) {
+      console.error("Error fetching schemes:", error);
     }
+    finally {
+      loader.close()
+    }
+
     f7.preloader.hide();
     set_loading(false);
   };
@@ -353,7 +368,7 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
         </List>
       )}
       <FilterPagination
-        totalItems={ineligible_schemes.length}
+        totalItems={ineligible_schemes?.length}
         itemsPerPage={itemsPerPage}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
