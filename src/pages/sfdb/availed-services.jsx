@@ -101,32 +101,42 @@ const AvailedServicePage = ({ languageData, lang }) => {
 
     }
   }, [tabsId]);
+  const showCustomPDFTxnLoader = () => {
+    const dialog = f7.dialog.create({
+      text: '<div class="custom-loader blinking-text">Loading Transactions...</div>',
+      cssClass: 'custom-loader-dialog',
+      closeByBackdropClick: false,
+    });
+    dialog.open();
+    return dialog;
+  };
 
   const get_pds_transaction = async () => {
     debugger
-    f7.preloader.show();
-    const response = await store.dispatch('getPdsData', uid);
-    if (response.statusCode === 200) {
-      // if (response.success) {
-      set_products(response?.Data?.transactionData.map((txtlist, i) => {
-        return txtlist?.txtlist;
-      }));
-      setListItms(true);
-      const sortedData = response?.Data?.transactionData.sort((a, b) => {
-        const dateA = a.transaction_date.slice(4) + a.transaction_date.slice(2, 4) + a.transaction_date.slice(0, 2);
-        const dateB = b.transaction_date.slice(4) + b.transaction_date.slice(2, 4) + b.transaction_date.slice(0, 2);
-        return dateB.localeCompare(dateA);
-      });
-      set_pds_transaction(sortedData);
-      // }
-      // else {
+    const load = showCustomPDFTxnLoader();
+    try {
+      const response = await store.dispatch('getPdsData', uid);
+      if (response.statusCode === 200) {
+        set_products(response?.Data?.transactionData.map((txtlist, i) => {
+          return txtlist?.txtlist;
+        }));
+        setListItms(true);
+        const sortedData = response?.Data?.transactionData.sort((a, b) => {
+          const dateA = a.transaction_date.slice(4) + a.transaction_date.slice(2, 4) + a.transaction_date.slice(0, 2);
+          const dateB = b.transaction_date.slice(4) + b.transaction_date.slice(2, 4) + b.transaction_date.slice(0, 2);
+          return dateB.localeCompare(dateA);
+        });
+        set_pds_transaction(sortedData);
 
-      //   // console.log(response.messeage);
-      // }
-
+      }
+    }
+    catch (error) {
+      console.error('Error fetching PDS transaction:', error);
+    }
+    finally {
+      load.close()
     }
 
-    f7.preloader.hide();
 
   }
   let dateStored = [];

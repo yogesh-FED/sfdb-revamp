@@ -60,7 +60,8 @@ const GET_PDS_DATA = LOCAL_API + "/fetchPdsSalesData";
 // const GET_MY_SERVICES = API + "/makkal/get-my-services";
 const GET_MY_SERVICES = LOCAL_API + "/getIndividualSchemeDetailsByUid";
 const GET_MY_FAMILY_SERVICES = LOCAL_API + "/getfamilySchemeDetailsByUfc";
-const LOGOUT = API + "/makkal/logout";
+// const LOGOUT = API + "/makkal/logout";
+const LOGOUT = LOCAL_API + "/logout";
 const GET_ALL_SCHEMES = API + "/makkal/get-all-schemes";
 const CHECK_MY_ELIGIBILITY = API + "/makkal/check-eligibility";
 const GET_DEPT_SCHEMES = API + "/makkal/get-schemes";
@@ -338,7 +339,7 @@ const store = createStore({
           }
         );
         const data = response.data;
-        console.log(data, 'get token response');
+        localStorage.setItem('token', data.data.refreshToken);
         return data;
 
       } catch (error) {
@@ -966,22 +967,22 @@ const store = createStore({
       }
     },
 
-    logout: async ({ state }) => {
-
-      let token = localStorage.getItem("token");
-
+    logout: async ({ state }, refreshToken) => {
       try {
-        const response = await fetch(LOGOUT, {
-          method: "GET",
+        const response = await axios.post(`${LOGOUT}`
+          , {
+            token: refreshToken,
+          }, {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json; charset=UTF-8",
-            Authorization: "Bearer " + token
+          },
+          auth: {
+            username: "TNeGA",
+            password: "aiml",
           },
         });
-
-        const data = await response.json();
-
+        const data = await response.data;
         return data;
       }
       catch (error) {

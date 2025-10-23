@@ -296,7 +296,17 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
   //old login submit
   const showCustomLoader = () => {
     const dialog = f7.dialog.create({
-      text: '<div class="custom-loader blinking-text">Please wait...</div>',
+      text: '<div class="custom-loader blinking-text">Generating OTP...</div>',
+      cssClass: 'custom-loader-dialog',
+      closeByBackdropClick: false,
+    });
+    dialog.open();
+    return dialog;
+  };
+
+  const showCustomOTPLoader = () => {
+    const dialog = f7.dialog.create({
+      text: '<div class="custom-loader blinking-text">Verifying OTP...</div>',
       cssClass: 'custom-loader-dialog',
       closeByBackdropClick: false,
     });
@@ -427,7 +437,7 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
 
       set_login_error("");
 
-      const loader = showCustomLoader();
+      const loader = showCustomOTPLoader();
       try {
         const response = await store.dispatch('sendOtp', formData);
 
@@ -436,7 +446,7 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
 
           // if (response.success == true) {
           if (response.status == "OK") {
-            localStorage.setItem('token', response.data?.refreshToken);
+            // localStorage.setItem('token', response.data?.refreshToken);
             localStorage.setItem('user_image', response.data.userImagePath);
             // location.reload();
             //f7.views.main.router.refreshPage();

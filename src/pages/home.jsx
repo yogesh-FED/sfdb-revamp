@@ -127,23 +127,56 @@ const HomePage = (props) => {
     });
   };
 
-  const checkUserLogout = async () => {
-
-    f7.preloader.show();
-    localStorage.removeItem('token');
-    localStorage.removeItem('authtabsId');
-    localStorage.removeItem('pds_transactions');
-    localStorage.removeItem('user_image');
-    localStorage.removeItem('f7router-view_main-history');
-    localStorage.removeItem('language');
-    localStorage.removeItem('ufc');
-    localStorage.removeItem('uidNumber');
-    localStorage.removeItem('user_image');
-    f7.views.main.router.navigate('/', {
-      clearPreviousHistory: true,
-      ignoreCache: true,
+  const showCustomLoader = () => {
+    const dialog = f7.dialog.create({
+      text: '<div class="custom-loader blinking-text">Session cleared...</div>',
+      cssClass: 'custom-loader-dialog',
+      closeByBackdropClick: false,
     });
-    f7.preloader.hide();
+    dialog.open();
+    return dialog;
+  };
+
+  const checkUserLogout = async () => {
+    const loader = showCustomLoader();
+    const refreshToken = localStorage.getItem('token');
+    try {
+      const response = await store.dispatch('logout', refreshToken);
+      if (response) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('authtabsId');
+        localStorage.removeItem('pds_transactions');
+        localStorage.removeItem('user_image');
+        localStorage.removeItem('f7router-view_main-history');
+        localStorage.removeItem('language');
+        localStorage.removeItem('ufc');
+        localStorage.removeItem('uidNumber');
+        localStorage.removeItem('user_image');
+        f7.views.main.router.navigate('/', {
+          clearPreviousHistory: true,
+          ignoreCache: true,
+        });
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+    finally {
+      loader.close();
+    }
+    // localStorage.removeItem('token');
+    // localStorage.removeItem('authtabsId');
+    // localStorage.removeItem('pds_transactions');
+    // localStorage.removeItem('user_image');
+    // localStorage.removeItem('f7router-view_main-history');
+    // localStorage.removeItem('language');
+    // localStorage.removeItem('ufc');
+    // localStorage.removeItem('uidNumber');
+    // localStorage.removeItem('user_image');
+    // f7.views.main.router.navigate('/', {
+    //   clearPreviousHistory: true,
+    //   ignoreCache: true,
+    // });
+    // f7.preloader.hide();
     // const response = await store.dispatch('logout');
 
     // if (response.data) {
