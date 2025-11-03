@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useSelect } from 'react';
 import { Block, List, ListItem, Button, ListInput, f7, Page, Navbar, NavLeft, NavTitle, NavRight, Link, f7ready, useStore } from 'framework7-react';
-import loginLeftImg from '../../assets/images/landing-small-bg.jpg';
+import loginLeftImg from '../../assets/images/login-bg/login-bg.png';
 import TopNavbar from '../TopNavbar';
 import { CustomNavbar } from '../CustomNavbar';
 import * as CryptoJS from "crypto-js";
@@ -463,6 +463,7 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
             }
             const tokenRepsonse = await store.dispatch('getToken', getTokenPayload);
             console.log(tokenRepsonse, 'tokenRepsonse');
+            f7.dialog.alert('✅ OTP Verified successfully!', 'Success');
             f7.views.main.router.navigate('/home/', {
               clearPreviousHistory: true,
               ignoreCache: true,
@@ -483,9 +484,11 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
         }
       } catch (error) {
         console.error("Error during OTP submission:", error);
+        f7.dialog.alert('✅ OTP Verification failed!', error);
       }
       finally {
         loader.close();
+
       }
 
     }
@@ -564,151 +567,159 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
 
         <div className={tnClass === "tnFontChange" ? 'tnFontChange grid grid-cols-1 large-grid-cols-1 grid-gap' : 'grid grid-cols-1 large-grid-cols-1 grid-gap'}>
           {is_login_screen == 1 ?
-            <div className='login-box'>
-              <h3 className='text-center'> {language_data?.login}</h3>
+            <>
+              <div className='loginLeftImg'>
+                {/* <img src={loginLeftImg} alt="leader" style={{ width: '100%', height: '100vh', objectFit: 'cover' }} /> */}
+              </div>
+              <div className='login-box'>
+                <h3 className='text-center'> {language_data?.login}</h3>
 
-              <form onSubmit={formSubmit}>
-                {is_login_error ?
-                  <span className='form-error'>{is_login_error}</span>
-                  : ""}
+                <form onSubmit={formSubmit}>
+                  {is_login_error ?
+                    <span className='form-error'>{is_login_error}</span>
+                    : ""}
 
-                <List strongIos outlineIos dividersIos>
-                  <ListItem
-                    radio
-                    radioIcon="start"
-                    className='text-white'
-                    title={language_data?.login_with_aadhar}
-                    name="login_with"
-                    value="aadhar"
-                    onChange={checkLogin}
-                    defaultChecked
-                  />
-                  {/* <ListItem
-            radio
-            radioIcon="start"
-            className='text-white'
-            title={languageData?.login_with_mobile}
-            name="login_with"
-            value="mobile"
-            onChange={checkLogin}
-          /> */}
+                  <List strongIos outlineIos dividersIos>
+                    <ListItem
+                      radio
+                      radioIcon="start"
+                      className='text-white'
+                      title={language_data?.login_with_aadhar}
+                      name="login_with"
+                      value="aadhar"
+                      onChange={checkLogin}
+                      defaultChecked
+                    />
+                    {/* <ListItem
+                  radio
+                  radioIcon="start"
+                  className='text-white'
+                  title={languageData?.login_with_mobile}
+                  name="login_with"
+                  value="mobile"
+                  onChange={checkLogin}
+                /> */}
 
-                  <ListInput
-                    outline
-                    floatingLabel
-                    type="tel"
-                    placeholder={language_data?.enter_aadhar_number}
-                    autocomplete='off'
-                    name='aadhar'
-                    value={formData.aadhar}
-                    onChange={handleInputChange}
-                    errorMessage={errors.aadhar}
-                    errorMessageForce
-                    style={{ display: is_login_with == "aadhar" ? "block" : "none" }}
-                  />
+                    <ListInput
+                      outline
+                      floatingLabel
+                      type="tel"
+                      placeholder={language_data?.enter_aadhar_number}
+                      autocomplete='off'
+                      name='aadhar'
+                      value={formData.aadhar}
+                      onChange={handleInputChange}
+                      errorMessage={errors.aadhar}
+                      errorMessageForce
+                      style={{ display: is_login_with == "aadhar" ? "block" : "none" }}
+                    />
 
-                  <ListInput
-                    outline
-                    floatingLabel
-                    type="tel"
-                    placeholder={language_data?.enter_mobile_number}
-                    autocomplete='off'
-                    name='mobile'
-                    value={formData.mobile}
-                    onChange={handleInputChange}
-                    errorMessage={errors.mobile}
-                    errorMessageForce
-                    style={{ display: is_login_with == "mobile" ? "block" : "none" }}
-                  />
+                    <ListInput
+                      outline
+                      floatingLabel
+                      type="tel"
+                      placeholder={language_data?.enter_mobile_number}
+                      autocomplete='off'
+                      name='mobile'
+                      value={formData.mobile}
+                      onChange={handleInputChange}
+                      errorMessage={errors.mobile}
+                      errorMessageForce
+                      style={{ display: is_login_with == "mobile" ? "block" : "none" }}
+                    />
 
-                  <ListItem
-                    className='save-consent'
-                    checkbox
-                    checkboxIcon="start"
-                    title={language_data?.consent_label}
-                    name="saveConsent"
-                    checked={formData.saveConsent}
-                    onChange={handleInputChange}
+                    <ListItem
+                      className='save-consent'
+                      checkbox
+                      checkboxIcon="start"
+                      title={language_data?.consent_label}
+                      name="saveConsent"
+                      checked={formData.saveConsent}
+                      onChange={handleInputChange}
 
-                  />
-                  <ListItem>
-                    <center>
-                      {errors.saveConsent && (
-                        <span className="error-message" style={{ color: 'red' }}>
-                          {errors.saveConsent}
-                        </span>
-                      )}
-
-                    </center>
-
-                  </ListItem>
-                  <ListItem>
-
-                    <Button fill round className='login-button' type="submit" disabled={is_login_button}>
-                      {language_data?.send_otp}
-                    </Button>
-                  </ListItem>
-                </List>
-              </form>
-            </div>
-            :
-            <div className='login-box'>
-              <h3 className='text-center'> {language_data?.enter_otp}</h3>
-
-              <form onSubmit={otpSubmit}>
-                {is_login_error ?
-                  <span className='form-error'>{is_login_error}</span>
-                  : ""}
-
-                <List strongIos outlineIos dividersIos>
-
-                  <ListInput
-                    outline
-                    floatingLabel
-                    type="tel"
-                    placeholder={language_data?.please_enter_otp}
-                    autocomplete='off'
-                    name='otp'
-                    value={formData.otp}
-                    onChange={handleInputChange}
-                    errorMessage={errors.otp}
-                    errorMessageForce
-                  />
-
-                  {countdown > 0 ? (
-                    <div>
+                    />
+                    <ListItem>
                       <center>
-                        <p>Resend available in: {countdown} seconds</p>
+                        {errors.saveConsent && (
+                          <span className="error-message" style={{ color: 'red' }}>
+                            {errors.saveConsent}
+                          </span>
+                        )}
+
                       </center>
 
+                    </ListItem>
+                    <ListItem>
 
-                    </div>
-                  ) : (
-                    <>
+                      <Button fill round className='login-button' type="submit" disabled={is_login_button}>
+                        {language_data?.send_otp}
+                      </Button>
+                    </ListItem>
+                  </List>
+                </form>
+              </div>
+            </>
+            :
+            <>
+              <p></p>
+              <div className='login-box'>
+                <h3 className='text-center'> {language_data?.enter_otp}</h3>
 
-                    </>
-                  )}
+                <form onSubmit={otpSubmit}>
+                  {is_login_error ?
+                    <span className='form-error'>{is_login_error}</span>
+                    : ""}
 
-                  <ListItem>
+                  <List strongIos outlineIos dividersIos>
+
+                    <ListInput
+                      outline
+                      floatingLabel
+                      type="tel"
+                      placeholder={language_data?.please_enter_otp}
+                      autocomplete='off'
+                      name='otp'
+                      value={formData.otp}
+                      onChange={handleInputChange}
+                      errorMessage={errors.otp}
+                      errorMessageForce
+                    />
+
+                    {countdown > 0 ? (
+                      <div>
+                        <center>
+                          <p>Resend available in: {countdown} seconds</p>
+                        </center>
 
 
-                    <Button fill round className='login-button' type="submit" >
-                      {language_data?.enter_otp}
-                    </Button>
+                      </div>
+                    ) : (
+                      <>
 
-                    <Button fill round className='login-button' type='button' onClick={resendOtp} disabled={is_resend_button}>
-                      {language_data?.resent_otp}
-                    </Button>
+                      </>
+                    )}
 
-
-                  </ListItem>
+                    <ListItem>
 
 
-                </List>
+                      <Button fill round className='login-button' type="submit" >
+                        {language_data?.enter_otp}
+                      </Button>
+
+                      <Button fill round className='login-button' type='button' onClick={resendOtp} disabled={is_resend_button}>
+                        {language_data?.resent_otp}
+                      </Button>
 
 
-              </form>
-            </div>
+                    </ListItem>
+
+
+                  </List>
+
+
+                </form>
+              </div>
+            </>
           }
         </div>
       </Block>

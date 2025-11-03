@@ -23,14 +23,32 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
   const [deptLabel, setDeptLabel] = useState('');
   const [deptSchCount, setDeptSchCount] = useState('');
   const [categoriesSchCount, setCategoriesSchCount] = useState('');
+  const showCustomLoader = () => {
+    const dialog = f7.dialog.create({
+      text: '<div class="custom-loader blinking-text">Loading</div>',
+      cssClass: 'custom-loader-dialog',
+      closeByBackdropClick: false,
+    });
+    dialog.open();
+    return dialog;
+  };
   const getCategorySchemesLabel = async () => {
+    const loaderDialog = showCustomLoader();
     const categoryResponse = await store.dispatch('getCategorySchemes');
-    const categoryResponseData = categoryResponse?.categories.map((item) => {
-      return item.category
-    })
+    try {
+      const categoryResponseData = categoryResponse?.categories.map((item) => {
+        return item.category
+      })
 
-    setCategoriesSchCount(categoryResponse);
-    setCategoryLabel(categoryResponseData);
+      setCategoriesSchCount(categoryResponse);
+      setCategoryLabel(categoryResponseData);
+    } catch (error) {
+      console.error('Error fetching category schemes:', error);
+    }
+    finally {
+      loaderDialog.close();
+    }
+
   }
   const getDepartmentSchemesLabel = async () => {
     const deptResponse = await store.dispatch('getDepartmentSchemes');

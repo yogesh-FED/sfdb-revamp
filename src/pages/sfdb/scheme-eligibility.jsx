@@ -132,7 +132,7 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
         // set_eligible_schemes(response);
         set_ineligible_schemes(response);
         // set_scheme_count(es.scheme_count);
-        // set_family_schemes_member(response.data.family);
+        // set_family_schemes_member(localStorage.getItem('family_members_names') ? JSON.parse(localStorage.getItem('family_members_names')) : []);
         // set_current_member(response.data.makkal_id);
         // setFilteredEligibleCount(es.schemes?.length || 0);
         setFilteredIneligibleCount(response?.length || 0);
@@ -151,27 +151,63 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
   const get_schemes = async (e) => {
     f7.preloader.show();
     set_loading(true);
+    set_current_member(e.target.value);
     const response = await store.dispatch('getMyFamilySchemes', e.target.value);
     if (response.success) {
       const { eligible_schemes: es } = response.data;
       set_eligible_schemes(es.schemes);
       set_ineligible_schemes(es.all_schemes);
       set_scheme_count(es.scheme_count);
-      set_current_member(response.data.makkal_id);
+      // set_current_member(response.data.makkal_id);
       setFilteredEligibleCount(es.schemes?.length || 0);
-      setFilteredIneligibleCount(es.all_schemes?.length || 0); // ✅ FIXED
+      setFilteredIneligibleCount(es.all_schemes?.length || 0);
     }
     f7.preloader.hide();
     set_loading(false);
   };
 
 
+  // useEffect(() => {
+  //   if (tabsId === "D" && (!eligible_schemes || eligible_schemes.length === 0)) {
+  //     set_family_schemes_member(localStorage.getItem('family_members_names') ? JSON.parse(localStorage.getItem('family_members_names')) : []);
+  //     checkSchemeInfo();
+  //   }
+  //   if (members.length > 0) {
+  //     set_current_member(members[0].makkal_id);
+  //   }
+
+  // }, [tabsId]);
+
+
   useEffect(() => {
     if (tabsId === "D" && (!eligible_schemes || eligible_schemes.length === 0)) {
-      checkSchemeInfo();
-    }
-  }, [tabsId]);
+      const members = localStorage.getItem("family_members_names")
+        ? JSON.parse(localStorage.getItem("family_members_names"))
+        : [];
+      const makkalId = localStorage.getItem("individualMakkalId");
 
+      set_family_schemes_member(members);
+      checkSchemeInfo();
+
+      if (makkalId && members.length > 0) {
+        const matchedMember = members.find(m => m.makkalId === makkalId);
+        if (matchedMember) {
+          set_current_member(
+            lang === "ENGLISH"
+              ? matchedMember.nameInEnglish
+              : matchedMember.nameInTamil
+          );
+        } else {
+
+          set_current_member(
+            lang === "ENGLISH"
+              ? members[0].nameInEnglish
+              : members[0].nameInTamil
+          );
+        }
+      }
+    }
+  }, [tabsId, lang]);
   const handleSearch = () => {
 
     const eligibleVisible = document.querySelectorAll(
@@ -203,7 +239,7 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
             <option value="all">Family Schemes</option>
             {family_schemes_member?.map((member, index) => (
               <option key={index} value={member?.makkal_id}>
-                {lang === "EN" ? member?.user_info?.name : member?.user_info?.info_tamil?.name}
+                {lang === "ENGLISH" ? member?.nameInEnglish : member?.nameInTamil}
               </option>
             ))}
           </select>

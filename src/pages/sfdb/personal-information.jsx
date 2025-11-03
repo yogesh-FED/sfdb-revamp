@@ -52,6 +52,8 @@ const PersonalInformationPage = ({ languageData, language, lang, userImgPath }) 
         if (response?.message === "success") {
           set_user(response?.Data);
           store.state.familyIdfromPersonalInfo = response.Data.familyId;
+          store.state.individualMakkalId = response.Data.makkalId;
+          localStorage.setItem('individualMakkalId', response?.Data?.makkalId);
           localStorage.setItem('ufc', response?.Data?.familyId);
         } else {
           f7.toast.create({

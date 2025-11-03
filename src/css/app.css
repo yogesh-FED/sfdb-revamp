@@ -313,7 +313,8 @@ html {
 }
 
 .auth-background {
-  background-image: url('../../public/assets/images/page-bg-3.jpg');
+  /* background-image: url('../../public/assets/images/page-bg-3.jpg'); */
+  background-image: url('../../public/assets/images/login-bg/profile.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -729,6 +730,7 @@ button.bannerCta {
   min-height: 30vh;
   max-height: 75vh;
   margin-top: 5rem;
+  border: 1px solid #004aad;
 }
 
 .login-box .item-title {
@@ -2851,8 +2853,17 @@ input[type="search"]::placeholder {
   background: url(../assets/images/bodyBg.png);
 }
 
+[data-name="loginpage"] .page-content {
+  background: url(../assets/images/login-bg/login-bg.png);
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
 .page-content {
-  background: url(../assets/images/bodyBg.png);
+  /* background: url(../assets/images/bodyBg.png); */
+  /* background: url(../assets/images/login-bg/login-bg.png); */
+  /* background: url(../assets/images/login-bg/profile.png);
+  background-repeat: no-repeat; */
 }
 
 .schemeFilters h2 {
@@ -3141,4 +3152,10 @@ input[type="search"]::placeholder {
   50% {
     opacity: 0.3;
   }
+}
+
+.loginLeftImg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

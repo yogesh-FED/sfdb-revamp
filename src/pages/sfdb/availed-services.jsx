@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { List, ListItem, Icon, BlockTitle, Block, f7, Button, useStore } from 'framework7-react';
+import { List, ListItem, Icon, BlockTitle, Block, f7, Button, useStore, AccordionItem, AccordionContent } from 'framework7-react';
+import { setPopupInstance } from './popUpService';
 
 const AvailedServicePage = ({ languageData, lang }) => {
   const store = f7.store;
@@ -13,6 +14,7 @@ const AvailedServicePage = ({ languageData, lang }) => {
   const [family_id, set_family_id] = useState();
   const [products, set_products] = useState([]);
   const [listItms, setListItms] = useState(true);
+  const [groupedData, setGroupedData] = useState([]);
   const uid = localStorage.getItem('uidNumber');
   const ufc = localStorage.getItem('ufc');
   const showCustomLoader = () => {
@@ -33,6 +35,29 @@ const AvailedServicePage = ({ languageData, lang }) => {
       if (response.statusCode === 200) {
         // if (response.success) {
         // set_individual_schemes(response.Data !== null ? response?.Data?.schemes : []);
+        const schemes = JSON.parse(response.Data.schemes);
+        // const grouped = schemes.reduce((acc, item) => {
+        //   if (!acc[item.name]) {
+        //     acc[item.name] = [];
+        //   }
+        //   acc[item.name].push({
+        //     scheme_id: item.scheme_id,
+        //     scheme_name: item.scheme_name,
+        //     scheme_name_tamil: item.scheme_name_tamil
+        //   });
+        //   return acc;
+        // }, {});
+        const grouped = schemes.reduce((acc, item) => {
+          if (!acc[item.name]) acc[item.name] = [];
+          acc[item.name].push(item);
+          return acc;
+        }, {});
+        console.log('grouped', grouped);
+        setGroupedData(grouped);
+        // const result = Object.entries(grouped).map(([name, schemeList]) => ({
+        //   name,
+        //   schemes: schemeList
+        // }));
         set_family_schemes(response.Data !== null ? JSON.parse(response?.Data?.schemes) : []);
         //   set_family_id(response.data.family_id);
 
@@ -232,6 +257,7 @@ const AvailedServicePage = ({ languageData, lang }) => {
           </div>
         `.trim(),
     });
+    setPopupInstance(popOpen);
     popOpen.open();
     popOpen.el.querySelector('.popup-close').addEventListener('click', () => {
       setListItms(false);
@@ -277,66 +303,169 @@ const AvailedServicePage = ({ languageData, lang }) => {
   };
   const family_availed_schemes = () => {
     return (
-      <>
-        {loading ? (
-          <List dividersIos outlineIos strongIos className='scheme-list skeleton-effect-wave'>
-            {[1, 2, 3].map((n) => (
-              <ListItem title="Loading Schemes" after="Availed" key={n} className='skeleton-block skeleton-text' style={{ height: "50px" }}>
-                <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />
-              </ListItem>
-            ))}
-          </List>
-        ) : (
-          lang === "ENGLISH" ? ( // Use ? for the true case
+      // <>
+      // {loading ? (
+      // <List dividersIos outlineIos strongIos className='scheme-list skeleton-effect-wave'>
+      //   {[1, 2, 3].map((n) => (
+      //     <ListItem title="Loading Schemes" after="Availed" key={n} className='skeleton-block skeleton-text' style={{ height: "50px" }}>
+      //       <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />
+      //     </ListItem>
+      //   ))}
+      // </List>
+      // ) : (
+      // lang === "ENGLISH" ? ( // Use ? for the true case
 
-            <List dividersIos outlineIos strongIos className='scheme-list'>
-              <ListItem title="1. PDS" key="1">
-                <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />
-                <Button fill className="padding-button" onClick={() => get_pds_transaction()}>Transaction</Button>
-              </ListItem>
-              {family_schemes?.map((scheme, index) => (
-                <ListItem title={
-                  <>
-                    {index + 2}. {scheme.scheme_name} - (
-                    <span style={{ fontWeight: "bold", color: "blue" }}>{scheme.name}</span>
-                    )
-                  </>
-                }
-                  key={index + 2}>
-                  <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" /> {scheme.last_availed}
+      // <List dividersIos outlineIos strongIos className='scheme-list'>
+      //   <ListItem title="1. PDS" key="1">
+      //     <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />
+      //     <Button fill className="padding-button" onClick={() => get_pds_transaction()}>Transaction</Button>
+      //   </ListItem>
+      //   <List accordionList>
+      //     {Object.entries(groupedData).map(([name, schemeList]) => (
+      //       <AccordionItem key={name}>
+      //         <ListItem accordionItem title={name} />
+      //         <AccordionContent>
+      //           <List>
+      //             {schemeList.map((scheme) => (
+      //               <ListItem
+      //                 key={scheme.scheme_id}
+      //                 title={scheme.scheme_name}
+      //                 after={`#${scheme.scheme_id}`}
+      //                 footer={scheme.scheme_name_tamil}
+      //               />
+      //             ))}
+      //           </List>
+      //         </AccordionContent>
+      //       </AccordionItem>
+      //     ))}
+      //   </List>
+      // </List>
+      // ) : ( // Use : for the false case
+      // <>
+
+
+
+
+      //   <List dividersIos outlineIos strongIos className='scheme-list'>
+      //     <ListItem title="1. PDS" key="1">
+      //       <Button fill className="padding-button" onClick={() => get_pds_transaction()}>Transaction</Button>
+      //     </ListItem>
+      //     {family_schemes?.map((scheme, index) => (
+      //       <ListItem title={
+      //         <>
+      //           {index + 2}. {scheme.scheme_name_tamil} - (
+      //           <span style={{ fontWeight: "bold", color: "blue" }}>{scheme.name}</span>
+      //           )
+      //         </>
+      //       }
+
+      //         key={index + 2}>
+      //         {/* <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" ></Icon>  */}
+      //       </ListItem>
+      //     ))}
+      //   </List>
+
+
+      // </>
+
+      //   )
+      // )}
+
+      // </>
+      <>
+        {
+          loading ? (
+            // 🔹 Skeleton loading view
+            <List dividersIos outlineIos strongIos className="scheme-list skeleton-effect-wave">
+              {[1, 2, 3].map((n) => (
+                <ListItem
+                  key={n}
+                  title="Loading Schemes"
+                  after="Availed"
+                  className="skeleton-block skeleton-text"
+                  style={{ height: "50px" }}
+                >
+                  <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />
                 </ListItem>
               ))}
             </List>
-          ) : ( // Use : for the false case
-            <>
-
-
-
-
-              <List dividersIos outlineIos strongIos className='scheme-list'>
+          ) : (
+            lang === "ENGLISH" ? (
+              // 🔹 ENGLISH VIEW with Accordion
+              <List dividersIos outlineIos strongIos className="scheme-list" accordionList>
+                {/* Static PDS item */}
                 <ListItem title="1. PDS" key="1">
-                  <Button fill className="padding-button" onClick={() => get_pds_transaction()}>Transaction</Button>
+                  <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />
+                  <Button fill className="padding-button" onClick={() => get_pds_transaction()}>
+                    Transaction
+                  </Button>
                 </ListItem>
-                {family_schemes?.map((scheme, index) => (
-                  <ListItem title={
-                    <>
-                      {index + 2}. {scheme.scheme_name_tamil} - (
-                      <span style={{ fontWeight: "bold", color: "blue" }}>{scheme.name}</span>
-                      )
-                    </>
-                  }
 
-                    key={index + 2}>
-                    {/* <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" ></Icon>  */}
+                {/* Dynamic accordion items */}
+                {Object.entries(groupedData).map(([name, schemeList]) => (
+                  <ListItem accordionItem key={name} title={name}>
+                    <AccordionContent>
+                      <List inset>
+                        <p>SCHEMES AVAILED</p>
+                        {schemeList.map((scheme) => (
+                          <ListItem
+                            key={scheme.scheme_id}
+                            title={scheme.scheme_name}
+                          // after={`#${scheme.scheme_id}`}
+                          // footer={scheme.scheme_name_tamil}
+                          >
+                            <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </AccordionContent>
                   </ListItem>
                 ))}
               </List>
+            ) : (
+              // 🔹 TAMIL VIEW (non-accordion)
+              <List dividersIos outlineIos strongIos className="scheme-list">
+                <ListItem title="1. PDS" key="1">
+                  <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />
+                  <Button fill className="padding-button" onClick={() => get_pds_transaction()}>
+                    Transaction
+                  </Button>
+                </ListItem>
 
-
-            </>
-
+                {/* {family_schemes?.map((scheme, index) => (
+                  <ListItem
+                    key={index + 2}
+                    title={
+                      <>
+                        {index + 2}. {scheme.scheme_name_tamil} - (
+                        <span style={{ fontWeight: "bold", color: "blue" }}>{scheme.name}</span>)
+                      </>
+                    }
+                  />
+                ))} */}
+                {Object.entries(groupedData).map(([name, schemeList]) => (
+                  <ListItem accordionItem key={name} title={name}>
+                    <AccordionContent>
+                      <List inset>
+                        <p>SCHEMES AVAILED</p>
+                        {schemeList.map((scheme) => (
+                          <ListItem
+                            key={scheme.scheme_name_tamil}
+                            title={scheme.scheme_name_tamil}
+                          // after={`#${scheme.scheme_id}`}
+                          // footer={scheme.scheme_name_tamil}
+                          >
+                            <Icon md="material:done_outline" ios="f7:checkmark_alt" slot="media" />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </AccordionContent>
+                  </ListItem>
+                ))}
+              </List>
+            )
           )
-        )}
+        }
 
       </>
     );

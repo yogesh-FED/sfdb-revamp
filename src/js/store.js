@@ -93,11 +93,13 @@ const store = createStore({
     aadharImg: "",
     uidNumber: '',
     familyIdfromPersonalInfo: '',
+    individualMakkalId: '',
   },
 
   getters: {
     lang: ({ state }) => state.lang,
     ufcId: ({ state }) => state.familyIdfromPersonalInfo,
+    individualMakkalId: ({ state }) => state.individualMakkalId,
     uidNumber: ({ state }) => state.uidNumber,
     aadharImg: ({ state }) => state.aadharImg,
     language_data: ({ state }) => state.language_data,
@@ -304,7 +306,8 @@ const store = createStore({
         return data;
 
       } catch (error) {
-        alert(error);
+        console.error('OTP Error:', error);
+        f7.dialog.alert(error.response.data.message, 'Error');
         return error;
       }
     },

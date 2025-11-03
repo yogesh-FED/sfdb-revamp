@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SettingsPage } from './sfdb/settings';
 import { PersonalInformationPage } from './sfdb/personal-information';
 import { FamilyTreePage } from './sfdb/family-tree';
@@ -26,6 +26,7 @@ import {
   Icon,
   useStore
 } from 'framework7-react';
+import { closePopup } from './sfdb/popUpService';
 import EligibiltyFilter from './sfdb/EligibiltyFilter';
 
 
@@ -136,8 +137,54 @@ const HomePage = (props) => {
     dialog.open();
     return dialog;
   };
+  const logoutTimer = useRef(null);
+  useEffect(() => {
+    const handleUserActivity = () => {
+      resetLogoutTimer();
+    };
 
+    // Add listeners for user activity
+    document.addEventListener('mousemove', handleUserActivity);
+    document.addEventListener('keydown', handleUserActivity);
+    document.addEventListener('click', handleUserActivity);
+    document.addEventListener('scroll', handleUserActivity);
+
+    // Start the timer initially
+    resetLogoutTimer();
+
+    console.log('logoutTimer.current', logoutTimer.current);
+    // Cleanup listeners and timer on unmount
+    return () => {
+      document.removeEventListener('mousemove', handleUserActivity);
+      document.removeEventListener('keydown', handleUserActivity);
+      document.removeEventListener('click', handleUserActivity);
+      document.removeEventListener('scroll', handleUserActivity);
+      if (logoutTimer.current) {
+        clearTimeout(logoutTimer.current);
+      }
+    };
+  }, []);
+  const resetLogoutTimer = () => {
+    if (logoutTimer.current) {
+      clearTimeout(logoutTimer.current);
+    }
+
+    // Set timer to 10 seconds (10 * 1000 ms)
+    logoutTimer.current = setTimeout(() => {
+      checkUserLogout();
+    }, 600 * 600 * 1000); // 👈 10 seconds
+  };
   const checkUserLogout = async () => {
+    try {
+      closePopup();
+      f7.popup.close();
+      f7.dialog.close();
+      f7.sheet.close();
+      f7.popover.close();
+      f7.panel.close();
+    } catch (e) {
+      console.warn('Error closing F7 popups:', e);
+    }
     const loader = showCustomLoader();
     const refreshToken = localStorage.getItem('token');
     try {
@@ -152,10 +199,15 @@ const HomePage = (props) => {
         localStorage.removeItem('ufc');
         localStorage.removeItem('uidNumber');
         localStorage.removeItem('user_image');
-        f7.views.main.router.navigate('/', {
-          clearPreviousHistory: true,
-          ignoreCache: true,
-        });
+        localStorage.removeItem('individualMakkalId');
+        localStorage.removeItem('family_members_names');
+        localStorage.removeItem('makkalId');
+        // f7.views.main.router.navigate('/', {
+        //   clearPreviousHistory: true,
+        //   ignoreCache: true,
+        // });
+        // window.location.reload();
+        window.location.href = '/';
       }
     } catch (error) {
       console.error('Logout error:', error);

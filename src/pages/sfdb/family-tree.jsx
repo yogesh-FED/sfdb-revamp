@@ -28,18 +28,21 @@ const FamilyTreePage = ({ languageData, lang }) => {
     return dialog;
   };
   const checkFamilyInfo = async () => {
+    debugger
     const loader = showCustomLoader();
     try {
       const response = await store.dispatch('getMyFamily', uid);
-
       if (response) {
+        const makkalId = localStorage.getItem('individualMakkalId');
+        localStorage.setItem('family_members_names', JSON.stringify(response?.Data));
         if (response.statusCode === 200) {
           const f_head = response?.Data?.find(item => item.relationCode === "1");
+          const youLable = response?.Data?.filter(item => item.makkalId === makkalId);
+          setYou(youLable[0].makkalId);
           const f_members = response?.Data.filter(item => item.relationCode !== "1").sort((a, b) => a.Age - b.Age); // Sort by user_age
           // const t = response?.ApplicantInfo[0].makkalId;
-          // const member = f_members.find((m) => m.MakkalId === t);
+          // const member = f_members.find((m) => m.makkalId === t);
           // setYou(member);
-          // Step 3: Insert relation names into the filtered family heads
           set_members(f_members);
           set_family_head(f_head);
           // set_current_user(response?.ApplicantInfo[0].makkalId);
@@ -141,7 +144,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
                         :
                         (family_head?.nameInTamil)
                       }
-                      {family_head?.makkal_id == current_user ?
+                      {family_head?.makkal_id == you ?
                         <Badge color="green">You</Badge>
                         : ""}
                     </p>
@@ -237,7 +240,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
                         }
                       </p>
                       <p>
-                        {member?.MakkalId == current_user ?
+                        {member?.makkalId == you ?
                           <Badge color="green" className='marRg'>You</Badge>
                           : ""}
                       </p>
@@ -294,7 +297,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
                 <tr>
                   <td className="label-cell">1</td>
                   <td className="label-cell">{family_head?.nameInEnglish}
-                    {members?.makkal_id == current_user ?
+                    {members?.makkal_id == you ?
                       <Badge color="green">You</Badge>
                       : ""}
                   </td>
@@ -306,7 +309,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
                 <tr>
                   <td className="label-cell">1</td>
                   <td className="label-cell">{family_head?.NameInTamil}
-                    {members?.makkal_id == current_user ?
+                    {members?.makkal_id == you ?
                       <Badge color="green">You</Badge>
                       : ""}
                   </td>
@@ -320,7 +323,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
                   <tr key={index}>
                     <td className="label-cell">{index + 2}</td>
                     <td className="label-cell">{member?.nameInEnglish}
-                      {member?.MakkalId == current_user ?
+                      {member?.makkalId == you ?
                         <Badge color="green">You</Badge>
                         : ""}
                     </td>
@@ -333,7 +336,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
                   <tr key={index}>
                     <td className="label-cell">{index + 2}</td>
                     <td className="label-cell">{member?.nameInTamil}
-                      {member?.MakkalId == current_user ?
+                      {member?.makkalId == you ?
                         <Badge color="green">You</Badge>
                         : ""}
                     </td>
