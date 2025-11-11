@@ -414,7 +414,7 @@ const SchemeEligibilityPage = ({ languageData, lang }) => {
 
   return (
     <>
-      <Block className='page-content scheme-page padB5rem'>
+      <Block className='scheme-page padB5rem'>
         {family_dropdown_box()}
 
         <Searchbar

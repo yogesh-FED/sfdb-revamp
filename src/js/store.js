@@ -346,7 +346,11 @@ const store = createStore({
         return data;
 
       } catch (error) {
-        alert(error);
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error;
       }
     },
@@ -393,7 +397,11 @@ const store = createStore({
         return data; // Returning response data
 
       } catch (error) {
-
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error; // Indicate failure
       }
     },
@@ -413,6 +421,11 @@ const store = createStore({
         return data;
 
       } catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error;
       }
     },
@@ -436,6 +449,11 @@ const store = createStore({
         return data;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error; // Indicate failure
       }
     },
@@ -479,6 +497,11 @@ const store = createStore({
         return decryptPersonalInfoData;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error; // Indicate failure
       }
     },
@@ -539,6 +562,11 @@ const store = createStore({
         return data;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error;
       }
     },
@@ -568,6 +596,11 @@ const store = createStore({
         return data;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error;
       }
     },
@@ -635,6 +668,11 @@ const store = createStore({
         return data;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error; // Indicate failure
       }
     },
@@ -702,6 +740,11 @@ const store = createStore({
         return data;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error; // Indicate failure
       }
     },
@@ -742,6 +785,11 @@ const store = createStore({
         return data;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error; // Indicate failure
       }
     },
@@ -787,6 +835,11 @@ const store = createStore({
         return data;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error; // Indicate failure
       }
     },
@@ -836,6 +889,11 @@ const store = createStore({
         return data;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error; // Indicate failure
       }
     },
@@ -867,6 +925,11 @@ const store = createStore({
         return responseData; // ✅ Return corrected response data
       } catch (error) {
         console.error("Error in getMyEligibleSchemes:", error);
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return { success: false, error }; // Return an error object
       }
     },
@@ -913,6 +976,11 @@ const store = createStore({
         return decryptedData;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error; // Indicate failure
       }
     },
@@ -965,6 +1033,11 @@ const store = createStore({
         return data;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         console.log(error);
         return error; // Indicate failure
       }
@@ -989,6 +1062,11 @@ const store = createStore({
         return data;
       }
       catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
         return error; // Indicate failure
       }
     },

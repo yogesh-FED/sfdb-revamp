@@ -369,7 +369,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
 
 
   return (
-    <Block className='page-content'>
+    <Block className=''>
       <div className='top-button'>
         <div className="button-group float-right ">
           {/* {is_grid_view ? */}

@@ -453,7 +453,7 @@ const PersonalInformationPage = ({ languageData, language, lang, userImgPath }) 
 
 
   return (
-    <Block className='page-content'>
+    <Block className=''>
       <div className='grid grid-cols-1 large-grid-cols-1'>
         {lang == "ENGLISH" ? personal_english() : personal_tamil()}
       </div>

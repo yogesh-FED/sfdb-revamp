@@ -36,6 +36,7 @@ const AvailedServicePage = ({ languageData, lang }) => {
         // if (response.success) {
         // set_individual_schemes(response.Data !== null ? response?.Data?.schemes : []);
         const schemes = JSON.parse(response.Data.schemes);
+        console.log('availed-schemes', schemes);
         // const grouped = schemes.reduce((acc, item) => {
         //   if (!acc[item.name]) {
         //     acc[item.name] = [];
@@ -474,7 +475,7 @@ const AvailedServicePage = ({ languageData, lang }) => {
   return (
     <>
 
-      <Block className='page-content'>
+      <Block className=''>
         <div className='block'>
           <div className="block-title">Individual availed Schemes / Services</div>
           {individual_availed_schemes()}
