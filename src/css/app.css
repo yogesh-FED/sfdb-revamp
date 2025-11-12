@@ -1079,14 +1079,14 @@ input[type="search"]::placeholder {
   .kural-title {
     color: yellow;
     font-weight: 600;
-    padding: 0px 20px;
+    padding: 0;
     font-size: 16px;
   }
 
   .kural {
     color: #fff;
     font-weight: 600;
-    padding: 0px 20px;
+    padding: 0;
     font-size: 16px;
   }
 
@@ -2209,256 +2209,7 @@ input[type="search"]::placeholder {
   border: 1px solid #0C64BD !important;
 }
 
-@media (max-width: 768px) {
-  .wid75 .block {
-    padding: 0 1rem !important;
-  }
 
-  .family-head .family-members {
-    display: block !important;
-  }
-
-  .loginPopPage .right {
-    margin-left: auto !important;
-  }
-
-  .loginPopPage .navbar {
-    top: 0 !important
-  }
-
-  .scheme_layout p {
-    text-align: left;
-  }
-
-  .scheme_layout .toolbar-inner {
-    width: 100%;
-    padding: 0;
-  }
-
-  .help_content .list {
-    padding-top: 0;
-    margin-top: 0;
-  }
-
-  .help_content {
-    text-align: left;
-    margin-bottom: 3rem;
-  }
-
-  .help_content .viewMore {
-    margin: 0;
-    margin-left: 1rem;
-  }
-
-  .about_us_content {
-    padding: 0;
-  }
-
-  .kyswl a {
-    padding: 0.5rem 1rem;
-  }
-
-  .still_content {
-    padding: 3rem 3rem 3rem 2rem;
-  }
-
-  .stillGotQ {
-    margin-bottom: 5rem;
-  }
-
-  .scheme_layout .tab-link {
-    font-size: 12px;
-  }
-
-  .searchInpt .list {
-    margin: 0 !important;
-    width: 100%;
-  }
-
-  .searchInpt .item-floating-label {
-    background: none !important;
-  }
-
-  .welcome-title-2 {
-    font-size: 18px;
-    line-height: 20px;
-    width: 100%;
-    padding-left: 0;
-  }
-
-  .welcomeTxt {
-    font-size: 14px;
-    padding-top: 1rem;
-    padding-left: 0;
-  }
-
-  .posRel {
-    background-position: 80% !important;
-  }
-
-  .head_split {
-    padding: 0;
-  }
-
-  .head_split p {
-    background: #010017;
-    padding: 1rem;
-  }
-
-  .subHead {
-    padding-left: 0;
-  }
-
-  .banner_kural_text {
-    padding-left: 0;
-    padding-top: 0
-  }
-
-  .porul-title,
-  .porul {
-    padding-left: 0;
-  }
-
-  .padLRZ,
-  .abouUsPage,
-  .schemeBg {
-    padding-top: 8rem !important;
-  }
-
-  .help_img img {
-    object-fit: unset;
-  }
-
-  .tnFontChange .welcome-title-2 {
-    font-size: 18px !important;
-    line-height: 25px !important;
-  }
-
-  .tnFontChange .welcomeTxt {
-    font-size: 14px !important;
-  }
-
-  .banner_kural_text p,
-  .porul {
-    line-height: 20px;
-    font-size: 12px;
-    font-weight: 100;
-  }
-
-  .scheme_layout .toolbar-bottom {
-    width: 100%;
-  }
-
-  .footer_sec {
-    gap: 25px !important;
-  }
-
-  .footer_sec h6 {
-    padding-bottom: 10px !important;
-  }
-
-  .posRel,
-  .abouUsPage,
-  .schemeBg,
-  .footerCls {
-    padding: 5rem 1rem !important;
-  }
-
-  .kyswl button {
-    width: 80%;
-  }
-
-  .adjustGridGap {
-    gap: 0 !important;
-  }
-
-  .pad5 {
-    padding: 0 1rem;
-  }
-
-  .helpPageHead {
-    padding: 0 3rem;
-  }
-
-  .schemeListPopup .navbar {
-    top: 0 !important;
-  }
-
-  .schemeListPopup h3 {
-    font-size: 14px;
-    z-index: 999;
-  }
-
-  .profileStyles {
-    min-height: auto !important;
-    max-height: none !important;
-  }
-
-  .profileStyles p.external {
-    position: relative !important;
-  }
-
-  .personalWelcome a {
-    position: relative !important;
-  }
-
-  .pad3.personalEng {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-  }
-
-  .personalWelcome {
-    text-align: left !important;
-  }
-
-  .user-profile-image {
-    width: 80px !important;
-    height: 80px !important;
-    vertical-align: top;
-  }
-
-  .profileStyles .user-profile-image {
-    right: 0% !important;
-  }
-
-  .schemeFilters .page-content {
-    padding: 1rem !important;
-  }
-
-  .schemeFilters .demo_details {
-    width: 100% !important;
-    padding: 2rem 0 !important;
-  }
-
-  .schemeFilters .demo_details p.title {
-    margin: 0 1rem;
-  }
-
-  .schemeFilters .res_block {
-    margin-top: 10rem;
-  }
-
-  .gender i.icon-radio {
-    margin: 0.5rem 0;
-  }
-
-  .demo_form .ageSection {
-    gap: 0 !important;
-  }
-
-  .demo_form .ageSection li {
-    margin-bottom: 1rem;
-  }
-
-  .demo_form .ageSection,
-  .demo_form .twoGrid {
-    grid-template-columns: 100% !important;
-  }
-
-  .schemeFilters .demo_form .ageSection .alignRight {
-    text-align: left !important;
-  }
-}
 
 /* @media (max-width: 1366px) {
   .loginPopPage .login-box {
@@ -3175,4 +2926,356 @@ input[type="search"]::placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+
+/* responsive code */
+
+@media (max-width: 768px) {
+  .wid75 .block {
+    padding: 0 1rem !important;
+  }
+
+  .family-head .family-members {
+    display: block !important;
+  }
+
+  .loginPopPage .right {
+    margin-left: auto !important;
+  }
+
+  .loginPopPage .navbar {
+    top: 0 !important
+  }
+
+  .scheme_layout p {
+    text-align: left;
+  }
+
+  .scheme_layout .toolbar-inner {
+    padding: 0;
+  }
+
+  .help_content .list {
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  .help_content {
+    text-align: left;
+    margin-bottom: 3rem;
+  }
+
+  .help_content .viewMore {
+    margin: 0;
+    margin-left: 1rem;
+  }
+
+  .about_us_content {
+    padding: 0;
+  }
+
+  /* .kyswl a {
+    padding: 0.5rem 1rem;
+  } */
+
+  .still_content {
+    padding: 1rem;
+  }
+
+  .stillGotQ {
+    margin-bottom: 5rem;
+  }
+
+  .scheme_layout .tab-link {
+    font-size: 12px;
+  }
+
+  .searchInpt .list {
+    margin: 0 !important;
+    width: 100%;
+  }
+
+  .searchInpt .item-floating-label {
+    background: none !important;
+  }
+
+  .welcome-title-2 {
+    font-size: 18px;
+    line-height: 20px;
+    width: 100%;
+    padding-left: 0;
+  }
+
+  .welcomeTxt {
+    font-size: 14px;
+    padding-top: 1rem;
+    padding-left: 0;
+  }
+
+  .posRel {
+    background-position: 80% !important;
+  }
+
+  .head_split {
+    padding: 0;
+  }
+
+  .head_split p {
+    background: #010017;
+    padding: 10px;
+  }
+
+  .subHead {
+    padding-left: 0;
+  }
+
+  .banner_kural_text {
+    padding-left: 0;
+    padding-top: 0
+  }
+
+  .porul-title,
+  .porul {
+    padding-left: 0;
+  }
+
+  .padLRZ,
+  .abouUsPage,
+  .schemeBg {
+    padding-top: 8rem !important;
+  }
+
+  .help_img img {
+    object-fit: unset;
+  }
+
+  .tnFontChange .welcome-title-2 {
+    font-size: 18px !important;
+    line-height: 25px !important;
+  }
+
+  .tnFontChange .welcomeTxt {
+    font-size: 14px !important;
+  }
+
+  .banner_kural_text p,
+  .porul {
+    line-height: 20px;
+    font-size: 12px;
+    font-weight: 100;
+  }
+
+  .scheme_layout .toolbar-bottom {
+    width: 100%;
+  }
+
+  .footer_sec {
+    gap: 25px !important;
+  }
+
+  .footer_sec h6 {
+    padding-bottom: 10px !important;
+  }
+
+  .posRel,
+  .abouUsPage,
+  .schemeBg,
+  .footerCls {
+    padding: 5rem 1rem !important;
+  }
+
+  .kyswl button {
+    width: 80%;
+  }
+
+  .adjustGridGap {
+    gap: 0 !important;
+  }
+
+  .pad5 {
+    padding: 0 1rem;
+  }
+
+  .helpPageHead {
+    padding: 0 1rem;
+  }
+
+  .schemeListPopup .navbar {
+    top: 0 !important;
+  }
+
+  .schemeListPopup h3 {
+    font-size: 14px;
+    z-index: 999;
+  }
+
+  .profileStyles {
+    min-height: auto !important;
+    max-height: none !important;
+  }
+
+  .profileStyles p.external {
+    position: relative !important;
+  }
+
+  .personalWelcome a {
+    position: relative !important;
+  }
+
+  .pad3.personalEng {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .personalWelcome {
+    text-align: left !important;
+  }
+
+  .user-profile-image {
+    width: 80px !important;
+    height: 80px !important;
+    vertical-align: top;
+  }
+
+  .profileStyles .user-profile-image {
+    right: 0% !important;
+  }
+
+  .schemeFilters .page-content {
+    padding: 1rem !important;
+  }
+
+  .schemeFilters .demo_details {
+    width: 100% !important;
+    padding: 2rem 0 !important;
+  }
+
+  .schemeFilters .demo_details p.title {
+    margin: 0 1rem;
+  }
+
+  .schemeFilters .res_block {
+    margin-top: 10rem;
+  }
+
+  .gender i.icon-radio {
+    margin: 0.5rem 0;
+  }
+
+  .demo_form .ageSection {
+    gap: 0 !important;
+  }
+
+  .demo_form .ageSection li {
+    margin-bottom: 1rem;
+  }
+
+  .demo_form .ageSection,
+  .demo_form .twoGrid {
+    grid-template-columns: 100% !important;
+  }
+
+  .schemeFilters .demo_form .ageSection .alignRight {
+    text-align: left !important;
+  }
+
+  .makkalportalmenu.navbar {
+    top: 5.5rem !important;
+  }
+
+  .findschemesPad {
+    padding: 1rem;
+  }
+
+  .schemeDetails {
+    margin-bottom: .5rem;
+  }
+
+  [data-name="loginpage"] .page-content {
+    background-size: cover !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  .posRel,
+  .abouUsPage,
+  .schemeBg,
+  .findschemesPad,
+  .pad5,
+  .still_content,
+  .footerCls {
+    padding: 2rem !important;
+  }
+
+  .footer_sec {
+    gap: 15px;
+  }
+
+  [data-name="loginpage"] .page-content {
+    background-size: cover !important;
+  }
+
+  .footer_sec h6 {
+    padding-bottom: .5rem;
+  }
+
+  .help_content .list {
+    padding: 0;
+  }
+
+  .flexAuto {
+    flex: none !important;
+  }
+
+  .desktop-menu {
+    gap: 10px !important;
+    margin-left: 4rem;
+  }
+
+  .desktop-menu span {
+    padding: 0.5rem 1rem !important;
+  }
+
+  .loginBtn {
+    margin-right: 1rem !important;
+  }
+
+  .help_img {
+    padding: 0;
+    text-align: center;
+  }
+
+  .help_img img {
+    width: auto;
+  }
+}
+
+@media (max-width: 1024px) {
+
+  .grid.grid-cols-1.large-grid-cols-2.grid-gap.gap50 {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .profileStyles:nth-of-type(2) {
+    order: -1;
+  }
+
+  .toolbar-inner {
+    width: 100% !important;
+  }
+}
+
+.homeTabClicks .toolbar-inner {
+  width: 100%;
+}
+
+.toolbar-inner {
+  width: 300px;
+}
+
+.wid75 .block {
+  margin-bottom: 5rem !important;
 }

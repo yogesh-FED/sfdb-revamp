@@ -108,7 +108,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
         {loading ?
           (
             <div className='family-members skeleton-effect-wave'>
-              <center>
+              {/* <center>
                 <div className="photo-container skeleton-block" style={{ height: "200px" }}>
 
                   <div className="passport-photo skeleton-block" />
@@ -124,7 +124,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
                     </p>
                   </div>
                 </div>
-              </center>
+              </center> */}
             </div>
           ) : (
 
@@ -200,7 +200,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
           (
             [1, 2, 3].map((n) => (
               <div className='family-members skeleton-effect-wave' key={n}>
-                <center>
+                {/* <center>
                   <div className="photo-container skeleton-block" style={{ height: "200px" }}>
 
                     <div className="passport-photo skeleton-block" />
@@ -216,7 +216,7 @@ const FamilyTreePage = ({ languageData, lang }) => {
                       </p>
                     </div>
                   </div>
-                </center>
+                </center> */}
               </div>
             ))
           )

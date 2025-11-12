@@ -74,7 +74,7 @@ const WelcomePage = ({ language_data }) => {
             <p className='welcomeTxt'>{language_data.banner_text}</p>
             <h2 className='welcome-title-2'>{language_data.banner_heading}</h2>
             {/* <span className='subHead'> {language_data.banner_subText} </span> */}
-            <div className="grid grid-cols-1 large-grid-cols-3 head_split grid-gap">
+            <div className="grid grid-cols-3 large-grid-cols-3 head_split grid-gap">
               <p> {language_data.banner_step_text1} </p>
               <p>{language_data.banner_step_text2}</p>
               <p>{language_data.banner_step_text3}</p>
