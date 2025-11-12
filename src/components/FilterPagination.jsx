@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Toolbar, Button } from 'framework7-react';
 
 const FilterPagination = ({
@@ -6,8 +6,19 @@ const FilterPagination = ({
   itemsPerPage,
   currentPage,
   onPageChange,
-  maxButtons = 5, // show max 5 buttons at once
+  maxButtons = 5, // show max 5 buttons on desktop
 }) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const goToPage = (page) => {
@@ -16,14 +27,17 @@ const FilterPagination = ({
     }
   };
 
+  // For mobile: show only 2 buttons
+  const displayMaxButtons = isMobile ? 2 : maxButtons;
+
   // Calculate the pagination window
-  const half = Math.floor(maxButtons / 2);
+  const half = Math.floor(displayMaxButtons / 2);
   let startPage = Math.max(1, currentPage - half);
-  let endPage = startPage + maxButtons - 1;
+  let endPage = startPage + displayMaxButtons - 1;
 
   if (endPage > totalPages) {
     endPage = totalPages;
-    startPage = Math.max(1, endPage - maxButtons + 1);
+    startPage = Math.max(1, endPage - displayMaxButtons + 1);
   }
 
   const pageNumbers = [];
@@ -33,7 +47,7 @@ const FilterPagination = ({
 
   return (
     <Toolbar bottom className='transparentBg'>
-      <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', width: '100%', gap: '4px', alignItems: 'center' }}>
         {/* Prev Button */}
         <Button
           small

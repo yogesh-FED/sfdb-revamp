@@ -3195,6 +3195,22 @@ input[type="search"]::placeholder {
   [data-name="loginpage"] .page-content {
     background-size: cover !important;
   }
+
+  .filterContent {
+    padding: 0 !important;
+  }
+
+  .filterTabsAccordion .block {
+    padding: 0 !important;
+  }
+
+  .categorySection {
+    width: 100%;
+  }
+
+  .accordion-item-content p {
+    padding: 1rem;
+  }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
@@ -3265,6 +3281,67 @@ input[type="search"]::placeholder {
 
   .toolbar-inner {
     width: 100% !important;
+  }
+}
+
+/* scheme filter section  */
+/* Hide filter section on mobile by default */
+@media (max-width: 768px) {
+  .mobile-filter-toggle {
+    display: block !important;
+  }
+
+  .filter-form-section {
+    display: none !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  .filter-form-section.show-mobile {
+    display: block !important;
+  }
+}
+
+/* Show filter section on desktop */
+/* Hide filter section on mobile by default */
+@media (max-width: 768px) {
+  .mobile-filter-toggle {
+    display: block !important;
+  }
+
+  .filter-form-section {
+    display: none !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  .filter-form-section.show-mobile {
+    display: block !important;
+  }
+}
+
+/* Show filter section on desktop */
+@media (min-width: 769px) {
+  .mobile-filter-toggle {
+    display: none !important;
+  }
+
+  .filter-form-section {
+    display: block !important;
   }
 }
 

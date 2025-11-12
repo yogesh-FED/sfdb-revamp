@@ -757,7 +757,7 @@ const LandingPage = ({ f7router }) => {
       <Section data-id="help" id="3" bg="#fff" className={tnFont ? 'tnFontChange padLRZ' : 'padLRZ'}>
         <HelpPageRevamp language_data={language_data} />
       </Section>
-      <Section id="4" bg="rgb(10, 0, 50)" className={tnFont ? 'tnFontChange footerCls' : 'footerCls'}>
+      <Section id="4" bg="rgb(10, 0, 50, .9)" className={tnFont ? 'tnFontChange footerCls' : 'footerCls'}>
         <FooterRevampPage language_data={language_data} />
       </Section>
       <ChatBotPage languageData={language_data} />
