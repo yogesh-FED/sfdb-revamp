@@ -9,6 +9,7 @@ import { HelpPageRevamp } from '../pages/frontend/help.jsx';
 import LoginPage from '../pages/frontend/login.jsx';
 import SchemeFilter from '../pages/frontend/SchemeFilter.jsx';
 import SchemeDescApply from '../pages/frontend/SchemeDescApply.jsx';
+import ChatBotWidgetPage from '../pages/frontend/ChatBotWidgetPage.jsx';
 
 var routes = [
   {
@@ -63,6 +64,10 @@ var routes = [
   {
     path: '/scheme-description-and-apply',
     component: SchemeDescApply,
+  },
+  {
+    path: '/chat-page',
+    component: ChatBotWidgetPage,
   },
   {
     path: '(.*)',

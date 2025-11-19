@@ -682,6 +682,7 @@ import { FooterRevampPage } from './frontend/footer';
 import { SchemePageRevamp } from './frontend/schemes-revamp';
 import { HelpPageRevamp } from './frontend/help';
 import { ChatBotPage } from './frontend/chat-bot';
+import ChatBotWidget from './frontend/ChatBotWidget';
 
 const Section = ({ id, title, bg, children, className }) => {
   const isImage = typeof bg === 'string' && (bg.startsWith('/') || bg.startsWith('http') || bg.startsWith('data:'));
@@ -760,7 +761,8 @@ const LandingPage = ({ f7router }) => {
       <Section id="4" bg="rgb(10, 0, 50, .9)" className={tnFont ? 'tnFontChange footerCls' : 'footerCls'}>
         <FooterRevampPage language_data={language_data} />
       </Section>
-      <ChatBotPage languageData={language_data} />
+      {/* <ChatBotPage languageData={language_data} /> */}
+      <ChatBotWidget languageData={language_data} />
     </Page>
   );
 };
