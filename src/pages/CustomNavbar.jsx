@@ -11,6 +11,7 @@ const CustomNavbar = (props) => {
   props.language_data.scheme,
   props.language_data.help];
   const scrollToSection = (id, setOpen) => {
+    debugger;
     if (props.hideMenusInDetailPage === true) {
       props.f7router.navigate('/', { clearPreviousHistory: true, ignoreCache: true })
       setTimeout(() => {
@@ -22,6 +23,10 @@ const CustomNavbar = (props) => {
         }
       }, 300)
     } else {
+      f7.views.main.router.navigate('/', {
+        clearPreviousHistory: true,
+        ignoreCache: true,
+      });
       setTimeout(() => {
         const section = document.getElementById(id);
         if (section) {
@@ -55,9 +60,9 @@ const CustomNavbar = (props) => {
   }, [activeSection]);
   const [hideMenu, setHideMenu] = useState(false);
   useEffect(() => {
-    if (props.hideMenusInDetailPage !== true) {
-      scrollToSection(0);
-    }
+    // if (props.hideMenusInDetailPage !== true) {
+    //   scrollToSection(0);
+    // }
   }, []);
   const popup = useRef(null);
   const LoginPopup = () => {

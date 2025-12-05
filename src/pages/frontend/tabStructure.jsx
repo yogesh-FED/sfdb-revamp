@@ -33,6 +33,7 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
     return dialog;
   };
   const getCategorySchemesLabel = async () => {
+    debugger;
     const loaderDialog = showCustomLoader();
     const categoryResponse = await store.dispatch('getCategorySchemes');
     try {
@@ -43,7 +44,14 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
       setCategoriesSchCount(categoryResponse);
       setCategoryLabel(categoryResponseData);
     } catch (error) {
+      f7.toast.create({
+        text: 'Something went wrong ! Please try again after sometime',
+        position: 'top',
+        closeTimeout: 2000,
+      }).open();
       console.error('Error fetching category schemes:', error);
+      alert('something went wrong');
+
     }
     finally {
       loaderDialog.close();
@@ -51,13 +59,23 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
 
   }
   const getDepartmentSchemesLabel = async () => {
+    debugger;
     const deptResponse = await store.dispatch('getDepartmentSchemes');
     const deptResponseData = deptResponse?.departments.map((item) => {
-      // return item.department
-      return {
-        id: item.departmentCode,
-        department: item.department
-      };
+      try {
+        return {
+          id: item.departmentCode,
+          department: item.department
+        };
+      } catch (error) {
+        f7.toast.create({
+          text: 'Something went wrong ! Please try again after sometime',
+          position: 'top',
+          closeTimeout: 2000,
+        }).open();
+      } finally {
+
+      }
     })
 
     setDeptSchCount(deptResponse);

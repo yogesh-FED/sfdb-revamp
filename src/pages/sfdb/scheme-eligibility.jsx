@@ -3,7 +3,6 @@ import { List, ListItem, Icon, BlockTitle, Block, f7, Button, AccordionContent, 
 import FilterPagination from '../../components/FilterPagination';
 
 const SchemeEligibilityPage = ({ languageData, lang }) => {
-  const store = f7.store;
   const tabsId = localStorage.getItem('authtabsId');
   // const languageData = useStore('language_data');
   const [eligible_schemes, set_eligible_schemes] = useState(store.state.eligible_schemes);

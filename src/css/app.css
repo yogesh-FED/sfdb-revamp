@@ -2634,6 +2634,15 @@ input[type="search"]::placeholder {
   background-position: center;
 }
 
+.chatbotPage .page-content {
+  /* background: url(../assets/images/bodyBg.png); */
+  /* background: url(../assets/images/login-bg/login-bg.png); */
+  background: url(../assets/images/chat/chatbg.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 .schemeFilters h2 {
   text-align: center;
   color: #0C64BD;

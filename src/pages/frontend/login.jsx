@@ -32,6 +32,13 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
         });
       }
     });
+    let hashLocate = window.location.hash
+    if (hashLocate === '#!/login') {
+      f7.views.main.router.navigate('/login/', {
+        clearPreviousHistory: true,
+        ignoreCache: true,
+      });
+    }
   }, []);
   const checkRoute = (path) => {
     debugger;
@@ -462,13 +469,22 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
               formData: formData
             }
             const tokenRepsonse = await store.dispatch('getToken', getTokenPayload);
-            console.log(tokenRepsonse, 'tokenRepsonse');
-            f7.dialog.alert('✅ OTP Verified successfully!', 'Success');
-            f7.views.main.router.navigate('/home/', {
-              clearPreviousHistory: true,
-              ignoreCache: true,
-            });
-            f7.popup.close();
+            if (tokenRepsonse.code === "ERR_NETWORK") {
+              f7.dialog.alert('Something went wrong - Please try again after sometime');
+              f7.views.main.router.navigate('/login/', {
+                clearPreviousHistory: true,
+                ignoreCache: true,
+              });
+              f7.popup.close();
+            } else {
+              f7.dialog.alert('✅ OTP Verified successfully!', 'Success');
+              f7.views.main.router.navigate('/home/', {
+                clearPreviousHistory: true,
+                ignoreCache: true,
+              });
+              f7.popup.close();
+            }
+
           }
           else {
 
