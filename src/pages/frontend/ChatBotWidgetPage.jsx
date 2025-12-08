@@ -21,7 +21,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
   // NEW STATE → input box hidden until user selects an option
   const [showInputBox, setShowInputBox] = useState(false);
-
+  const [showTotal, setShowTotal] = useState(0);
   const chatEndRef = useRef(null);
 
   useEffect(() => {
@@ -88,37 +88,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     setLoadFlag(true);
   };
 
-  // const sendMessage = async () => {
-  //   debugger;
-  //   if (!input.trim()) return;
 
-  //   const newMsg = { from: "user", text: input };
-  //   const updatedList = [...messages, newMsg];
-  //   setMessages(updatedList);
-  //   let response = await store.dispatch('getChatMsg', input);
-  //   console.log('chat-response', response.reply.reply);
-  //   if (!currentChatId) setCurrentChatId(Date.now());
-  //   const userText = input;
-  //   setInput("");
-
-  //   setBotTyping(true);
-
-  //   setTimeout(() => {
-  //     const botResponse = response.reply.reply;
-  //     const botReplyResponse = Object.values(botResponse).map((item, i) => {
-  //       return (
-  //         item.scheme_name
-  //       )
-  //     })
-  //     console.log('botResponse', botReplyResponse);
-  //     // const finalMessages = [...updatedList, botReply];
-  //     const finalMessages = [...updatedList, botReplyResponse];
-  //     console.log('finalMessages', finalMessages);
-  //     setMessages(finalMessages);
-  //     setBotTyping(false);
-  //     saveChatToStorage(currentChatId || Date.now(), finalMessages);
-  //   }, 900);
-  // };
 
   const sendMessage = async () => {
     debugger;
@@ -127,40 +97,51 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     const newMsg = { from: "user", text: input };
     const updatedList = [...messages, newMsg];
     setMessages(updatedList);
+    try {
+      let response = await store.dispatch('getChatMsg', input);
+      console.log('chat-response', response.total);
+      setShowTotal(response.total);
 
-    let response = await store.dispatch('getChatMsg', input);
-    console.log('chat-response', response.type);
+      if (!currentChatId) setCurrentChatId(Date.now());
 
-    if (!currentChatId) setCurrentChatId(Date.now());
+      setInput("");
+      setBotTyping(true);
+      setTimeout(() => {
+        let finalMessages;
+        if (response.type === 'greeting' || response.total === 0) {
+          const botReply = response;
+          finalMessages = [...updatedList, botReply];
+        } else {
+          const botResponse = response.reply.reply;
+          const botReplyResponse = Object.values(botResponse).map(item => item.scheme_name);
 
-    setInput("");
-    setBotTyping(true);
+          console.log('botResponse', botReplyResponse);
 
-    setTimeout(() => {
-      let finalMessages;
-      if (response.type === 'greeting' || response.total === 0) {
-        const botReply = response;
-        finalMessages = [...updatedList, botReply];
-      } else {
-        const botResponse = response.reply.reply;
-        const botReplyResponse = Object.values(botResponse).map(item => item.scheme_name);
+          const botMsg = {
+            from: "bot",
+            text: botReplyResponse,
+            class: 'botResponse'
+          };
 
-        console.log('botResponse', botReplyResponse);
+          finalMessages = [...updatedList, botMsg];
+        }
 
-        const botMsg = {
-          from: "bot",
-          text: botReplyResponse
-        };
+        setMessages(finalMessages);
+        setBotTyping(false);
 
-        finalMessages = [...updatedList, botMsg];
-      }
+        saveChatToStorage(currentChatId || Date.now(), finalMessages);
 
-      setMessages(finalMessages);
-      setBotTyping(false);
+      }, 900);
 
-      saveChatToStorage(currentChatId || Date.now(), finalMessages);
+    }
+    catch (err) {
+      console.log(err);
+    }
+    finally {
 
-    }, 900);
+    }
+
+
   };
 
 
@@ -218,20 +199,38 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
           {/* Normal Messages */}
           {messages.map((msg, idx) => (
+            // <div key={idx} className={`message-row ${msg.from} ${msg.class}`}>
+            //   <div className="bubble">
+            //     {
+            //       Array.isArray(msg.text) ? msg.text.map((item, i) => <p> <span> {i + 1}. </span> {item}</p>)
+            //         :
+            //         msg.text || msg.reply
+            //     }
+            //     {/* {
+            //       Array.isArray(msg.text) ? msg.text.map((item, i) => <span className="result"> <span> {i + 1}. </span> {item} &nbsp; </span>)
+            //         :
+            //         msg.text || msg.reply
+            //     } */}
+            //   </div>
+            // </div>
             <div key={idx} className={`message-row ${msg.from} ${msg.class}`}>
               <div className="bubble">
                 {
-                  Array.isArray(msg.text) ? msg.text.map((item, i) => <p> <span> {i + 1}. </span> {item}</p>)
-                    :
-                    msg.text || msg.reply
+                  Array.isArray(msg.text)
+                    ? (
+                      <div className="flex-list">
+                        {msg.text.map((item, i) => (
+                          <span key={i} className="pill-item gradient-btn">
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    )
+                    : msg.text || msg.reply
                 }
-                {/* {
-                  Array.isArray(msg.text) ? msg.text.map((item, i) => <span className="result"> <span> {i + 1}. </span> {item} &nbsp; </span>)
-                    :
-                    msg.text || msg.reply
-                } */}
               </div>
             </div>
+
           ))}
 
           {/* Bot typing loader */}
@@ -256,7 +255,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
             <input
               type="text"
               className="chat-input"
-              placeholder="Type a message..."
+              placeholder="Welcome to the makkal portal Bot! I’m here to help! Please share your basic details"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
@@ -288,6 +287,34 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
       {/* STYLES */}
       <style>{`
+      .botResponse {
+        border-bottom: 1px solid #fff;
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+      }
+      .flex-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .gradient-btn {
+        background: linear-gradient(90deg, #ff4f9a, #7b61ff);
+        color: #fff;
+        padding: 10px 22px;
+        border-radius: 10px;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
+      }
+      .pill-item {
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
       .selectedOption .bubble {
           background: #0c64bc;
           color: #ffffff;
@@ -447,6 +474,9 @@ export default function ChatBotWidgetPage({ f7router, user }) {
       .chat-list .item-title {
         color: #fff;
       }
+        .botResponse .bubble {
+        background: transparent;
+        }
       `}</style>
     </Page>
   );
