@@ -9,19 +9,47 @@ import {
   ListItem,
   f7
 } from "framework7-react";
+import './chatStyle.css';
 
 export default function ChatBotWidgetPage({ f7router, user }) {
   const eligibilitySteps = [
     { key: "age", question: "Please tell us your age?", options: ["18", "26", "41"] },
     { key: "income", question: "Please tell us your annual income?", options: ["Below 2L", "2.5 Lakhs", "Above 5L"] },
     { key: "community", question: "Please tell us  your community", options: ["General", "OBC", "SC", "ST"] },
-    { key: "gender", question: "Please tell us  your gender", options: ["Male", "Female"] },
+    { key: "gender", question: "Please tell us  your gender", options: ["Male", "Female", "Transgender"] },
     { key: "maritalStatus", question: "Please tell us your Marital status?", options: ["Single", "Married"] },
   ];
-
+  const [showReopenFormBtn, setShowReopenFormBtn] = useState(false);
   const [currentStep, setCurrentStep] = useState(-1);
   const [eligibilityAnswers, setEligibilityAnswers] = useState({});
-
+  const [showIntro, setShowIntro] = useState(true);
+  const [showEligibilityForm, setShowEligibilityForm] = useState(false);
+  const [formData, setFormData] = useState({
+    age: "",
+    gender: "",
+    income: "",
+    community: "",
+    maritalStatus: "",
+    disability: "",
+    srilankaRefugee: "",
+    occupation: "",
+    farmerType: "",
+    studentType: "",
+    collegeType: "",
+    schoolType: "",
+    studentClass: "",
+    fishingType: "",
+    govtSchool612: "",
+  });
+  const emptyFormData = {
+    age: "",
+    gender: "",
+    income: "",
+    community: "",
+    maritalStatus: "",
+    disability: "",
+    srilankaRefuge: ""
+  };
   const store = f7.store;
   const [loadFlag, setLoadFlag] = useState(true);
   const [currentChatId, setCurrentChatId] = useState(null);
@@ -30,22 +58,11 @@ export default function ChatBotWidgetPage({ f7router, user }) {
   const [chatHistory, setChatHistory] = useState([]);
   const [botTyping, setBotTyping] = useState(false);
   const [allSchemeAndDesc, setAllSchemeAndDesc] = useState([]);
-  // NEW STATE → input box hidden until user selects an option
+
   const [showInputBox, setShowInputBox] = useState(false);
   const [showTotal, setShowTotal] = useState(0);
   const chatEndRef = useRef(null);
-  // const chatContainerRef = useRef(null)
-
-  // replace the scroll effect with:
-  // useEffect(() => {
-  //   const el = chatContainerRef.current;
-  //   if (!el) return;
-  //   const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-  //   if (distanceFromBottom < 40) {
-  //     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  //   }
-  // }, [messages, botTyping]);
-
+  const eligibilityFormRef = useRef(null);
   useEffect(() => {
     if (user) {
       const saved = JSON.parse(localStorage.getItem("chat_history") || "[]");
@@ -53,9 +70,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     }
   }, [user]);
 
-  // useEffect(() => {
-  //   chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  // }, [messages, botTyping]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({
@@ -63,24 +77,211 @@ export default function ChatBotWidgetPage({ f7router, user }) {
       block: "start",
     });
   }, [messages, botTyping]);
+  const isEligibilityTrigger = (text) => {
+    if (!text) return false;
 
-  const createNewChat = () => {
-    const newId = Date.now();
-    setCurrentChatId(newId);
-    setMessages([]);
-    setShowInputBox(false); // hide input until user chooses category again
+    const normalized = text.toLowerCase().trim();
+
+    const triggers = [
+      "hi",
+      "hello",
+      "hey",
+      "good morning",
+      "good evening",
+      "good afternoon",
+      "eligibility",
+      "check eligibility",
+      "scheme eligibility",
+      "find schemes",
+    ];
+
+    return triggers.some(t => normalized.includes(t));
   };
+
   // const buildEligibilitySummary = (answers) => {
   //   return `I am ${answers.age} years old, my income is ${answers.income}, I belong to ${answers.community} community, I am ${answers.gender} and ${answers.maritalStatus}`;
   // };
+  // const buildFormSentence = (data) => {
+  //   const parts = [];
+
+  //   if (data.age) parts.push(`I am ${data.age} years old`);
+  //   if (data.gender) parts.push(`I am ${data.gender}`);
+  //   if (data.income) parts.push(`my income is ${data.income}`);
+  //   if (data.community) parts.push(`I belong to ${data.community} community`);
+  //   if (data.maritalStatus) parts.push(`I am ${data.maritalStatus}`);
+  //   if (data.disability) parts.push(`Disability: ${data.disability}`);
+  //   if (data.srilankaRefugee) parts.push(`Sri Lanka refugee: ${data.srilankaRefugee}`);
+
+  //   return parts.join(", ");
+  // };
+
+  const buildFormSentence = (data) => {
+    const parts = [];
+
+    // Basic details
+    if (data.age) parts.push(`I am ${data.age} years old`);
+    if (data.gender) parts.push(`I am ${data.gender}`);
+    if (data.income) parts.push(`my income is ${data.income}`);
+    if (data.community) parts.push(`I belong to ${data.community} community`);
+    if (data.maritalStatus) parts.push(`I am ${data.maritalStatus}`);
+    if (data.disability) parts.push(`Disability: ${data.disability}`);
+
+    // Occupation
+    if (data.occupation) {
+      parts.push(`My occupation is ${data.occupation}`);
+
+      /* ========= FARMER ========= */
+      if (data.occupation === "Farmer" && data.farmerType) {
+        parts.push(`I am a ${data.farmerType} farmer`);
+      }
+
+      /* ========= STUDENT ========= */
+      if (data.occupation === "Student" && data.studentType) {
+        parts.push(`I am a ${data.studentType} student`);
+
+        // School student
+        if (data.studentType === "School") {
+          if (data.schoolType)
+            parts.push(`studying in a ${data.schoolType} school`);
+
+          if (data.studentClass)
+            parts.push(`currently studying in class ${data.studentClass}`);
+        }
+
+        // College student
+        if (data.studentType === "College") {
+          if (data.collegeType)
+            parts.push(`studying in a ${data.collegeType} college`);
+
+          if (data.govtSchool612)
+            parts.push(
+              `my schooling from 6th to 12th was in a government school: ${data.govtSchool612}`
+            );
+        }
+      }
+
+      /* ========= FISHERMAN ========= */
+      if (data.occupation === "Fisherman" && data.fishingType) {
+        parts.push(`I am a ${data.fishingType} fisherman`);
+
+        if (data.govtSchool612)
+          parts.push(
+            `my schooling from 6th to 12th was in a government school: ${data.govtSchool612}`
+          );
+      }
+    }
+
+    return parts.join(", ") + ".";
+  };
+
+
+
+
+  const handleEligibilityFormSubmit = () => {
+    const payload = buildEligibilityPayload(formData);
+    console.log("FINAL PAYLOAD", payload);
+    const sentence = buildFormSentence(formData);
+
+    setShowEligibilityForm(false);
+    setShowInputBox(true);
+    setShowReopenFormBtn(true);
+
+    setMessages(prev => [...prev, { from: "user", text: sentence }]);
+
+    setTimeout(() => {
+      sendEligibilityMessage(sentence);
+    }, 500);
+  };
+
+
+  const ageOptions = [
+    ...Array.from({ length: 60 }, (_, i) => String(i + 1)),
+    ">60"
+  ];
 
   const buildEligibilitySummary = (answers) => {
     return `📋 Your Details:
-• Age: ${answers.age}
-• Income: ${answers.income}
-• Community: ${answers.community}
-• Gender: ${answers.gender}
-• Marital Status: ${answers.maritalStatus}`;
+      • Age: ${answers.age}
+      • Income: ${answers.income}
+      • Community: ${answers.community}
+      • Gender: ${answers.gender}
+      • Marital Status: ${answers.maritalStatus}`;
+  };
+
+  const buildEligibilityPayload = (formData) => {
+    const payload = {
+      type: "attributes",
+      details: "Test",
+      category: "",
+      name: "User",
+      age: Number(formData.age) || "",
+      gender: formData.gender?.charAt(0) || "",
+      maritalStatus: formData.maritalStatus || "",
+      disability: formData.disability === 'Yes' ? 'Disabled' : '',
+      income: {
+        amount: formData.income || "",
+        type: "",
+      },
+      community: formData.community || "",
+      occupation: formData.occupation ? [formData.occupation] : [],
+      occupation_type: {},
+    };
+
+
+    if (formData.occupation === "Student") {
+      payload.occupation_type.student = {
+        allowed: [formData.studentType?.toLowerCase()],
+      };
+
+      if (formData.studentType === "School") {
+        payload.occupation_type.student.school = {
+          class_min: Number(formData.studentClass) || "",
+          class_max: Number(formData.studentClass) || "",
+          school_type: [formData.schoolType?.toLowerCase()],
+        };
+      }
+
+      if (formData.studentType === "College") {
+        payload.occupation_type.student.college = {
+          college_type: [formData.collegeType?.toLowerCase()],
+          school_6th_12th: [formData.govtSchool612],
+        };
+      }
+    }
+
+
+    if (formData.occupation === "Farmer") {
+      payload.occupation_type.farmer = {
+        allowed: [formData.farmerType?.toLowerCase()],
+        land_min_acres: 0,
+        land_max_acres: 5,
+      };
+    }
+
+
+    if (formData.occupation === "Fisherman") {
+      payload.occupation_type.fisherman = {
+        allowed: [formData.fishingType?.toLowerCase()],
+        boat_owner: [formData.boatOwner || "Yes"],
+      };
+    }
+
+    return payload;
+  };
+
+
+  const resetChat = () => {
+    setMessages([]);
+    setInput("");
+    setBotTyping(false);
+
+    setCurrentChatId(null);
+    setCurrentStep(-1);
+    setEligibilityAnswers({});
+
+    setShowInputBox(false);
+    setShowEligibilityForm(false);
+    setShowIntro(true);
   };
 
   const saveChatToStorage = (chatId, messages) => {
@@ -115,7 +316,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
   const startEligibilityFlow = () => {
     setEligibilityAnswers({});
     setCurrentStep(0);
-    setShowInputBox(false); // 👈 hide input during questions
+    setShowInputBox(false);
 
     setMessages(prev => ([
       ...prev,
@@ -124,6 +325,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
         text: {
           question: eligibilitySteps[0].question,
           options: eligibilitySteps[0].options,
+          stepKey: eligibilitySteps[0].key,
         },
       },
     ]));
@@ -150,8 +352,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
 
   const sendMessage = async () => {
-    debugger;
-    if (input.trim().toLowerCase() === "hi" && currentStep === -1) {
+    if (isEligibilityTrigger(input) && currentStep === -1) {
       setMessages(prev => ([...prev, { from: "user", text: input }]));
       setInput("");
       startEligibilityFlow();
@@ -211,18 +412,21 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
   };
 
-
-  const handleEligibilityAnswer = (answer) => {
+  const handleEligibilityAnswer = (answer, isSkipped = false) => {
+    debugger;
     const stepKey = eligibilitySteps[currentStep].key;
 
+    const finalAnswer = isSkipped ? "Not provided" : answer;
+
+    // show user action in chat
     setMessages(prev => ([
       ...prev,
-      { from: "user", text: answer }
+      { from: "user", text: isSkipped ? "Skipped" : answer }
     ]));
 
     const updatedAnswers = {
       ...eligibilityAnswers,
-      [stepKey]: answer,
+      [stepKey]: finalAnswer,
     };
 
     setEligibilityAnswers(updatedAnswers);
@@ -239,23 +443,18 @@ export default function ChatBotWidgetPage({ f7router, user }) {
           text: {
             question: eligibilitySteps[nextStep].question,
             options: eligibilitySteps[nextStep].options,
+            stepKey: eligibilitySteps[nextStep].key,
           },
         },
       ]));
-    }
-    else {
+    } else {
+      // ✅ last step finished
       setCurrentStep(-1);
       setShowInputBox(true);
 
-      const finalAnswers = {
-        ...eligibilityAnswers,
-        [stepKey]: answer,
-      };
-
-      const summaryText = buildEligibilitySummary(finalAnswers);
-      const sentence = buildEligibilitySentence(finalAnswers);
-
-      // 👤 show summary as BOT log in chat
+      const summaryText = buildEligibilitySummary(updatedAnswers);
+      const sentence = buildEligibilitySentence(updatedAnswers);
+      console.log(sentence, 'sent');
       setMessages(prev => ([
         ...prev,
         {
@@ -265,26 +464,37 @@ export default function ChatBotWidgetPage({ f7router, user }) {
         }
       ]));
 
-      // 🤖 show processing message
-      // setMessages(prev => ([
-      //   ...prev,
-      //   {
-      //     from: "bot",
-      //     // text: "🔍 Finding the best schemes for you...",
-      //   }
-      // ]));
-
-      // 🔥 auto trigger API
       setTimeout(() => {
         sendEligibilityMessage(sentence);
       }, 600);
     }
-
-
   };
+
+
+  // const buildEligibilitySentence = (answers) => {
+  //   return `I am ${answers.age} years old, my income is ${answers.income}, I belong to ${answers.community} community, I am ${answers.gender} and ${answers.maritalStatus}`;
+  // };
   const buildEligibilitySentence = (answers) => {
-    return `I am ${answers.age} years old, my income is ${answers.income}, I belong to ${answers.community} community, I am ${answers.gender} and ${answers.maritalStatus}`;
+    const parts = [];
+
+    if (answers.age !== "Not provided")
+      parts.push(`I am ${answers.age} years old`);
+
+    if (answers.income !== "Not provided")
+      parts.push(`my income is ${answers.income}`);
+
+    if (answers.community !== "Not provided")
+      parts.push(`I belong to ${answers.community} community`);
+
+    if (answers.gender !== "Not provided")
+      parts.push(`I am ${answers.gender}`);
+
+    if (answers.maritalStatus !== "Not provided")
+      parts.push(`I am ${answers.maritalStatus}`);
+
+    return parts.join(", ");
   };
+
 
 
   const sendEligibilityMessage = async (text) => {
@@ -358,6 +568,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
       {/* CHAT AREA */}
       <Block className="chatbotPage_block" style={{ paddingBottom: "90px", marginTop: "4rem" }}>
         {/* <div className="chat-container"> */}
+
         <div className="chat-container">
           {/* BEFORE input → Show two options */}
           {!showInputBox && messages.length === 0 && (
@@ -396,15 +607,56 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                     >
                       <p>{msg.text.question}</p>
                       <div className="flex-list-item">
-                        {msg.text.options.map((opt, i) => (
-                          <button
-                            key={i}
-                            className="pill-item gradient-btn"
-                            onClick={() => handleEligibilityAnswer(opt)}
-                          >
-                            {opt}
-                          </button>
-                        ))}
+                        {msg.text.stepKey === "age" ? (
+                          <div className="age-dropdown">
+                            <select
+                              defaultValue=""
+                              onChange={(e) => {
+                                if (e.target.value) {
+                                  handleEligibilityAnswer(e.target.value);
+                                }
+                              }}
+                            >
+                              <option value="" disabled>
+                                Select Age
+                              </option>
+
+                              {ageOptions.map((age, i) => (
+                                <option key={i} value={age}>
+                                  {age}
+                                </option>
+                              ))}
+                            </select>
+
+                            <button
+                              className="skip-btn"
+                              onClick={() => handleEligibilityAnswer(null, true)}
+                            >
+                              Skip
+                            </button>
+                          </div>
+                        ) : (
+
+                          <div className="flex-list-item">
+                            {msg.text.options.map((opt, i) => (
+                              <button
+                                key={i}
+                                className="pill-item gradient-btn"
+                                onClick={() => handleEligibilityAnswer(opt)}
+                              >
+                                {opt}
+                              </button>
+                            ))}
+
+                            <button
+                              className="pill-item skip-btn"
+                              onClick={() => handleEligibilityAnswer(null, true)}
+                            >
+                              Skip
+                            </button>
+                          </div>
+                        )}
+
                       </div>
                     </div>
                   </>
@@ -463,6 +715,34 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                   </div>
                 </div>
               }
+              {showIntro && (
+                <div className="introText">
+                  <p className="preText">
+                    Hi! I can help you find government schemes that match your eligibility.
+                    <br />
+                    Would you like to check your eligibility now?
+                  </p>
+                  <button onClick={() => {
+                    setShowIntro(false);
+                    setShowEligibilityForm(true);
+                    setTimeout(() => {
+                      eligibilityFormRef.current?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }, 100);
+                  }}>
+                    Yes
+                  </button>
+
+                  <button onClick={() => setShowIntro(false)}>
+                    No
+                  </button>
+                </div>
+              )}
+
+
+
 
             </>
 
@@ -481,6 +761,269 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
           <div ref={chatEndRef} />
         </div>
+        {showEligibilityForm && (
+          <div className="eligibilityFullWidth" ref={eligibilityFormRef}>
+            <button
+              className="formCloseBtn"
+              onClick={() => {
+                setShowEligibilityForm(false);
+                setShowInputBox(true);
+                setShowReopenFormBtn(true);
+              }}
+            >
+              ✕
+            </button>
+            <h2>Check Your Eligibility</h2>
+            {/* <p className="subText">
+                    Ungal details fill pannunga. Idhai use panni suitable schemes suggest pannuvom.
+                  </p> */}
+
+            <div className="formGrid">
+              <div className="formGroup">
+                <label>Age</label>
+                <select onChange={(e) => setFormData({ ...formData, age: e.target.value })}>
+                  <option value="">Select Age</option>
+                  {ageOptions.map((age, i) => (
+                    <option key={i}>{age}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="formGroup">
+                <label>Gender</label>
+                <select onChange={(e) => setFormData({ ...formData, gender: e.target.value })}>
+                  <option value="">Select Gender</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Transgender</option>
+                </select>
+              </div>
+
+              <div className="formGroup">
+                <label>Annual Income</label>
+                <select onChange={(e) => setFormData({ ...formData, income: e.target.value })}>
+                  <option value="">Select Income</option>
+                  <option value='72000'>0 to 72,000</option>
+                  <option value="100000">72,000 to 1,00,000</option>
+                  <option value="2,50,000">1,00,000 to 2,50,000</option>
+                  <option value="3,00,000">2,50,000 to 3,00,000</option>
+                </select>
+              </div>
+
+              <div className="formGroup">
+                <label>Community</label>
+                <select onChange={(e) => setFormData({ ...formData, community: e.target.value })}>
+                  <option value="">Select Community</option>
+                  <option>General</option>
+                  <option>OBC</option>
+                  <option>SC</option>
+                  <option>ST</option>
+                </select>
+              </div>
+
+              <div className="formGroup">
+                <label>Marital Status</label>
+                <select onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}>
+                  <option value="">Select Status</option>
+                  <option>Single</option>
+                  <option>Married</option>
+                </select>
+              </div>
+
+              <div className="formGroup">
+                <label>Disability</label>
+                <select onChange={(e) => setFormData({ ...formData, disability: e.target.value })}>
+                  <option value="">Select</option>
+                  <option>Yes</option>
+                  <option>No</option>
+                </select>
+              </div>
+
+              <div className="formGroup">
+                <label>Occupation</label>
+                <select
+                  value={formData.occupation}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      occupation: e.target.value,
+                      farmerType: "",
+                      studentType: "",
+                      collegeType: "",
+                      schoolType: "",
+                      studentClass: "",
+                      fishingType: "",
+                      govtSchool612: "",
+                    })
+                  }
+                >
+                  <option value="">Select Occupation</option>
+                  <option>Farmer</option>
+                  <option>Student</option>
+                  <option>Fisherman</option>
+                </select>
+              </div>
+
+              {formData.occupation === "Farmer" && (
+                <div className="formGroup">
+                  <label>Farmer Type</label>
+                  <select
+                    value={formData.farmerType}
+                    onChange={(e) =>
+                      setFormData({ ...formData, farmerType: e.target.value })
+                    }
+                  >
+                    <option value="">Select</option>
+                    <option>Small</option>
+                    <option>Marginal</option>
+                    <option>Tenant</option>
+                  </select>
+                </div>
+              )}
+
+
+              {formData.occupation === "Student" && (
+                <div className="formGroup">
+                  <label>Student Type</label>
+                  <select
+                    value={formData.studentType}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        studentType: e.target.value,
+                        collegeType: "",
+                        schoolType: "",
+                        studentClass: "",
+                        govtSchool612: "",
+                      })
+                    }
+                  >
+                    <option value="">Select</option>
+                    <option>College</option>
+                    <option>School</option>
+                  </select>
+                </div>
+              )}
+
+              {formData.studentType === "College" && (
+                <>
+                  <div className="formGroup">
+                    <label>College Type</label>
+                    <select
+                      value={formData.collegeType}
+                      onChange={(e) =>
+                        setFormData({ ...formData, collegeType: e.target.value })
+                      }
+                    >
+                      <option value="">Select</option>
+                      <option>Govt</option>
+                      <option>Private</option>
+                    </select>
+                  </div>
+
+                  <div className="formGroup">
+                    <label>School 6th to 12th in Govt?</label>
+                    <div className="radioGroup">
+                      <label>
+                        <input
+                          type="radio"
+                          name="govtSchool612"
+                          value="Yes"
+                          checked={formData.govtSchool612 === "Yes"}
+                          onChange={(e) =>
+                            setFormData({ ...formData, govtSchool612: e.target.value })
+                          }
+                        />
+                        Yes
+                      </label>
+
+                      <label>
+                        <input
+                          type="radio"
+                          name="govtSchool612"
+                          value="No"
+                          checked={formData.govtSchool612 === "No"}
+                          onChange={(e) =>
+                            setFormData({ ...formData, govtSchool612: e.target.value })
+                          }
+                        />
+                        No
+                      </label>
+                    </div>
+                  </div>
+                </>
+              )}
+
+
+              {formData.studentType === "School" && (
+                <>
+                  <div className="formGroup">
+                    <label>School Type</label>
+                    <select
+                      value={formData.schoolType}
+                      onChange={(e) =>
+                        setFormData({ ...formData, schoolType: e.target.value })
+                      }
+                    >
+                      <option value="">Select</option>
+                      <option>Govt</option>
+                      <option>Private</option>
+                    </select>
+                  </div>
+
+                  <div className="formGroup">
+                    <label>Class</label>
+                    <select
+                      value={formData.studentClass}
+                      onChange={(e) =>
+                        setFormData({ ...formData, studentClass: e.target.value })
+                      }
+                    >
+                      <option value="">Select Class</option>
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <option key={i} value={i + 1}>
+                          {i + 1}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+              {formData.occupation === "Fisherman" && (
+                <>
+                  <div className="formGroup">
+                    <label>Fishing Type</label>
+                    <select>
+                      <option value="">Select</option>
+                      <option>Marine</option>
+                      <option>Inland</option>
+                    </select>
+                  </div>
+
+                  <div className="formGroup">
+                    <label>Are you a Boat Owner?</label>
+                    <div className="radioGroup">
+                      <label><input type="radio" /> Yes</label>
+                      <label><input type="radio" /> No</label>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+
+
+
+
+            <div className="formActions">
+              <Button fill onClick={handleEligibilityFormSubmit}>
+                Find Eligible Schemes
+              </Button>
+            </div>
+          </div>
+        )}
+
+
       </Block>
 
       {/* INPUT BOX (ONLY AFTER OPTION SELECTED) */}
@@ -496,22 +1039,44 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
               />
+              {showReopenFormBtn && !showEligibilityForm && (
+                <div className="reopenFormWrapper">
+                  <Button
+                    outline
+                    small
+                    color="blue"
+                    onClick={() => {
+                      setShowEligibilityForm(true);
+                      setShowInputBox(false);
+                      setShowReopenFormBtn(false);
+                      setFormData(emptyFormData);
+                      setTimeout(() => {
+                        eligibilityFormRef.current?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start"
+                        });
+                      }, 100);
+                    }}
+
+                  >
+                    Check Eligibility Again
+                  </Button>
+                </div>
+              )}
               {showInputBox && (
                 <div className="back-select-btn">
                   <Button
                     outline
                     small
                     color="gray"
-                    onClick={() => {
-                      setShowInputBox(false);
-                      setMessages([]); // optional: reset chat
-                    }}
+                    // onClick={() => {
+                    //   setShowInputBox(false);
+                    //   setMessages([]);
+                    // }}
+                    onClick={resetChat}
                   >
                     ← New Chat
                   </Button>
-                  {/* <Button fill small color="green" onClick={createNewChat}>
-                  + New Chat
-                </Button> */}
                 </div>
               )}
               <Button fill small onClick={sendMessage} className="send-btn">
@@ -521,242 +1086,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
           </div>
         )
       }
-
-      {/* STYLES */}
-      <style>{`
-      .applyBtn a {
-      font-size:12px;
-    background: #005bc1;
-    display: inline-block;
-    padding: .5rem;
-    border-radius: 5px;
-    color: #fff;
-}
-      .botResponse {
-        border-bottom: 1px solid #fff;
-        padding-top: 1rem;
-        padding-bottom: 2rem;
-      }
-        .flex-list-item {
-        display: flex;
-        gap: 10px;
-        }
-      .flex-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-      .gradient-btn {
-        background: linear-gradient(90deg, #ff4f9a, #7b61ff);
-        color: #fff;
-        padding: 10px 22px;
-        border-radius: 10px;
-        font-size: 14px;
-        border: none;
-        cursor: pointer;
-        font-weight: 500;
-        box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
-      }
-      .pill-item {
-        padding: 8px 14px;
-        border-radius: 20px;
-        font-size: 14px;
-        white-space: nowrap;
-      }
-      .flex-list-item .pill-item {
-        width: max-content;
-      }
-
-      .selectedOption .bubble {
-          background: #0c64bc;
-          color: #ffffff;
-          font-size: 14px;
-          border-radius: 50px;
-          margin: auto;
-        }
-      .chatHead {
-        width: 500px;
-        margin: auto;
-        font-size: 30px;
-      }
-
-      .questions {
-        display: flex;
-        flex-direction: row;
-        text-align: center;
-        margin-top: 30px;
-        gap: 1rem;
-        justify-content: center;
-      }
-
-      .chat-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        padding: 10px;
-        overflow: auto;
-        margin: auto;
-        width: 85%;
-        height: 60vh;
-      }
-
-      .chat-container::-webkit-scrollbar {
-        width: 5px;
-      }
-
-      .chat-container::-webkit-scrollbar-track {
-        background: #eee;
-      }
-
-      .chat-container::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
-      }
-
-      .chat-container::-webkit-scrollbar-thumb:hover {
-        background: #555;
-      }
-      .prechat-options {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-        margin-top: 30px;
-        border-radius: 15px;
-        padding: 3rem;
-      }
-
-      /* NEW BACK BUTTON STYLE */
-      .back-select-btn {
-        display: flex;
-        justify-content: center;
-      }
-
-      .back-select-btn .button {
-        background: rgba(255, 255, 255, 0.7);
-        border-color: #999;
-        color: #333;
-        backdrop-filter: blur(6px);
-        border-radius: 8px;
-      }
-
-      .message-row {
-        display: flex;
-      }
-
-      .message-row.user {
-        justify-content: flex-end;
-      }
-
-      .message-row.bot {
-        justify-content: flex-start;
-      }
-
-      .bubble {
-        padding: 10px 15px;
-        border-radius: 15px;
-        background: #005bc1;
-        color: #fff;
-        font-size: 15px;
-        line-height: 1.4;
-      }
-
-      .message-row.user .bubble {
-         background-color: #fff;
-        color: #222;
-        word-wrap: break-word;
-        border-radius: 50px;
-      }
-
-      .typing {
-        background: #fff;
-        display: flex;
-        gap: 3px;
-      }
-
-      .dot {
-        width: 6px;
-        height: 6px;
-        background-color: #555;
-        border-radius: 50%;
-        animation: blink 1.4s infinite both;
-      }
-
-      .dot:nth-child(1) { animation-delay: 0s; }
-      .dot:nth-child(2) { animation-delay: 0.2s; }
-      .dot:nth-child(3) { animation-delay: 0.4s; }
-
-      @keyframes blink {
-        0%, 80%, 100% { opacity: 0; }
-        40% { opacity: 1; }
-      }
-
-      .chat-input-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 80%;
-        padding: 1.5rem;
-        background: white;
-        border-top: 1px solid #ccc;
-        z-index: 999;
-        margin: 0 auto;
-        right: 0;
-        border-radius: 15px;
-        margin-bottom: 10px;
-      }
-
-      .chat-input-wrapper {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-      }
-
-      .chat-input {
-        flex-grow: 1;
-        padding: 10px 12px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 15px;
-      }
-
-      .send-btn {
-        white-space: nowrap;
-      }
-
-      .chat-list .item-title {
-        color: #fff;
-      }
-        .botResponse .bubble {
-        background: transparent;
-        }
-        .showsCountOfSchemes, .colorBlk {
-          color: #222;
-        }
-          .allSchemesandDesc {
-           color: #222;
-          padding: 2rem;
-          margin-top: 1rem;
-          background: rgba(255, 255, 255, 0.7);
-          border-radius: 15px;
-          }
-            .allSchemesandDesc h4 {
-            margin-bottom: 0;
-            }
-            .allSchemesandDesc p{
-            margin-top: 5px;
-            }
-            .getInputs {
-            border-bottom: 1px solid #fff;
-            padding-bottom: 1rem;
-            }
-            .eligibilitySummary .bubble {
-              background: rgba(255, 255, 255, 0.85);
-              color: #222;
-              font-size: 14px;
-              line-height: 1.6;
-              border-radius: 12px;
-            }
-      `}</style>
     </Page >
   );
 }

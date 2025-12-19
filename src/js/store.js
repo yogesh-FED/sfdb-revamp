@@ -624,6 +624,21 @@ const store = createStore({
       }
     },
 
+    getFilterResponse: async ({ }, inputMsg) => {
+      try {
+        const response = await axios.get("http://192.168.5.205/backup/api/v1/makkal/chatbot/schemes", {
+          params: {
+            message: inputMsg
+          }
+        });
+        const chatMsgData = response.data;
+        console.log("API Response:", chatMsgData);
+        return chatMsgData;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
+
     getMySchemeswithStatus: async ({ state }) => {
 
       let token = localStorage.getItem("token");

@@ -81,20 +81,6 @@ export default function Details({ f7router, title, language_data }) {
     <Page name="details" className='schemeFilters'>
       <Block className='res_block'>
         {
-          // schemeFormIsVisible === true ?
-          //   <SchemeForm
-          //     handleChange={handleChange}
-          //     handleSubmit={handleSubmit}
-          //     formData={formData}
-          //     buttonImg={buttonImg}
-          //     IsVisibleFalse={IsVisibleFalse}
-          //   />
-          //   :
-          //   <SchemeFilter
-          //     handleBackClick={handleBackClick}
-          //     schData={schData}
-          //     formData={formData}
-          //   />
           <SchemeForm
             handleChange={handleChange}
             handleSubmit={handleSubmit}

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Navbar, Page, Block, Tabs, Tab, Link, Toolbar,
   List,
@@ -26,7 +26,49 @@ const FilterTabs = (props) => {
     allSchemesCategory();
   }, [])
   const allSchemesCategory = async () => {
-    const response = await store.dispatch('getMySchemes');
+    debugger;
+    const fieldFilterData = localStorage.getItem('formDataVal');
+    // const buildEligibilitySentence = useCallback((answers) => {
+    //   if (answers.age !== "")
+    //     parts.push(`I am ${answers.age} years old`);
+
+    //   if (answers.income !== "")
+    //     parts.push(`my income is ${answers.income}`);
+
+    //   if (answers.community !== "")
+    //     parts.push(`I belong to ${answers.community} community`);
+
+    //   if (answers.gender !== "")
+    //     parts.push(`I am ${answers.gender}`);
+
+    //   if (answers.maritalStatus !== "")
+    //     parts.push(`I am ${answers.maritalStatus}`);
+    //   return parts.join(", ");
+    // }, [])
+    const buildEligibilitySentence = useCallback((answers) => {
+      const parts = [];
+
+      if (answers.age)
+        parts.push(`I am ${answers.age} years old`);
+
+      if (answers.income)
+        parts.push(`my income is ${answers.income}`);
+
+      if (answers.community)
+        parts.push(`I belong to ${answers.community} community`);
+
+      if (answers.gender)
+        parts.push(`I am ${answers.gender}`);
+
+      if (answers.maritalStatus)
+        parts.push(`I am ${answers.maritalStatus}`);
+
+      return parts.join(", ");
+    }, []);
+
+    const parseToObj = JSON.parse(fieldFilterData);
+    const finalData = buildEligibilitySentence(parseToObj);
+    const response = await store.dispatch('getFilterResponse', finalData);
     const categoryResponse = await store.dispatch('getCategorySchemes');
     const categoryResponseData = categoryResponse?.categories.map((item) => {
       return item.category
