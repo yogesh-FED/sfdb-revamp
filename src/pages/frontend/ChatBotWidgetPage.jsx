@@ -178,6 +178,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
 
   const handleEligibilityFormSubmit = () => {
+    debugger;
     const payload = buildEligibilityPayload(formData);
     console.log("FINAL PAYLOAD", payload);
     const sentence = buildFormSentence(formData);
@@ -189,7 +190,8 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     setMessages(prev => [...prev, { from: "user", text: sentence }]);
 
     setTimeout(() => {
-      sendEligibilityMessage(sentence);
+      // sendEligibilityMessage(sentence);
+      sendEligibilityMessage(payload);
     }, 500);
   };
 
@@ -534,7 +536,14 @@ export default function ChatBotWidgetPage({ f7router, user }) {
         ...messages,
       ]);
     } catch (err) {
-      console.log(err);
+      console.log('eeeerrrroooorrr', err);
+      alert('Please try again after sometime');
+      f7.toast.create({
+        text: 'Something went wrong ! Please try again after sometime',
+        position: 'top',
+        closeTimeout: 2000,
+      }).open();
+      return err;
     } finally {
       setBotTyping(false);
     }

@@ -611,16 +611,22 @@ const store = createStore({
 
     getChatMsg: async ({ }, inputMsg) => {
       try {
-        const response = await axios.get("http://192.168.5.205/backup/api/v1/makkal/chatbot/schemes", {
-          params: {
-            message: inputMsg
+        // const response = await axios.get("http://192.168.5.205/backup/api/v1/makkal/chatbot/schemes", {
+        //   params: {
+        //     message: inputMsg
+        //   }
+        // });
+        const response = await axios.post(
+          "http://192.168.5.205/backup/api/v1/makkal/chatbot/schemes",
+          {
+            "data": inputMsg
           }
-        });
+        );
         const chatMsgData = response.data;
         console.log("API Response:", chatMsgData);
         return chatMsgData;
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("eeeeError fetching data:", error);
       }
     },
 
