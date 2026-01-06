@@ -146,7 +146,8 @@
   background-color: #fff;
   color: #222;
   word-wrap: break-word;
-  border-radius: 50px;
+  border-radius: 15px;
+  line-height: 30px;
 }
 
 .typing {
@@ -313,6 +314,7 @@
   margin: 2rem auto;
   background: #ffffff;
   padding: 2rem 3rem;
+  padding-top: 7rem;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   position: relative;
@@ -344,6 +346,8 @@
   font-size: 14px;
   color: #555;
   margin-bottom: 1.5rem;
+  margin: 0;
+  padding-bottom: 1rem;
 }
 
 .formGrid {
@@ -393,6 +397,11 @@
 .formActions {
   margin-top: 2rem;
   text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
 }
 
 /* Responsive */
@@ -483,4 +492,8 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   font-size: 24px;
   text-decoration: none;
+}
+
+.formActions .button {
+  width: max-content;
 }

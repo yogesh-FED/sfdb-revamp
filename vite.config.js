@@ -44,7 +44,7 @@ export default async () => {
     },
     server: {
       host: true,
-      port: 5174,
+      port: 5175,
       historyApiFallback: true,
       proxy: {
         '/api': {

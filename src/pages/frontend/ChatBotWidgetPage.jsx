@@ -31,6 +31,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     community: "",
     maritalStatus: "",
     disability: "",
+    disabilityPercentage: "",
     srilankaRefugee: "",
     occupation: "",
     farmerType: "",
@@ -40,6 +41,8 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     studentClass: "",
     fishingType: "",
     govtSchool612: "",
+    boatOwner: "",
+    educationQualification: "",
   });
   const emptyFormData = {
     age: "",
@@ -63,6 +66,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
   const [showTotal, setShowTotal] = useState(0);
   const chatEndRef = useRef(null);
   const eligibilityFormRef = useRef(null);
+
   useEffect(() => {
     if (user) {
       const saved = JSON.parse(localStorage.getItem("chat_history") || "[]");
@@ -175,10 +179,34 @@ export default function ChatBotWidgetPage({ f7router, user }) {
   };
 
 
+  const handleNo = () => {
+    setShowIntro(false);
+    f7.views.main.router.navigate('/', {
+      clearPreviousHistory: true,
+      ignoreCache: true,
+    });
+  }
 
+  const handleFormClose = () => {
+    setShowEligibilityForm(false);
+    setShowInputBox(true);
+    setShowReopenFormBtn(true);
+    f7.views.main.router.navigate('/', {
+      clearPreviousHistory: true,
+      ignoreCache: true,
+    });
+  }
 
   const handleEligibilityFormSubmit = () => {
     debugger;
+    if (!formData.age || !formData.gender || !formData.maritalStatus) {
+      f7.toast.create({
+        text: 'Please fill Age, Gender and Marital Status',
+        position: 'top',
+        closeTimeout: 2000,
+      }).open();
+      return;
+    }
     const payload = buildEligibilityPayload(formData);
     console.log("FINAL PAYLOAD", payload);
     const sentence = buildFormSentence(formData);
@@ -197,8 +225,8 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
 
   const ageOptions = [
-    ...Array.from({ length: 60 }, (_, i) => String(i + 1)),
-    ">60"
+    ...Array.from({ length: 59 }, (_, i) => String(i + 1)),
+    "60 and Above"
   ];
 
   const buildEligibilitySummary = (answers) => {
@@ -211,63 +239,35 @@ export default function ChatBotWidgetPage({ f7router, user }) {
   };
 
   const buildEligibilityPayload = (formData) => {
+    debugger;
     const payload = {
       type: "attributes",
       details: "Test",
       category: "",
       name: "User",
-      age: Number(formData.age) || "",
-      gender: formData.gender?.charAt(0) || "",
-      maritalStatus: formData.maritalStatus || "",
+      age: Number(formData.age) || null,
+      gender: formData.gender?.charAt(0) || null,
+      marital_status: formData.maritalStatus || null,
       disability: formData.disability === 'Yes' ? 'Disabled' : '',
       income: {
         amount: formData.income || "",
         type: "",
       },
-      community: formData.community || "",
-      occupation: formData.occupation ? [formData.occupation] : [],
-      occupation_type: {},
-    };
-
-
-    if (formData.occupation === "Student") {
-      payload.occupation_type.student = {
-        allowed: [formData.studentType?.toLowerCase()],
-      };
-
-      if (formData.studentType === "School") {
-        payload.occupation_type.student.school = {
-          class_min: Number(formData.studentClass) || "",
-          class_max: Number(formData.studentClass) || "",
-          school_type: [formData.schoolType?.toLowerCase()],
-        };
-      }
-
-      if (formData.studentType === "College") {
-        payload.occupation_type.student.college = {
-          college_type: [formData.collegeType?.toLowerCase()],
-          school_6th_12th: [formData.govtSchool612],
-        };
-      }
+      community: formData.community || null,
+      occupation: formData.occupation ? formData.occupation : null,
+      // occupation_type: {},
+      occupation_type: formData.occupation === "Student" ? formData.studentType?.toLowerCase()
+        : formData.studentType === "School" ? formData.schoolType?.toLowerCase()
+          : formData.studentType === "College" ? formData.collegeType?.toLowerCase()
+            : formData.occupation === "Farmer" ? formData.farmerType?.toLowerCase()
+              : formData.occupation === "Fisherman" ? formData.fishingType?.toLowerCase()
+                : null,
+      school_6th_12th: formData.govtSchool612,
+      college_type: formData.collegeType ? formData.collegeType : null,
+      school_type: formData.schoolType ? formData.schoolType : null,
+      boat_owner: formData.boatOwner ? formData.boatOwner : null,
+      class: formData.studentClass ? formData.studentClass : null
     }
-
-
-    if (formData.occupation === "Farmer") {
-      payload.occupation_type.farmer = {
-        allowed: [formData.farmerType?.toLowerCase()],
-        land_min_acres: 0,
-        land_max_acres: 5,
-      };
-    }
-
-
-    if (formData.occupation === "Fisherman") {
-      payload.occupation_type.fisherman = {
-        allowed: [formData.fishingType?.toLowerCase()],
-        boat_owner: [formData.boatOwner || "Yes"],
-      };
-    }
-
     return payload;
   };
 
@@ -284,6 +284,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     setShowInputBox(false);
     setShowEligibilityForm(false);
     setShowIntro(true);
+    setShowReopenFormBtn(false);
   };
 
   const saveChatToStorage = (chatId, messages) => {
@@ -744,7 +745,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                     Yes
                   </button>
 
-                  <button onClick={() => setShowIntro(false)}>
+                  <button onClick={handleNo}>
                     No
                   </button>
                 </div>
@@ -772,39 +773,49 @@ export default function ChatBotWidgetPage({ f7router, user }) {
         </div>
         {showEligibilityForm && (
           <div className="eligibilityFullWidth" ref={eligibilityFormRef}>
-            <button
-              className="formCloseBtn"
-              onClick={() => {
-                setShowEligibilityForm(false);
-                setShowInputBox(true);
-                setShowReopenFormBtn(true);
-              }}
-            >
-              ✕
-            </button>
             <h2>Check Your Eligibility</h2>
-            {/* <p className="subText">
-                    Ungal details fill pannunga. Idhai use panni suitable schemes suggest pannuvom.
-                  </p> */}
+            <p className="subText">
+              <b> Note : * is mandatory</b>
+            </p>
 
             <div className="formGrid">
               <div className="formGroup">
-                <label>Age</label>
+                <label>Age <span className="required">*</span></label>
                 <select onChange={(e) => setFormData({ ...formData, age: e.target.value })}>
                   <option value="">Select Age</option>
-                  {ageOptions.map((age, i) => (
-                    <option key={i}>{age}</option>
+                  {/* {ageOptions.map((age, i) => (
+                    <option key={i} value={age}>{age}</option>
+                  ))} */}
+                  {Array.from({ length: 59 }, (_, i) => (
+                    <option key={i + 1} value={i + 1}>
+                      {i + 1}
+                    </option>
                   ))}
+                  <option value="60">60 and Above</option>
                 </select>
               </div>
 
               <div className="formGroup">
-                <label>Gender</label>
+                <label>Gender <span className="required">*</span></label>
                 <select onChange={(e) => setFormData({ ...formData, gender: e.target.value })}>
                   <option value="">Select Gender</option>
                   <option>Male</option>
                   <option>Female</option>
                   <option>Transgender</option>
+                </select>
+              </div>
+
+              <div className="formGroup">
+                <label>Marital Status <span className="required">*</span></label>
+                <select onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}>
+                  <option value="">Select Status</option>
+                  <option value={'single'}>Single</option>
+                  <option value={'married'}>Married</option>
+                  {formData.gender !== "Male" && (
+                    <option value="widow">Widow</option>
+                  )}
+                  <option value={'divorced'}>Divorced</option>
+
                 </select>
               </div>
 
@@ -823,19 +834,10 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                 <label>Community</label>
                 <select onChange={(e) => setFormData({ ...formData, community: e.target.value })}>
                   <option value="">Select Community</option>
-                  <option>General</option>
-                  <option>OBC</option>
-                  <option>SC</option>
-                  <option>ST</option>
-                </select>
-              </div>
-
-              <div className="formGroup">
-                <label>Marital Status</label>
-                <select onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}>
-                  <option value="">Select Status</option>
-                  <option>Single</option>
-                  <option>Married</option>
+                  <option value={'general'}>General</option>
+                  <option value={'obc'}>OBC</option>
+                  <option value={'sc'}>SC</option>
+                  <option value={'st'}>ST</option>
                 </select>
               </div>
 
@@ -847,6 +849,23 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                   <option>No</option>
                 </select>
               </div>
+
+              {formData.disability === "Yes" && (
+                <div className="formGroup">
+                  <label>Disability Percentage</label>
+                  <select
+                    value={formData.disabilityPercentage}
+                    onChange={(e) =>
+                      setFormData({ ...formData, disabilityPercentage: e.target.value })
+                    }
+                  >
+                    <option value="">Select</option>
+                    <option value="40-60">40% – 60%</option>
+                    <option value="60-80">60% – 80%</option>
+                    <option value="80+">Above 80%</option>
+                  </select>
+                </div>
+              )}
 
               <div className="formGroup">
                 <label>Occupation</label>
@@ -863,15 +882,42 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                       studentClass: "",
                       fishingType: "",
                       govtSchool612: "",
+                      educationQualification: "",
                     })
                   }
                 >
                   <option value="">Select Occupation</option>
-                  <option>Farmer</option>
-                  <option>Student</option>
-                  <option>Fisherman</option>
+                  <option value={'Farmer'}>Farmer</option>
+                  <option value={'Student'}>Student</option>
+                  <option value={'Fisherman'}>Fisherman</option>
+                  <option value={'HandloomWeavers'}>Handloom Weavers</option>
+                  <option value={'Labour'}>Labour</option>
                 </select>
               </div>
+
+              {formData.occupation && formData.occupation !== "Student" && (
+                <div className="formGroup">
+                  <label>Education Qualification</label>
+                  <select
+                    value={formData.educationQualification}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        educationQualification: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Select</option>
+                    <option value="illiterate">Illiterate</option>
+                    <option value="primary">Primary</option>
+                    <option value="secondary">Secondary</option>
+                    <option value="higher_secondary">Higher Secondary</option>
+                    <option value="graduate">Graduate</option>
+                    <option value="post_graduate">Post Graduate</option>
+                  </select>
+                </div>
+              )}
+
 
               {formData.occupation === "Farmer" && (
                 <div className="formGroup">
@@ -883,9 +929,9 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                     }
                   >
                     <option value="">Select</option>
-                    <option>Small</option>
-                    <option>Marginal</option>
-                    <option>Tenant</option>
+                    <option value={'small'}>Small</option>
+                    <option value={'marginal'}>Marginal</option>
+                    <option value={'tenant'}>Tenant</option>
                   </select>
                 </div>
               )}
@@ -908,8 +954,8 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                     }
                   >
                     <option value="">Select</option>
-                    <option>College</option>
-                    <option>School</option>
+                    <option value={'College'}>College</option>
+                    <option value={'School'}>School</option>
                   </select>
                 </div>
               )}
@@ -925,8 +971,9 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                       }
                     >
                       <option value="">Select</option>
-                      <option>Govt</option>
-                      <option>Private</option>
+                      <option value={'government'}>Govt</option>
+                      <option value={'aided'}>Aided</option>
+                      <option value={'private'}>Private</option>
                     </select>
                   </div>
 
@@ -975,8 +1022,9 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                       }
                     >
                       <option value="">Select</option>
-                      <option>Govt</option>
-                      <option>Private</option>
+                      <option value={'government'}>Govt</option>
+                      <option value={'aided'}>Aided</option>
+                      <option value={'private'}>Private</option>
                     </select>
                   </div>
 
@@ -1002,18 +1050,47 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                 <>
                   <div className="formGroup">
                     <label>Fishing Type</label>
-                    <select>
+                    <select
+                      value={formData.fishingType}
+                      onChange={(e) =>
+                        setFormData({ ...formData, fishingType: e.target.value })
+                      }
+                    >
                       <option value="">Select</option>
-                      <option>Marine</option>
-                      <option>Inland</option>
+                      <option value={'marine'}>Marine</option>
+                      <option value={'inland'}>Inland</option>
                     </select>
                   </div>
+
 
                   <div className="formGroup">
                     <label>Are you a Boat Owner?</label>
                     <div className="radioGroup">
-                      <label><input type="radio" /> Yes</label>
-                      <label><input type="radio" /> No</label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="boatOwner"
+                          value="Yes"
+                          checked={formData.boatOwner === "Yes"}
+                          onChange={(e) =>
+                            setFormData({ ...formData, boatOwner: e.target.value })
+                          }
+                        />
+                        Yes
+                      </label>
+
+                      <label>
+                        <input
+                          type="radio"
+                          name="boatOwner"
+                          value="No"
+                          checked={formData.boatOwner === "No"}
+                          onChange={(e) =>
+                            setFormData({ ...formData, boatOwner: e.target.value })
+                          }
+                        />
+                        No
+                      </label>
                     </div>
                   </div>
                 </>
@@ -1025,9 +1102,24 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
 
             <div className="formActions">
-              <Button fill onClick={handleEligibilityFormSubmit}>
+              <Button fill onClick={handleEligibilityFormSubmit} disabled={!formData.age || !formData.gender || !formData.maritalStatus}>
                 Find Eligible Schemes
               </Button>
+              <Button
+                fill
+                color="red"
+                onClick={handleFormClose}
+              >Cancel</Button>
+              {/* <button
+                // className="formCloseBtn"
+                onClick={() => {
+                  setShowEligibilityForm(false);
+                  setShowInputBox(true);
+                  setShowReopenFormBtn(true);
+                }}
+              >
+                Cancel
+              </button> */}
             </div>
           </div>
         )}
@@ -1040,14 +1132,14 @@ export default function ChatBotWidgetPage({ f7router, user }) {
         showInputBox && (
           <div className="chat-input-bar">
             <div className="chat-input-wrapper">
-              <input
+              {/* <input
                 type="text"
                 className="chat-input"
                 placeholder="Say Hi to Know your Eligibility"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              />
+              /> */}
               {showReopenFormBtn && !showEligibilityForm && (
                 <div className="reopenFormWrapper">
                   <Button
@@ -1088,9 +1180,9 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                   </Button>
                 </div>
               )}
-              <Button fill small onClick={sendMessage} className="send-btn">
+              {/* <Button fill small onClick={sendMessage} className="send-btn">
                 Send
-              </Button>
+              </Button> */}
             </div>
           </div>
         )

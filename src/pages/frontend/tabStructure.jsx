@@ -246,7 +246,8 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
               <div className='findschemesPad'>
                 <h4>{language_data.know_your_scheme}</h4>
                 <p> {language_data.know_your_scheme_desc} </p>
-                <Link href={`/details`}>
+                {/* <Link href={`/details`}> */}
+                <Link href={`/chat-page`}>
                   <span className='detailsCta kysCTA'>{language_data.know_your_scheme_cta}</span>
                 </Link>
               </div>
