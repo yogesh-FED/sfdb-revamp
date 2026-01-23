@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Navbar, Page, Block, Tabs, Tab, Link, Toolbar, Icon, ListInput, List, f7 } from 'framework7-react';
+import { Popup, Navbar, Page, Block, Tabs, Tab, Link, Toolbar, Icon, ListInput, List, f7 } from 'framework7-react';
 import agriculture from '../../assets/images/agriculture.png';
 import education from '../../assets/images/education.png';
 import HealthWellness from '../../assets/images/HealthWellness.png';
@@ -11,12 +11,16 @@ import departmentImg from '../../assets/images/department-logo/sample.png';
 import CategoryPage from './categoryschemes';
 import SchemeList from './scheme-list';
 import FilterPagination from '../../components/FilterPagination';
+import { createRoot } from 'react-dom/client';
 
 
 
 
 export default ({ language_data, tnClass, getdepartment, f7router }) => {
   const store = f7.store;
+  const [categoryPopupOpened, setCategoryPopupOpened] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSchemes, setSelectedSchemes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchDeptQuery, setSearchDeptQuery] = useState('');
   const [categoryLabel, setCategoryLabel] = useState('');
@@ -101,44 +105,112 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
   };
   const [deptName, setDeptName] = useState('');
   const popup = useRef(null);
-  const handleCategoryPopUp = () => {
-    return false;
-    if (!popup.current) {
-      popup.current = f7.popup.create({
-        content: `
-          <div class="popup">
-            <div class="page">
-              <div class="navbar">
-                <div class="navbar-inner">
-                  <div class="navbar-bg"></div>
-                  
-                  <div class="right"><a  class="link popup-close">Close</a></div>
-                </div>
-              </div>
-              <div class="page-content">
-                <div class="block">
-                  <div id="category-popup-root"></div>
-                </div>
+  const popupRoot = useRef(null);
+  const openCategoryPopup = (categoryName, schemes) => {
+    setSelectedCategory(categoryName);
+    setSelectedSchemes(schemes);
+    setCategoryPopupOpened(true);
+  };
+
+  // const handleCategoryPopUp = (categoryName, schemes) => {
+  //   // return false;
+  //   if (popup.current) {
+  //     popup.current.destroy();
+  //     popup.current = null;
+  //   }
+  //   if (!popup.current) {
+  //     popup.current = f7.popup.create({
+  //       content: `
+  //         <div class="popup popAdjust">
+  //           <div class="page">
+  //             <div class="navbar">
+  //               <div class="navbar-inner">
+  //                 <div class="navbar-bg"></div>
+
+  //                 <div class="right"><a  class="link popup-close">Close</a></div>
+  //               </div>
+  //             </div>
+  //             <div class="page-content">
+  //               <div class="block">
+  //                 <div id="category-popup-root"></div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       `.trim(),
+  //     });
+  //   }
+  //   // Open it
+  //   popup.current.open();
+  //   setTimeout(() => {
+  //     const container = document.getElementById('category-popup-root');
+  //     if (container) {
+  //       ReactDOM.render(<CategoryPage languageData={language_data} categoryName={categoryName}
+  //         schemes={schemes} />, container);
+  //     }
+  //   }, 100);
+
+  //   popup.current.on('closed', () => {
+  //     const container = document.getElementById('login-popup-root');
+  //     if (container) ReactDOM.unmountComponentAtNode(container);
+  //   });
+  // };
+  const handleCategoryPopUp = (categoryName, schemes) => {
+
+    if (popup.current) {
+      popup.current.destroy();
+      popup.current = null;
+    }
+
+    popup.current = f7.popup.create({
+      content: `
+      <div class="popup popAdjust">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-inner">
+              <div class="navbar-bg"></div>
+              <div class="title">${categoryName}</div>
+              <div class="right">
+                <a class="link popup-close">Close</a>
               </div>
             </div>
           </div>
-        `.trim(),
-      });
-    }
-    // Open it
+          <div class="page-content">
+            <div class="block">
+              <div id="category-popup-root"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `,
+    });
+
     popup.current.open();
+
     setTimeout(() => {
       const container = document.getElementById('category-popup-root');
+
       if (container) {
-        ReactDOM.render(<CategoryPage languageData={language_data} />, container);
+        popupRoot.current = createRoot(container);
+        popupRoot.current.render(
+          <CategoryPage
+            languageData={language_data}
+            categoryName={categoryName}
+            schemes={schemes}
+          />
+        );
       }
-    }, 100);
+    }, 0);
 
     popup.current.on('closed', () => {
-      const container = document.getElementById('login-popup-root');
-      if (container) ReactDOM.unmountComponentAtNode(container);
+      if (popupRoot.current) {
+        popupRoot.current.unmount();
+        popupRoot.current = null;
+      }
     });
   };
+
+
   const [activeTabText, setActiveTabText] = useState('categories');
   useEffect(() => {
     getCategorySchemesLabel();
@@ -272,12 +344,12 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
         }
         <div className='searchInpt'>
           <List strongIos dividersIos insetIos>
-            <ListInput outline label={language_data.schemeSearch} floatingLabel type="text" value={searchQuery}
-              onInput={(e) => setSearchQuery(e.target.value)}>
-              {/* onInput={(e) => activeTabText === "categories" ? setSearchQuery(e.target.value) : setSearchDeptQuery(e.target.value)}> */}
+            {/* <ListInput outline label={language_data.schemeSearch} floatingLabel type="text" value={searchQuery}
+              onInput={(e) => setSearchQuery(e.target.value)}> */}
+            {/* onInput={(e) => activeTabText === "categories" ? setSearchQuery(e.target.value) : setSearchDeptQuery(e.target.value)}> */}
 
-              <Icon icon="demo-list-icon" slot="media" />
-            </ListInput>
+            {/* <Icon icon="demo-list-icon" slot="media" />
+            </ListInput> */}
           </List>
         </div>
       </div>
@@ -297,14 +369,19 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
                           {
                             categoryCount.find(catCount => catCount.category === cat)
                               ? (
-                                <a onClick={() => handleCategoryPopUp()}>
+                                <a onClick={() =>
+                                  openCategoryPopup(
+                                    cat,
+                                    categoryCount.find(c => c.category === cat)?.schemes || []
+                                  )
+                                }>
                                   {
                                     categoryCount.find(catCount => catCount.category === cat).schemes.length
                                   } {language_data.schemes} Schemes
                                 </a>
                               )
                               : (
-                                <a>0 {language_data.schemes}</a> // in case no schemes for this category
+                                <a>0 {language_data.schemes}</a>
                               )
                           }
                         </span>
@@ -325,19 +402,6 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
         </Tab>
         <Tab id="tab-2" className="page-content tabContent">
           <Block>
-            {/* <div className="grid grid-cols-1 large-grid-cols-3 grid-gap">
-              {getdepartment.map((departmentName, i) => {
-                return (
-                  <div className='departmentDetails grid grid-cols-3 large-grid-cols-3' key={i}>
-                    <img
-                      src={`../../assets/images/department-logo/${departmentName.org_id}.png`} alt={departmentName.name} />
-                    <p>{departmentName.name}</p>
-                    <p className='schemeCountDept' onClick={() => handleSchemeCountClick(departmentName.org_id, departmentName.name)}> {departmentName.schemes_count} </p>
-                  </div>
-
-                )
-              })}
-            </div> */}
             <div className="grid grid-cols-1 large-grid-cols-3 grid-gap adjustGridGap">
               {searchDeptSchemes && searchDeptSchemes.map((cat, index) => {
                 // console.log('deptCount', cat);
@@ -346,14 +410,14 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
                     <img src={`../../assets/images/department-logo/${cat.id}.png`} alt={cat} />
                     <div>
                       <p>{cat.department}</p>
-                      {deptCount && deptCount.length > 0 && (
+                      {/* {deptCount && deptCount.length > 0 && (
                         <span>
                           {
                             deptCount.find(catCount => catCount.department === cat.department)
                               ? (
                                 <a onClick={() => handleCategoryPopUp()}>
                                   {
-                                    deptCount.find(catCount => catCount.department === cat.department).schemes.length
+                                    deptCount.find(catCount => catCount.department === cat.department)?.schemes?.length
                                   } {language_data.schemes} Schemes
                                 </a>
                               )
@@ -362,79 +426,41 @@ export default ({ language_data, tnClass, getdepartment, f7router }) => {
                               )
                           }
                         </span>
-                      )}
+                      )} */}
                     </div>
                   </div>
                 );
               })}
 
             </div>
-
-
-            {/* <div className="grid grid-cols-1 large-grid-cols-3 grid-gap">
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-              <div className='departmentDetails grid grid-cols-3 large-grid-cols-3'>
-                <img src={departmentImg} alt='Animal' />
-                <p>Animal Husbandry, Dairying, Fisheries & Fishermen Welfare </p>
-                <p>24</p>
-              </div>
-            </div> */}
           </Block>
         </Tab>
       </Tabs>
+      <Popup
+        opened={categoryPopupOpened}
+        onPopupClosed={() => setCategoryPopupOpened(false)}
+        className="scheme-popup"
+      >
+        <Page>
+          {/* Header */}
+          <Navbar className="scheme-popup-navbar">
+            <div className="popup-title">{selectedCategory}</div>
+            <Link slot="right" popupClose className="popup-close-btn">
+              Close
+            </Link>
+          </Navbar>
+
+          {/* Content */}
+          <div className="scheme-popup-content">
+            {selectedSchemes.map((scheme, index) => (
+              <div key={index} className="scheme-card">
+                <h4 className="scheme-name">{scheme.schemeName}</h4>
+                <p className="scheme-desc">{scheme.schemeDesc}</p>
+              </div>
+            ))}
+          </div>
+        </Page>
+      </Popup>
+
     </>)
 };

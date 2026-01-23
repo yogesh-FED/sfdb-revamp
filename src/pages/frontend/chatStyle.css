@@ -82,7 +82,7 @@
 }
 
 .chat-container::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
 }
 
 .chat-container::-webkit-scrollbar-track {
@@ -428,7 +428,7 @@
   z-index: 1000;
 }
 
-.chat-bot-widget .button:hover {
+.chat-bot-widget .button {
   background-color: #fff;
 }
 
@@ -496,4 +496,30 @@
 
 .formActions .button {
   width: max-content;
+}
+
+/* .summaryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+} */
+
+.editBtn {
+  border: none;
+  background: #0c64bc;
+  color: #fff;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.editBtn i {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.summaryHeader h4 span {
+  display: inline-block;
+  padding-left: 0.5rem;
 }

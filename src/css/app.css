@@ -3365,3 +3365,84 @@ input[type="search"]::placeholder {
 .wid75 .block {
   margin-bottom: 5rem !important;
 }
+
+.popAdjust {
+  margin-top: 6rem;
+  height: 75vh;
+  overflow: auto;
+}
+
+/* Popup container */
+.scheme-popup {
+  --f7-popup-border-radius: 12px;
+  background: #f5f7fa;
+  margin: auto;
+  margin-top: 6rem;
+  overflow: auto;
+}
+
+/* Navbar */
+.scheme-popup-navbar {
+  background: #0d5fb8;
+  color: #fff;
+}
+
+.popup-title {
+  font-size: 18px;
+  font-weight: 600;
+  padding-left: 16px;
+}
+
+.popup-close-btn {
+  color: #fff !important;
+  font-weight: 500;
+}
+
+/* Content wrapper */
+.scheme-popup-content {
+  padding: 20px;
+  padding-bottom: 10rem;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+/* Scheme card */
+.scheme-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid #0d5fb8;
+}
+
+/* Scheme title */
+.scheme-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0d2a4d;
+  margin-bottom: 6px;
+}
+
+/* Scheme description */
+.scheme-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #444;
+  margin: 0;
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+  .scheme-popup-content {
+    padding: 14px;
+  }
+
+  .scheme-name {
+    font-size: 15px;
+  }
+
+  .scheme-desc {
+    font-size: 13px;
+  }
+}

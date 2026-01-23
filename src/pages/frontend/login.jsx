@@ -321,7 +321,6 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
     return dialog;
   };
   const formSubmit = async (e) => {
-
     e.preventDefault();
     localStorage.setItem('uidNumber', formData.aadhar);
     const newErrors = {};
@@ -373,7 +372,8 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
       try {
         const response = await store.dispatch('sendLogin', formData);
 
-        if (response) {
+        if (response.code !== 500) {
+          debugger;
           // if (response.success == true) {
           if (response.status == "OK") {
             // if (response.data?.data?.code == 500) {
@@ -405,9 +405,13 @@ const LoginPage = ({ f7router, popUpclosefromLogin, tnClass, hidef7router }) => 
 
         }
         else {
-
-          set_login_error("Server Could not connect");
-
+          set_login_error("Server Error, Please try again after sometime");
+          // alert('Please try again after sometime');
+          // f7.toast.create({
+          //   text: 'Please Try Again After Sometime',
+          //   position: 'top',
+          //   closeTimeout: 2000,
+          // }).open();
         }
       } catch (error) {
         console.error("Error during login:", error);

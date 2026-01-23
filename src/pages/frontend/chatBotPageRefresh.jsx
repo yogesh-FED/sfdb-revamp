@@ -20,6 +20,12 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     { key: "gender", question: "Please tell us  your gender", options: ["Male", "Female", "Transgender"] },
     { key: "maritalStatus", question: "Please tell us your Marital status?", options: ["Single", "Married"] },
   ];
+  const CHAT_STEPS = {
+    PRECHAT: "PRECHAT",
+    ELIGIBILITY_FORM: "ELIGIBILITY_FORM",
+    SCHEME_RESULT: "SCHEME_RESULT",
+  };
+  const [chatStep, setChatStep] = useState(CHAT_STEPS.PRECHAT);
   const [showReopenFormBtn, setShowReopenFormBtn] = useState(false);
   const [currentStep, setCurrentStep] = useState(-1);
   const [eligibilityAnswers, setEligibilityAnswers] = useState({});
@@ -70,6 +76,40 @@ export default function ChatBotWidgetPage({ f7router, user }) {
   const [showTotal, setShowTotal] = useState(0);
   const chatEndRef = useRef(null);
   const eligibilityFormRef = useRef(null);
+  // useEffect(() => {
+  //   const savedState = localStorage.getItem("chat_ui_state");
+  //   if (savedState) {
+  //     const parsed = JSON.parse(savedState);
+  //     setChatStep(parsed.chatStep || CHAT_STEPS.PRECHAT);
+  //     setMessages(parsed.messages || []);
+  //     setShowInputBox(parsed.showInputBox || false);
+  //     setShowReopenFormBtn(parsed.showReopenFormBtn || false);
+  //   }
+  // }, []);
+  useEffect(() => {
+    const savedState = localStorage.getItem("chat_ui_state");
+
+    if (!savedState) return;
+
+    const parsed = JSON.parse(savedState);
+
+    setChatStep(parsed.chatStep || CHAT_STEPS.PRECHAT);
+    setMessages(parsed.messages || []);
+    setShowInputBox(parsed.showInputBox || false);
+    setShowReopenFormBtn(parsed.showReopenFormBtn || false);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "chat_ui_state",
+      JSON.stringify({
+        chatStep,
+        messages,
+        showInputBox,
+        showReopenFormBtn,
+      })
+    );
+  }, [chatStep, messages, showInputBox, showReopenFormBtn]);
 
   useEffect(() => {
     if (user) {
@@ -190,11 +230,21 @@ export default function ChatBotWidgetPage({ f7router, user }) {
       ignoreCache: true,
     });
   }
+  const clearChatSession = () => {
+    localStorage.removeItem("chat_ui_state");
+    localStorage.removeItem("chat_history");
+  };
 
   const handleFormClose = () => {
+    clearChatSession();
+    setMessages([]);
+    setInput("");
+    setBotTyping(false);
+    setCurrentChatId(null);
     setShowEligibilityForm(false);
     setShowInputBox(true);
     setShowReopenFormBtn(true);
+    setChatStep(CHAT_STEPS.SCHEME_RESULT);
     f7.views.main.router.navigate('/', {
       clearPreviousHistory: true,
       ignoreCache: true,
@@ -251,7 +301,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
       ...prev,
       { from: "user", text: sentence }
     ]);
-
+    setChatStep(CHAT_STEPS.SCHEME_RESULT);
     setTimeout(() => {
       sendEligibilityMessage(payload);
     }, 500);
@@ -381,7 +431,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
       text: `You selected: ${optionText}. How can I assist further?`,
       class: 'selectedOption',
     };
-
+    setChatStep(CHAT_STEPS.PRECHAT);
     setMessages([botWelcome]);
     setShowInputBox(true);
 
@@ -553,18 +603,10 @@ export default function ChatBotWidgetPage({ f7router, user }) {
         ]));
       } else {
         const botResponse = response.reply.reply;
-
         const botReplyResponse = Object.values(botResponse).map(item => ({
           name: item.scheme_name,
           desc: item.scheme_description.english,
         }));
-
-        // const botMsg = {
-        //   from: "bot",
-        //   text: botReplyResponse,
-        //   class: "botResponse",
-        // };
-
         const botMsg = {
           from: "bot",
           text: botReplyResponse,
@@ -579,6 +621,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
           ...prev,
           botMsg,
         ]));
+        setChatStep(CHAT_STEPS.SCHEME_RESULT);
       }
 
       saveChatToStorage(currentChatId || Date.now(), [
@@ -648,7 +691,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
         <div className="chat-container">
           {/* BEFORE input → Show two options */}
-          {!showInputBox && messages.length === 0 && (
+          {chatStep === CHAT_STEPS.PRECHAT && !showInputBox && messages.length === 0 && (
             <div className="prechat-options">
               <p className="chatHead">Choose to discover scheme benefits or understand portal features.</p>
 
