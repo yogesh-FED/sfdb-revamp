@@ -10,7 +10,11 @@ const ChatBotWidget = ({ languageData }) => {
     <>
       <div className="chat-bot-widget">
         <Link href="/chat-page" className="button vibrate" onClick={() => {
-          sessionStorage.setItem("chat_open_mode", "fresh");
+          localStorage.removeItem("messages");
+          localStorage.removeItem("showInputBox");
+          localStorage.removeItem("showIntro");
+          localStorage.removeItem("showEligibilityForm");
+          localStorage.removeItem("formData");
         }}>
           {/* {"languageData.openChat" || 'Open Chat'} */}
           <img src={ChatBotImg} alt="Chat Bot" style={{ width: '30px', height: '30px' }} />

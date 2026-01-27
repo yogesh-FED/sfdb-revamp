@@ -23,8 +23,15 @@ export default function ChatBotWidgetPage({ f7router, user }) {
   const [showReopenFormBtn, setShowReopenFormBtn] = useState(false);
   const [currentStep, setCurrentStep] = useState(-1);
   const [eligibilityAnswers, setEligibilityAnswers] = useState({});
-  const [showIntro, setShowIntro] = useState(true);
-  const [showEligibilityForm, setShowEligibilityForm] = useState(false);
+  // const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(() => {
+    const stored = localStorage.getItem("showIntro");
+    return stored !== null ? JSON.parse(stored) : true; // default true
+  });
+  // const [showEligibilityForm, setShowEligibilityForm] = useState(false);
+  const [showEligibilityForm, setShowEligibilityForm] = useState(() => {
+    return JSON.parse(localStorage.getItem("showEligibilityForm")) || false;
+  });
   const lastEligibilityFormRef = useRef(null);
   const [formData, setFormData] = useState({
     age: "",
@@ -60,13 +67,19 @@ export default function ChatBotWidgetPage({ f7router, user }) {
   const store = f7.store;
   const [loadFlag, setLoadFlag] = useState(true);
   const [currentChatId, setCurrentChatId] = useState(null);
-  const [messages, setMessages] = useState([]);
+  // const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem("messages");
+    return saved ? JSON.parse(saved) : [];
+  });
   const [input, setInput] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [botTyping, setBotTyping] = useState(false);
   const [allSchemeAndDesc, setAllSchemeAndDesc] = useState([]);
-
-  const [showInputBox, setShowInputBox] = useState(false);
+  // const [showInputBox, setShowInputBox] = useState(false);
+  const [showInputBox, setShowInputBox] = useState(() => {
+    return JSON.parse(localStorage.getItem("showInputBox")) || false;
+  });
   const [showTotal, setShowTotal] = useState(0);
   const chatEndRef = useRef(null);
   const eligibilityFormRef = useRef(null);
@@ -106,27 +119,10 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     return triggers.some(t => normalized.includes(t));
   };
 
-  // const buildEligibilitySummary = (answers) => {
-  //   return `I am ${answers.age} years old, my income is ${answers.income}, I belong to ${answers.community} community, I am ${answers.gender} and ${answers.maritalStatus}`;
-  // };
-  // const buildFormSentence = (data) => {
-  //   const parts = [];
-
-  //   if (data.age) parts.push(`I am ${data.age} years old`);
-  //   if (data.gender) parts.push(`I am ${data.gender}`);
-  //   if (data.income) parts.push(`my income is ${data.income}`);
-  //   if (data.community) parts.push(`I belong to ${data.community} community`);
-  //   if (data.maritalStatus) parts.push(`I am ${data.maritalStatus}`);
-  //   if (data.disability) parts.push(`Disability: ${data.disability}`);
-  //   if (data.srilankaRefugee) parts.push(`Sri Lanka refugee: ${data.srilankaRefugee}`);
-
-  //   return parts.join(", ");
-  // };
 
   const buildFormSentence = (data) => {
     const parts = [];
 
-    // Basic details
     if (data.age) parts.push(`I am ${data.age} years old`);
     if (data.gender) parts.push(`I am ${data.gender}`);
     if (data.income) parts.push(`my income is ${data.income}`);
@@ -134,20 +130,16 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     if (data.maritalStatus) parts.push(`I am ${data.maritalStatus}`);
     if (data.disability) parts.push(`Disability: ${data.disability}`);
 
-    // Occupation
     if (data.occupation) {
       parts.push(`My occupation is ${data.occupation}`);
 
-      /* ========= FARMER ========= */
       if (data.occupation === "Farmer" && data.farmerType) {
         parts.push(`I am a ${data.farmerType} farmer`);
       }
 
-      /* ========= STUDENT ========= */
       if (data.occupation === "Student" && data.studentType) {
         parts.push(`I am a ${data.studentType} student`);
 
-        // School student
         if (data.studentType === "School") {
           if (data.schoolType)
             parts.push(`studying in a ${data.schoolType} school`);
@@ -156,7 +148,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
             parts.push(`currently studying in class ${data.studentClass}`);
         }
 
-        // College student
         if (data.studentType === "College") {
           if (data.collegeType)
             parts.push(`studying in a ${data.collegeType} college`);
@@ -168,7 +159,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
         }
       }
 
-      /* ========= FISHERMAN ========= */
       if (data.occupation === "Fisherman" && data.fishingType) {
         parts.push(`I am a ${data.fishingType} fisherman`);
 
@@ -185,6 +175,11 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
   const handleNo = () => {
     setShowIntro(false);
+    localStorage.removeItem("messages");
+    localStorage.removeItem("showInputBox");
+    localStorage.removeItem("showIntro");
+    localStorage.removeItem("showEligibilityForm");
+    localStorage.removeItem("formData");
     f7.views.main.router.navigate('/', {
       clearPreviousHistory: true,
       ignoreCache: true,
@@ -195,37 +190,17 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     setShowEligibilityForm(false);
     setShowInputBox(true);
     setShowReopenFormBtn(true);
+    localStorage.removeItem("messages");
+    localStorage.removeItem("showInputBox");
+    localStorage.removeItem("showIntro");
+    localStorage.removeItem("showEligibilityForm");
+    localStorage.removeItem("formData");
     f7.views.main.router.navigate('/', {
       clearPreviousHistory: true,
       ignoreCache: true,
     });
   }
 
-  // const handleEligibilityFormSubmit = () => {
-  //   debugger;
-  //   if (!formData.age || !formData.gender || !formData.maritalStatus) {
-  //     f7.toast.create({
-  //       text: 'Please fill Age, Gender and Marital Status',
-  //       position: 'top',
-  //       closeTimeout: 2000,
-  //     }).open();
-  //     return;
-  //   }
-  //   const payload = buildEligibilityPayload(formData);
-  //   console.log("FINAL PAYLOAD", payload);
-  //   const sentence = buildFormSentence(formData);
-
-  //   setShowEligibilityForm(false);
-  //   setShowInputBox(true);
-  //   setShowReopenFormBtn(true);
-
-  //   setMessages(prev => [...prev, { from: "user", text: sentence }]);
-
-  //   setTimeout(() => {
-  //     // sendEligibilityMessage(sentence);
-  //     sendEligibilityMessage(payload);
-  //   }, 500);
-  // };
 
   const handleEligibilityFormSubmit = () => {
     if (!formData.age || !formData.gender || !formData.maritalStatus) {
@@ -290,7 +265,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
       },
       community: formData.community || null,
       occupation: formData.occupation ? formData.occupation : null,
-      // occupation_type: {},
       occupation_type: formData.occupation === "Student" ? formData.studentType?.toLowerCase()
         : formData.studentType === "School" ? formData.schoolType?.toLowerCase()
           : formData.studentType === "College" ? formData.collegeType?.toLowerCase()
@@ -302,7 +276,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
       school_type: formData.schoolType ? formData.schoolType : null,
       boat_owner: formData.boatOwner ? formData.boatOwner : null,
       class: formData.studentClass ? formData.studentClass : null,
-      //bpl: formData.bpl ? formData.bpl : null,
       member: formData.memberType ? formData.memberType : null,
       educationQualification: formData.educationQualification ? formData.educationQualification : null,
       disability_percentage: formData.disabilityPercentage ? formData.disabilityPercentage : null
@@ -324,6 +297,11 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     setShowEligibilityForm(false);
     setShowIntro(true);
     setShowReopenFormBtn(false);
+    localStorage.removeItem("messages");
+    localStorage.removeItem("showInputBox");
+    localStorage.removeItem("showIntro");
+    localStorage.removeItem("showEligibilityForm");
+    localStorage.removeItem("formData");
   };
 
   const saveChatToStorage = (chatId, messages) => {
@@ -350,7 +328,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     setCurrentChatId(chat.id);
     setMessages(chat.messages);
 
-    // once a chat is selected, user can type normally
     setShowInputBox(true);
     f7router.closePanel("left");
   };
@@ -374,7 +351,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
   };
 
 
-  // NEW → handle option click
   const handlePreChatOption = (optionText) => {
     const botWelcome = {
       from: "bot",
@@ -422,7 +398,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
         } else {
           const botResponse = response.reply.reply;
           setAllSchemeAndDesc(botResponse);
-          // const botReplyResponse = Object.values(botResponse).map(item => item.scheme_name, item.scheme_description.english);
           const botReplyResponse = Object.values(botResponse).map(item => ({
             name: item.scheme_name,
             desc: item.scheme_description.english
@@ -512,10 +487,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
     }
   };
 
-
-  // const buildEligibilitySentence = (answers) => {
-  //   return `I am ${answers.age} years old, my income is ${answers.income}, I belong to ${answers.community} community, I am ${answers.gender} and ${answers.maritalStatus}`;
-  // };
   const buildEligibilitySentence = (answers) => {
     const parts = [];
 
@@ -558,13 +529,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
           name: item.scheme_name,
           desc: item.scheme_description.english,
         }));
-
-        // const botMsg = {
-        //   from: "bot",
-        //   text: botReplyResponse,
-        //   class: "botResponse",
-        // };
-
         const botMsg = {
           from: "bot",
           text: botReplyResponse,
@@ -620,6 +584,22 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
 
   // console.log('message', messages);
+  useEffect(() => {
+    localStorage.setItem("showInputBox", JSON.stringify(showInputBox));
+    localStorage.setItem("showIntro", JSON.stringify(showIntro));
+    localStorage.setItem("showEligibilityForm", JSON.stringify(showEligibilityForm));
+  }, [showInputBox, showIntro, showEligibilityForm]);
+  useEffect(() => {
+    localStorage.setItem("messages", JSON.stringify(messages));
+    localStorage.setItem("formData", JSON.stringify(formData));
+  }, [messages, formData]);
+  useEffect(() => {
+    if (showEligibilityForm) {
+      setTimeout(() => {
+        eligibilityFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+  }, [showEligibilityForm]);
   return (
     <Page name="chatbot" className="chatbotPage">
       {/* LEFT PANEL (Sidebar) */}
@@ -746,10 +726,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                       Array.isArray(msg.text)
                         ? (
                           <>
-                            {/* <div className="showsCountOfSchemes">
-                              <h4>Based on your provided details, </h4>
-                              <p>Below are the top <b>{msg.text.length}</b> {msg.text.length > 1 ? 'schemes' : 'scheme'} relevant to you:</p>
-                            </div> */}
                             <div className="showsCountOfSchemes">
                               <div className="summaryHeader">
                                 <h4>Based on your provided details
@@ -802,16 +778,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                                 })
                               }
                             </div>
-                            {/* <div className="chatSchemeDesc">
-                          {msg.text.map((item, i) => (
-                            <span key={i} className="pill-item gradient-btn">
-                              {item}
-                            </span>
-                          ))}
-                        </div> */}
-                            {/* <div className="showsCountOfSchemes">
-                          <p>Want to know more about the schemes, Tell me the scheme name or number, and I’ll show more details.</p>
-                        </div> */}
+
                           </>
                         )
                         : msg.text || msg.reply
@@ -877,9 +844,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                 <label>Age <span className="required">*</span></label>
                 <select value={formData.age} onChange={(e) => setFormData({ ...formData, age: e.target.value })}>
                   <option value="">Select Age</option>
-                  {/* {ageOptions.map((age, i) => (
-                    <option key={i} value={age}>{age}</option>
-                  ))} */}
+
                   {Array.from({ length: 59 }, (_, i) => (
                     <option key={i + 1} value={i + 1}>
                       {i + 1}
@@ -901,16 +866,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
 
               <div className="formGroup">
                 <label>Marital Status <span className="required">*</span></label>
-                {/* <select onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}>
-                  <option value="">Select Status</option>
-                  <option value={'single'}>Single</option>
-                  <option value={'married'}>Married</option>
-                  {formData.gender !== "Male" && (
-                    <option value="widow">Widow</option>
-                  )}
-                  <option value={'divorced'}>Divorced</option>
 
-                </select> */}
                 <select
                   value={formData.maritalStatus}
                   onChange={(e) =>
@@ -946,30 +902,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                 </select>
               </div>
 
-              {/* <div className="formGroup">
-                <label>Do you belong to BPL category? </label>
-                <select value={formData.bpl} onChange={(e) => setFormData({ ...formData, bpl: e.target.value })}>
-                  <option value="">Select BPL</option>
-                  <option value={'yes'}>Yes</option>
-                  <option value={'no'}>No</option>
-                </select>
-              </div> */}
 
-
-              {/* {
-                formData.bpl === 'no' && (
-                  <div className="formGroup">
-                    <label>Annual Income</label>
-                    <select value={formData.income} onChange={(e) => setFormData({ ...formData, income: e.target.value })}>
-                      <option value="">Select Income</option>
-                      <option value='72000'>0 to 72,000</option>
-                      <option value="100000">72,000 to 1,00,000</option>
-                      <option value="2,50,000">1,00,000 to 2,50,000</option>
-                      <option value="3,00,000">2,50,000 to 3,00,000</option>
-                    </select>
-                  </div>
-                )
-              } */}
               <div className="formGroup">
                 <label>Annual Income</label>
                 <select value={formData.income} onChange={(e) => setFormData({ ...formData, income: e.target.value })}>
@@ -1070,10 +1003,10 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                     <option value="">Select</option>
                     <option value="illiterate">Illiterate</option>
                     <option value="primary">Primary</option>
-                    <option value="secondary">Secondary</option>
-                    <option value="higher_secondary">Higher Secondary</option>
-                    <option value="graduate">Graduate</option>
-                    <option value="post_graduate">Post Graduate</option>
+                    <option value="sslc">Secondary</option>
+                    <option value="hsc">Higher Secondary</option>
+                    <option value="ug">UG</option>
+                    <option value="pg">PG</option>
                   </select>
                 </div>
               )}
@@ -1270,36 +1203,17 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                 color="red"
                 onClick={handleFormClose}
               >Cancel</Button>
-              {/* <button
-                // className="formCloseBtn"
-                onClick={() => {
-                  setShowEligibilityForm(false);
-                  setShowInputBox(true);
-                  setShowReopenFormBtn(true);
-                }}
-              >
-                Cancel
-              </button> */}
+
             </div>
           </div>
         )}
 
 
       </Block>
-
-      {/* INPUT BOX (ONLY AFTER OPTION SELECTED) */}
       {
         showInputBox && (
           <div className="chat-input-bar">
             <div className="chat-input-wrapper">
-              {/* <input
-                type="text"
-                className="chat-input"
-                placeholder="Say Hi to Know your Eligibility"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              /> */}
               {showReopenFormBtn && !showEligibilityForm && (
                 <div className="reopenFormWrapper">
                   <Button
@@ -1330,10 +1244,6 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                     outline
                     small
                     color="gray"
-                    // onClick={() => {
-                    //   setShowInputBox(false);
-                    //   setMessages([]);
-                    // }}
                     onClick={resetChat}
                   >
                     ← New Chat
