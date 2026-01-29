@@ -963,13 +963,13 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                   <option value="">Select Occupation</option>
                   <option value={'Farmer'}>Farmer</option>
                   <option value={'Student'}>Student</option>
-                  <option value={'Fisherman'}>Fisherman</option>
+                  <option value={'Fishermen'}>Fishermen</option>
                   <option value={'Handloom Weavers'}>Handloom Weavers</option>
                   <option value={'Labour'}>Labour</option>
                 </select>
               </div>
 
-              {(formData.occupation === "Handloom Weavers" || formData.occupation === "Labour") && (
+              {(formData.occupation === "Handloom Weavers" || formData.occupation === "Labour" || formData.occupation === "Fishermen") && (
                 <div className="formGroup">
                   <label>Are you a member ?</label>
                   <select
@@ -1005,6 +1005,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                     <option value="primary">Primary</option>
                     <option value="sslc">Secondary</option>
                     <option value="hsc">Higher Secondary</option>
+                    <option value="diploma">Diploma</option>
                     <option value="ug">UG</option>
                     <option value="pg">PG</option>
                   </select>
@@ -1139,7 +1140,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                   </div>
                 </>
               )}
-              {formData.occupation === "Fisherman" && (
+              {/* {formData.occupation === "Fisherman" && (
                 <>
                   <div className="formGroup">
                     <label>Fishing Type</label>
@@ -1187,7 +1188,7 @@ export default function ChatBotWidgetPage({ f7router, user }) {
                     </div>
                   </div>
                 </>
-              )}
+              )} */}
             </div>
 
 
